@@ -7,9 +7,9 @@
 
 ## 📌 Sobre o projeto
 
-Sistema de folha de pagamento via terminal (console) que gerencia três perfis de funcionários, calcula salários automaticamente e persiste os dados localmente em CSV — sem banco de dados externo, sem dependências, sem internet.
+Sistema de folha de pagamento via terminal (console) que gerencia três perfis de funcionários, escolhidos pela UC Dual. Ele calcula salários automaticamente e persiste/exporta os dados localmente em CSV — sem banco de dados externo, sem dependências, sem internet.
 
-A arquitetura foi organizada em camadas bem definidas para separar interface, regras de negócio e persistência. Não é maquiagem: cada camada faz exatamente o que o nome dela diz, e nada além disso.
+A arquitetura foi organizada em camadas bem definidas para separar interface, regras de negócio e persistência. O projeto brinca bastante com pacotes em JAVA. Não é uma mera maquiagem: cada camada faz exatamente o que o nome dela diz, e nada além disso.
 
 ---
 
@@ -64,7 +64,7 @@ sistemaFolha/
 └── README.md
 ```
 
-Para adicionar um novo tipo de funcionário: crie a classe em `model/`, implemente os quatro métodos abstratos e adicione o `case` correspondente em `FuncionarioRepository`. Só isso.
+Para adicionar um novo tipo de funcionário: crie a classe em `model/`, implemente os quatro métodos abstratos e adicione o `case` correspondente em `FuncionarioRepository`. Só isso. Parece simples, não é?
 
 ---
 
@@ -77,7 +77,7 @@ O fluxo completo da aplicação — do menu principal até cada operação — e
 Abra o arquivo diretamente no navegador. Não precisa de servidor, não precisa de nada instalado — é HTML puro, funciona offline.
 
 > **Por que HTML e não uma imagem?**  
-> HTML é universal: todo dispositivo tem navegador. O fluxograma foi mantido como arquivo separado em `docs/` para não misturar documentação com código-fonte — o projeto continua sendo 100% Java na essência, com o HTML servindo como material de apoio.
+> HTML, hoje em dia, é universal: todo dispositivo tem navegador. O fluxograma foi mantido como arquivo separado em `docs/` para não misturar documentação com código-fonte — o projeto continua sendo 100% Java na essência, com o HTML servindo como material de apoio.
 
 ---
 
@@ -262,22 +262,22 @@ O sistema usa o relógio do próprio computador para marcar data e hora nos arqu
 
 ## 🔢 Decisão de design — o `0` como cancelamento universal
 
-Em qualquer campo de cadastro, digitar `0` cancela a operação e volta ao menu.
+Em qualquer campo, na hora do cadastro, digitar `0` cancela a operação e volta ao menu.
 
-Essa escolha é inspirada em interfaces que qualquer pessoa já usou: sistemas de atendimento telefônico (como telemarketing) e controles remotos — onde `0` historicamente significa "voltar" ou "cancelar". É uma convenção que dispensa explicação.
+Essa escolha é inspirada em interfaces que qualquer pessoa já usou ou pelo menos conhece: sistemas de atendimento telefônico (como telemarketing) e controles remotos — onde `0` historicamente significa "voltar" ou "cancelar". É uma convenção que dispensa explicação.
 
 Dentro deste projeto, a decisão é segura: todos os valores numéricos válidos respeitam limites mínimos definidos pelas regras de negócio (matrícula deve ser maior que zero, valores monetários são tratados como não-negativos com sinal de cancelamento separado).
 
 Isso transforma uma escolha simples em **decisão de design consciente**.
 
-**Onde mora o risco — não é no agora, é no futuro.**
+**Onde mora o risco aqui? — No caso, não é no agora, é no futuro.**
 
 Imagine que o sistema seja expandido:
-- um novo campo aceita `0` como valor legítimo (desconto zero, horas extras zero, bônus zero)
-- outro desenvolvedor mexe no código sem saber da convenção
-- ou você mesmo, meses depois, esquece a regra
+- um novo campo aceita `0` como valor legítimo (desconto zero, horas extras zero, bônus zero);
+- outro desenvolvedor mexe no código sem saber da convenção;
+- ou, meses depois, a regra acaba sendo esquecida.
 
-De repente, `0` volta a ser válido como dado — e o cancelamento vira armadilha silenciosa.
+De repente, `0` volta a ser válido como dado — e o cancelamento vira uma armadilha silenciosa e uma dor de cabeça na certa.
 
 Se o projeto for escalonado, a recomendação é substituir o `0` por uma entrada textual explícita, como `c` ou `cancelar`. Mais verboso, mas inequívoco.
 
