@@ -1,0 +1,161 @@
+============================================================
+  SISTEMA DE FOLHA DE PAGAMENTO  |  Guia de Uso
+============================================================
+
+  Antes de qualquer coisa, um aviso tranquilizador:
+  voce nao precisa saber programar para usar este sistema.
+  So precisa saber digitar e pressionar ENTER.
+
+------------------------------------------------------------
+  COMO ABRIR O SISTEMA
+------------------------------------------------------------
+
+  1. Abra o PowerShell (ou o terminal do VS Code)
+     dentro da pasta do projeto.
+
+  2. Compile o codigo (so precisa fazer isso uma vez,
+     ou quando alterar algum arquivo .java):
+
+     > dir /s /b src\*.java > sources.txt
+     > javac -encoding UTF-8 -d bin @sources.txt
+
+  3. Execute o sistema:
+
+     > java -cp bin br.com.folha.main.SistemaFolha
+
+  Pronto. O menu vai aparecer na tela.
+
+------------------------------------------------------------
+  O MENU PRINCIPAL
+------------------------------------------------------------
+
+  Ao abrir, voce vera isto:
+
+  ===========================================
+          FOLHA DE PAGAMENTO  (salarios mensais)
+  ===========================================
+    1 - Cadastrar Funcionario Padrao
+    2 - Cadastrar Funcionario Comissionado
+    3 - Cadastrar Funcionario de Producao
+    4 - Gerar Folha de Pagamento
+    5 - Exportar CSV  (copia com data e hora)
+    6 - Resetar sistema  [ADM]
+    0 - Sair
+  ===========================================
+
+  Digite o numero da opcao desejada e pressione ENTER.
+
+------------------------------------------------------------
+  OPCAO 1 - Funcionario Padrao
+------------------------------------------------------------
+
+  Para quem recebe apenas o salario fixo mensal,
+  sem comissao ou bonus de producao.
+
+  O sistema pede:
+    - Nome  (pode digitar em qualquer caixa: jose, JOSE ou Jose)
+    - Matricula  (numero unico de identificacao)
+
+  DICA: se errou ou arrependeu no meio do cadastro,
+  digite 0 em qualquer campo para voltar ao menu.
+
+------------------------------------------------------------
+  OPCAO 2 - Funcionario Comissionado
+------------------------------------------------------------
+
+  Para quem recebe salario fixo + comissao sobre vendas.
+
+  O sistema pede:
+    - Nome
+    - Matricula
+    - Total de vendas do mes  (ex: 15000)
+    - Percentual de comissao  (ex: 5 para 5%)
+
+  O calculo e feito automaticamente:
+  salario final = salario base + (vendas x percentual / 100)
+
+------------------------------------------------------------
+  OPCAO 3 - Funcionario de Producao
+------------------------------------------------------------
+
+  Para quem recebe salario fixo + bonus por pecas produzidas.
+
+  O sistema pede:
+    - Nome
+    - Matricula
+    - Quantidade de pecas produzidas no mes
+    - Valor pago por cada peca  (ex: 3.50)
+
+  O calculo e feito automaticamente:
+  salario final = salario base + (quantidade x valor por peca)
+
+------------------------------------------------------------
+  OPCAO 4 - Gerar Folha de Pagamento
+------------------------------------------------------------
+
+  Exibe no terminal todos os funcionarios cadastrados,
+  ordenados por matricula (do menor para o maior numero).
+
+  Para cada funcionario, voce ve:
+    - Nome e matricula
+    - Tipo  (Padrao, Comissionado ou Producao)
+    - Salario base mensal
+    - Extras  (comissao ou bonus, dependendo do tipo)
+    - Total mensal a receber
+
+------------------------------------------------------------
+  OPCAO 5 - Exportar CSV
+------------------------------------------------------------
+
+  Gera uma copia do cadastro atual em formato CSV,
+  que abre direto no Excel.
+
+  O arquivo e salvo em:
+    exportados/folha_AAAA-MM-DD_HH-MM-SS.csv
+
+  A data e hora no nome do arquivo garantem que voce
+  nunca sobrescreve uma exportacao anterior.
+  Cada vez que exportar, um novo arquivo e criado.
+
+------------------------------------------------------------
+  OPCAO 6 - Resetar sistema  [ADM]
+------------------------------------------------------------
+
+  Apaga todos os funcionarios e zera o sistema.
+
+  ANTES de apagar qualquer coisa, um backup automatico
+  e salvo em:
+    backups/backup_AAAA-MM-DD_HH-MM-SS.csv
+
+  Para confirmar o reset, voce precisa digitar
+  exatamente a palavra:  CONFIRMAR
+
+  Qualquer outra coisa cancela a operacao.
+
+------------------------------------------------------------
+  OPCAO 0 - Sair
+------------------------------------------------------------
+
+  Salva tudo automaticamente no arquivo database.csv
+  e encerra o programa.
+
+  Na proxima vez que abrir, todos os dados estarao la,
+  exatamente como voce deixou.
+
+------------------------------------------------------------
+  INFORMACOES TECNICAS  (para quem quiser saber)
+------------------------------------------------------------
+
+  database.csv    → banco de dados principal do sistema
+  exportados/     → copias manuais com data e hora
+  backups/        → backups automaticos gerados pelo reset
+
+  O sistema usa o relogio do proprio computador para
+  marcar data e hora nos arquivos. Nao precisa de
+  conexao com a internet.
+
+  Salario base mensal atual: R$ 2000,00
+  Para alterar, edite a constante SALARIO_BASE
+  no arquivo: src/br/com/folha/model/Funcionario.java
+
+============================================================

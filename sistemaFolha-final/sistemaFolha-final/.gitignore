@@ -1,0 +1,24 @@
+# ─── Compilação ───────────────────────────────────────────
+bin/
+*.class
+sources.txt
+
+# ─── Dados gerados em tempo de execução ───────────────────
+# Esses arquivos são criados pelo próprio sistema ao rodar.
+# Não pertencem ao repositório: podem conter dados pessoais
+# ou sensíveis de funcionários, e variam a cada execução.
+database.csv
+backups/
+exportados/
+
+# ─── IDEs ─────────────────────────────────────────────────
+.idea/
+*.iml
+.vscode/
+*.classpath
+*.project
+.settings/
+
+# ─── Sistema operacional ──────────────────────────────────
+.DS_Store
+Thumbs.db
