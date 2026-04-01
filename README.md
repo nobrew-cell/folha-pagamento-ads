@@ -9,7 +9,7 @@
 
 Sistema de folha de pagamento via terminal (console) que gerencia três perfis de funcionários, escolhidos pela UC Dual. Ele calcula salários automaticamente e persiste/exporta os dados localmente em CSV — sem banco de dados externo, sem dependências, sem internet.
 
-A arquitetura foi organizada em camadas bem definidas para separar interface, regras de negócio e persistência. O projeto brinca bastante com pacotes em JAVA. Não é uma mera maquiagem: cada camada faz exatamente o que o nome dela diz, e nada além disso.
+A arquitetura foi organizada em camadas bem definidas para separar interface, regras de negócio e persistência. O projeto brinca bastante com pacotes em JAVA. Não sendo uma mera "maquiagem", pois cada camada faz exatamente o que o nome dela diz, e nada além disso.
 
 ---
 
@@ -70,14 +70,14 @@ Para adicionar um novo tipo de funcionário: crie a classe em `model/`, implemen
 
 ## 📊 Fluxograma do sistema
 
-O fluxo completo da aplicação — do menu principal até cada operação — está documentado visualmente em:
+O fluxo completo da aplicação, deste projeto — do menu principal até cada operação — está documentado visualmente em:
 
-📄 [`docs/fluxograma-sistema-folha.html`](./docs/fluxograma-sistema-folha.html)
+📄 [`docs/fluxograma-sistema-folha.html`](./sistemaFolha-final/docs/fluxograma-sistema-folha.html)
 
-Abra o arquivo diretamente no navegador. Não precisa de servidor, não precisa de nada instalado — é HTML puro, funciona offline.
+Abra o arquivo diretamente no navegador. Não precisa de servidor, não precisa de nada instalado; é HTML puro, funciona offline.
 
 > **Por que HTML e não uma imagem?**  
-> HTML, hoje em dia, é universal: todo dispositivo tem navegador. O fluxograma foi mantido como arquivo separado em `docs/` para não misturar documentação com código-fonte — o projeto continua sendo 100% Java na essência, com o HTML servindo como material de apoio.
+> HTML, hoje em dia, é universal: todo dispositivo tem navegador. O fluxograma foi mantido como arquivo separado em `docs/` para não misturar documentação com código-fonte — o projeto continua sendo 100% Java na essência, com o HTML servindo como material de apoio. Ele é um quase 60% necessário, como linguagem, nesse projeto. Pois formatos como SVG, que se renderizam, são pesados. E formatos como PNG e JPEG, não preservam detalhes. 
 
 ---
 
@@ -294,6 +294,20 @@ src/br/com/folha/model/Funcionario.java
 ```java
 public static final double SALARIO_BASE = 2000.00;
 ```
+
+---
+
+## 🛠️ Uso de ferramentas externas
+
+Ao longo do desenvolvimento, recorreu-se pontualmente ao **Claude Code** como ferramenta de acompanhamento, não como substituto de raciocínio, mas como um par de olhos externo.
+
+Os usos foram cirúrgicos e bem delimitados, e são explicados a seguir:
+
+- **Comentários no código-fonte**: a empolgação falou mais alto no início, e o código saiu antes da documentação. Os comentários foram revisados com auxílio da ferramenta depois.
+- **Partes do `model/` e do `repository/`**: orientação a objetos ainda é território em construção. Usou-se a ferramenta para validar decisões de herança e polimorfismo, não para gerá-las do zero.
+- **Estética do fluxograma HTML**: cores e legenda receberam um ajuste com suporte externo para deixar a visualização mais apresentável.
+
+O restante, arquitetura, lógica de negócio, estrutura de pacotes e decisões de design, foi desenvolvido manualmente. Além disso, o material disponibilizado pela **Oracle Academy** serviu como base de estudo ao longo de todo o projeto, e fez diferença.
 
 ---
 
