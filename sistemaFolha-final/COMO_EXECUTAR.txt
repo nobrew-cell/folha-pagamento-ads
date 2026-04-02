@@ -24,6 +24,23 @@
      > java -cp bin br.com.folha.main.SistemaFolha
 
   Pronto. O menu vai aparecer na tela.
+  
+------------------------------------------------------------
+  PRIMEIRA TELA
+------------------------------------------------------------
+
+  No primeiro acesso, antes do menu, voce vera isto:
+
+  ===========================================
+       Bem-vindo ao Sistema de Folha de Pagamento
+       Versao 2.0  |  Salarios mensais
+  ===========================================
+    Este e o seu primeiro acesso.
+    Nenhum funcionario cadastrado ainda.
+  -------------------------------------------
+    Pressione ENTER para continuar...
+
+  Pressione ENTER. O menu principal vai aparecer.
 
 ------------------------------------------------------------
   O MENU PRINCIPAL

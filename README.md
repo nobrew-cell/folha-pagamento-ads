@@ -74,7 +74,7 @@ O fluxo completo da aplicação, deste projeto — do menu principal até cada o
 
 📄 [`docs/fluxograma-sistema-folha.html`](./sistemaFolha-final/docs/fluxograma-sistema-folha.html)
 
-Abra o arquivo diretamente no navegador. Não precisa de servidor, não precisa de nada instalado; é HTML puro, funciona offline.
+Baixe o arquivo RAW ali mesmo, caso só queira o HTML. Ou baixe o repositório inteiro e procuro o arquivo HTML na pasta do projeto. E depois, abra o arquivo diretamente no navegador. Não precisa de servidor, não precisa de nada instalado; é HTML puro, funciona offline.
 
 > **Por que HTML e não uma imagem?**  
 > HTML, hoje em dia, é universal: todo dispositivo tem navegador. O fluxograma foi mantido como arquivo separado em `docs/` para não misturar documentação com código-fonte — o projeto continua sendo 100% Java na essência, com o HTML servindo como material de apoio. Ele é um quase 60% necessário, como linguagem, nesse projeto. Pois formatos como SVG, que se renderizam, são pesados. E formatos como PNG e JPEG, não preservam detalhes. 
@@ -83,44 +83,56 @@ Abra o arquivo diretamente no navegador. Não precisa de servidor, não precisa 
 
 ## 🚀 Como executar
 
-> Antes de qualquer coisa, um aviso tranquilizador:  
-> você não precisa saber programar para usar este sistema.  
-> Só precisa saber digitar e pressionar ENTER.
+### Opção 1 — VS Code (recomendada)
 
-### 1. Abrir o terminal
+1. Tenha o **JDK 17+** instalado na máquina.
+2. Instale o pacote **Extension Pack for Java** no VS Code.
+3. Abra a pasta do projeto no VS Code e aguarde as extensões carregarem.
+4. Navegue até `src/br/com/folha/main/`, abra o arquivo `SistemaFolha.java` e clique em **Run** que aparece acima do método `main`, ou no topo da IDE.
 
-Abra o **PowerShell** (ou o terminal integrado do VS Code) dentro da pasta do projeto.
+Pronto. O terminal integrado vai abrir e o sistema vai iniciar.
 
-### 2. Compilar
+### Opção 2 — Terminal (PowerShell ou bash)
 
-> Só precisa fazer isso uma vez — ou quando alterar algum arquivo `.java`.
+1. Tenha o **JDK 17+** instalado na máquina.
+2. Abra o terminal dentro da pasta do projeto. Só entrar na pasta e digitar **powershell** no topo
+
+3. Compile:
 
 **Windows (PowerShell):**
 ```powershell
-dir /s /b src\*.java > sources.txt
-javac -encoding UTF-8 -d bin @sources.txt
+javac -encoding UTF-8 -d bin (Get-ChildItem -Recurse -Filter *.java src | % { $_.FullName })
 ```
 
 **Linux / macOS:**
 ```bash
-find src -name "*.java" > sources.txt
-javac -encoding UTF-8 -d bin @sources.txt
+javac -encoding UTF-8 -d bin $(find src -name "*.java")
 ```
 
-### 3. Executar
-
+4. Execute:
 ```bash
 java -cp bin br.com.folha.main.SistemaFolha
 ```
 
-Pronto. O menu vai aparecer na tela.
+Se tudo correu bem, a primeira tela do sistema vai aparecer no terminal.
 
 ---
 
 ## 🖥️ Interface do sistema
 
-Ao abrir, você verá:
+No primeiro acesso, antes do menu, você verá:
+```
+===========================================
+     Bem-vindo ao Sistema de Folha de Pagamento
+     Versao 2.0  |  Salarios mensais
+===========================================
+  Este e o seu primeiro acesso.
+  Nenhum funcionario cadastrado ainda.
+-------------------------------------------
+  Pressione ENTER para continuar...
+```
 
+Pressione ENTER. O menu principal vai aparecer:
 ```
 ===========================================
         FOLHA DE PAGAMENTO  (salarios mensais)
