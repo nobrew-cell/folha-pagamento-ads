@@ -83,19 +83,33 @@ Baixe o arquivo RAW ali mesmo, caso só queira o HTML. Ou baixe o repositório i
 
 ## 🚀 Como executar
 
-### Opção 1 — VS Code (recomendada)
+### Opção 1 — Arquivo `.bat` (recomendada, somente Windows)
 
 1. Tenha o **JDK 17+** instalado na máquina.
-2. Instale o pacote **Extension Pack for Java** no VS Code.
-3. Abra a pasta do projeto no VS Code e aguarde as extensões carregarem.
-4. Navegue até `src/br/com/folha/main/`, abra o arquivo `SistemaFolha.java` e clique em **Run** que aparece acima do método `main`, ou no topo da IDE.
+2. Coloque o arquivo `executar.bat` dentro da pasta do projeto (ao lado das pastas `src` e `bin`).
+3. Dê dois cliques no `executar.bat`.
+
+O sistema vai compilar e abrir automaticamente.
+
+> **Obs.:** na primeira vez, o Windows pode exibir um aviso do SmartScreen — clique em **"Mais informações"** e depois em **"Executar assim mesmo"**.
+
+---
+
+### Opção 2 — Sua IDE favorita
+
+1. Tenha o **JDK 17+** instalado na máquina.
+2. Instale o suporte a Java na sua IDE (ex.: **Extension Pack for Java** no VS Code, ou use IntelliJ/Eclipse que já vêm com suporte nativo).
+3. Abra a pasta do projeto na IDE e aguarde as extensões carregarem.
+4. Navegue até `src/br/com/folha/main/`, abra o arquivo `SistemaFolha.java` e clique em **Run** acima do método `main` ou no topo da IDE.
 
 Pronto. O terminal integrado vai abrir e o sistema vai iniciar.
 
-### Opção 2 — Terminal (PowerShell ou bash)
+---
+
+### Opção 3 — Terminal (PowerShell ou bash)
 
 1. Tenha o **JDK 17+** instalado na máquina.
-2. Abra o terminal dentro da pasta do projeto. Só entrar na pasta e digitar **powershell** no topo
+2. Abra o terminal dentro da pasta do projeto. Só entrar na pasta e digitar **powershell** no topo.
 
 3. Compile:
 
@@ -123,8 +137,8 @@ Se tudo correu bem, a primeira tela do sistema vai aparecer no terminal.
 No primeiro acesso, antes do menu, você verá:
 ```
 ===========================================
-     Bem-vindo ao Sistema de Folha de Pagamento
-     Versao 2.0  |  Salarios mensais
+ Bem-vindo ao Sistema de Folha de Pagamento
+      Versao 2.0  |  Salarios mensais
 ===========================================
   Este e o seu primeiro acesso.
   Nenhum funcionario cadastrado ainda.

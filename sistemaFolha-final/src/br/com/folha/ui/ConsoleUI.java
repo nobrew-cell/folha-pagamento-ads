@@ -52,8 +52,8 @@ public class ConsoleUI {
 
     private void exibirBoasVindas() {
         System.out.println("\n" + SEP);
-        System.out.println("     Bem-vindo ao Sistema de Folha de Pagamento");
-        System.out.println("     Versao 2.0  |  Salarios mensais");
+        System.out.println(" Bem-vindo ao Sistema de Folha de Pagamento");
+        System.out.println("      Versao 2.0  |  Salarios mensais");
         System.out.println(SEP);
         System.out.println("  Este e o seu primeiro acesso.");
         System.out.println("  Nenhum funcionario cadastrado ainda.");
