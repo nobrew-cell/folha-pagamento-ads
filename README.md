@@ -290,7 +290,7 @@ O sistema usa o relógio do próprio computador para marcar data e hora nos arqu
 
 Em qualquer campo, na hora do cadastro, digitar `0` cancela a operação e volta ao menu.
 
-Essa escolha é inspirada em interfaces que qualquer pessoa já usou ou pelo menos conhece: sistemas de atendimento telefônico (como telemarketing) e controles remotos — onde `0` historicamente significa "voltar" ou "cancelar". É uma convenção que dispensa explicação.
+Essa escolha é inspirada em interfaces que qualquer pessoa já usou ou pelo menos conhece: sistemas de atendimento telefônico (como telemarketing) e e alguns tipos de controles remotos — onde `0` historicamente significa "voltar" ou "cancelar". É uma convenção que dispensa explicação.
 
 Dentro deste projeto, a decisão é segura: todos os valores numéricos válidos respeitam limites mínimos definidos pelas regras de negócio (matrícula deve ser maior que zero, valores monetários são tratados como não-negativos com sinal de cancelamento separado).
 
@@ -305,7 +305,7 @@ Imagine que o sistema seja expandido:
 
 De repente, `0` volta a ser válido como dado — e o cancelamento vira uma armadilha silenciosa e uma dor de cabeça na certa.
 
-Se o projeto for escalonado, a recomendação é substituir o `0` por uma entrada textual explícita, como `c` ou `cancelar`. Mais verboso, mas inequívoco.
+Se o projeto for escalonado, a recomendação é substituir o `0` por uma entrada textual explícita, como uma variável char `c` ou String `cancelar`. Mais verboso, mas inequívoco.
 
 ---
 

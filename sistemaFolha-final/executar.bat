@@ -12,7 +12,7 @@ echo.
 java -version >nul 2>&1
 if %errorlevel% neq 0 (
     echo [ERRO] Java nao encontrado! Instale o JDK 17 ou superior.
-    echo        Download: https://adoptium.net/
+    echo        Download: https://www.java.com/pt-BR/
     pause
     exit /b 1
 )
