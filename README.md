@@ -69,15 +69,74 @@ Para adicionar um novo tipo de funcionário: crie a classe em `model/`, implemen
 ---
 
 ## 📊 Fluxograma do sistema
+```mermaid
+flowchart TD
+    A([Início — main])
+    A --> B{database.csv\nexiste?}
+    B -- não --> C[/exibe boas-vindas\nprimer acesso/]
+    C --> D
+    B -- sim --> D
+    D[[Repository.carregar]]
+    D --> E[Menu principal\nlê opção do usuário]
+    E --> F{qual\nopção?}
+    F -- 4 --> G[[service.listar\nordena por matrícula]]
+    G --> H[para cada Funcionario\ncalcularSalarioFinal]
+    H --> I[/exibe: nome, tipo\nsalário base + extra/]
+    I --> Z970
+    F -- 1 --> J[/lê nome/]
+    J --> K[/lê matrícula/]
+    K --> L{campo\n= 0?}
+    L -- sim --> Z970
+    L -- não --> M{matrícula\núnica?}
+    M -- não --> K
+    M -- sim --> N[service.cadastrarPadrao]
+    N --> Z970
+    F -- 2 --> O[/lê nome + matrícula\nvendas + % comissão/]
+    O --> P[service.cadastrarComissionado]
+    P --> Z970
+    F -- 3 --> Q[/lê nome + matrícula\npeças + valor/peça/]
+    Q --> R[service.cadastrarProducao]
+    R --> Z970
+    Z970[ ]
+    Z970 --> S{é op.\n5 / 6 / 0?}
+    S -- 1/2/3/4 --> T[↻ retorna ao menu]
+    T -.-> E
+    S -- 5 --> U[service.exportar\ncria CSV com timestamp]
+    U --> V[(exportados/\nfolha_timestamp.csv)]
+    V --> ZFim
+    S -- 6 --> W[/lê confirmação\ndigita CONFIRMAR/]
+    W --> X{CONFIRMAR?}
+    X -- não --> E
+    X -- sim --> Y[repository.resetar\nbackup automático]
+    Y --> AA[(backups/\nbackup_timestamp.csv)]
+    AA --> AB[lista.clear]
+    AB --> ZFim
+    S -- 0 --> ZFim
+    ZFim[ ]
+    ZFim --> AC[[service.salvar\nrepository.salvar lista]]
+    AC --> AD[escreverCSV\ncabeçalho + toCSV por registro]
+    AD --> AE[(database.csv\nestado persistido)]
+    AE --> AF[/exibe: Dados salvos. Volte sempre!/]
+    AF --> AG([Fim — scanner.close])
+    classDef terminal fill:#E1F5EE,stroke:#0F6E56,color:#085041
+    classDef process  fill:#E6F1FB,stroke:#185FA5,color:#0C447C
+    classDef io       fill:#EEEDFE,stroke:#534AB7,color:#3C3489
+    classDef decision fill:#FAEEDA,stroke:#854F0B,color:#633806
+    classDef storage  fill:#F1EFE8,stroke:#5F5E5A,color:#2C2C2A
+    classDef sub      fill:#FBEAF0,stroke:#993556,color:#4B1528
+    classDef ghost    fill:none,stroke:none,color:transparent
+    class A,AG terminal
+    class E,H,N,P,R,AB,AD process
+    class C,J,K,O,Q,W,I,AF io
+    class B,F,L,M,S,X decision
+    class V,AA,AE storage
+    class D,G,AC sub
+    class Z970,ZFim ghost
+```
 
-O fluxo completo da aplicação, deste projeto — do menu principal até cada operação — está documentado visualmente em:
-
-📄 [`docs/fluxograma-sistema-folha.html`](./sistemaFolha-final/docs/fluxograma-sistema-folha.html)
-
-Baixe o arquivo RAW ali mesmo, caso só queira o HTML. Ou baixe o repositório inteiro e procuro o arquivo HTML na pasta do projeto. E depois, abra o arquivo diretamente no navegador. Não precisa de servidor, não precisa de nada instalado; é HTML puro, funciona offline.
-
-> **Por que HTML e não uma imagem?**  
-> HTML, hoje em dia, é universal: todo dispositivo tem navegador. O fluxograma foi mantido como arquivo separado em `docs/` para não misturar documentação com código-fonte — o projeto continua sendo 100% Java na essência, com o HTML servindo como material de apoio. Ele é um quase 60% necessário, como linguagem, nesse projeto. Pois formatos como SVG, que se renderizam, são pesados. E formatos como PNG e JPEG, não preservam detalhes. 
+> Uma versão estendida do fluxograma, com simbologia ANSI completa e suporte a dark mode,
+> está disponível em [`docs/fluxograma-sistema-folha.html`](./docs/fluxograma-sistema-folha.html)
+> para visualização offline — basta abrir o arquivo no navegador, sem servidor ou dependências.
 
 ---
 
