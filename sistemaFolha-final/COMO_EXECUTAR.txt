@@ -55,7 +55,7 @@
     2 - Cadastrar Funcionario Comissionado
     3 - Cadastrar Funcionario de Producao
     4 - Gerar Folha de Pagamento
-    5 - Exportar CSV  (copia com data e hora)
+    5 - Exportar TSV  (copia com data e hora)
     6 - Resetar sistema  [ADM]
     0 - Sair
   ===========================================
@@ -121,14 +121,14 @@
     - Total mensal a receber
 
 ------------------------------------------------------------
-  OPCAO 5 - Exportar CSV
+  OPCAO 5 - Exportar TSV
 ------------------------------------------------------------
 
-  Gera uma copia do cadastro atual em formato CSV,
+  Gera uma copia do cadastro atual em formato TSV,
   que abre direto no Excel.
 
   O arquivo e salvo em:
-    exportados/folha_AAAA-MM-DD_HH-MM-SS.csv
+    exportados/folha_AAAA-MM-DD_HH-MM-SS.tsv
 
   A data e hora no nome do arquivo garantem que voce
   nunca sobrescreve uma exportacao anterior.
@@ -142,7 +142,7 @@
 
   ANTES de apagar qualquer coisa, um backup automatico
   e salvo em:
-    backups/backup_AAAA-MM-DD_HH-MM-SS.csv
+    backups/backup_AAAA-MM-DD_HH-MM-SS.tsv
 
   Para confirmar o reset, voce precisa digitar
   exatamente a palavra:  CONFIRMAR
@@ -153,7 +153,7 @@
   OPCAO 0 - Sair
 ------------------------------------------------------------
 
-  Salva tudo automaticamente no arquivo database.csv
+  Salva tudo automaticamente no arquivo database.tsv
   e encerra o programa.
 
   Na proxima vez que abrir, todos os dados estarao la,
@@ -163,7 +163,7 @@
   INFORMACOES TECNICAS  (para quem quiser saber)
 ------------------------------------------------------------
 
-  database.csv    → banco de dados principal do sistema
+  database.tsv    → banco de dados principal do sistema
   exportados/     → copias manuais com data e hora
   backups/        → backups automaticos gerados pelo reset
 

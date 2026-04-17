@@ -7,7 +7,7 @@
 
 ## 📌 Sobre o projeto
 
-Sistema de folha de pagamento via terminal (console) que gerencia três perfis de funcionários, escolhidos pela UC Dual. Ele calcula salários automaticamente e persiste/exporta os dados localmente em CSV — sem banco de dados externo, sem dependências, sem internet.
+Sistema de folha de pagamento via terminal (console) que gerencia três perfis de funcionários, escolhidos pela UC Dual. Ele calcula salários automaticamente e persiste/exporta os dados localmente em TSV — sem banco de dados externo, sem dependências, sem internet.
 
 A arquitetura foi organizada em camadas bem definidas para separar interface, regras de negócio e persistência. O projeto brinca bastante com pacotes em JAVA. Não sendo uma mera "maquiagem", pois cada camada faz exatamente o que o nome dela diz, e nada além disso.
 
@@ -22,7 +22,7 @@ A arquitetura foi organizada em camadas bem definidas para separar interface, re
 - **Matrícula única** — o sistema rejeita duplicatas na hora
 - **Nome normalizado automaticamente** — pode digitar em maiúsculo, minúsculo ou misturado
 - **Geração de folha** — exibe todos os funcionários ordenados por matrícula
-- **Exportação CSV com timestamp** — cada exportação gera um arquivo novo, nunca sobrescreve
+- **Exportação TSV com timestamp** — cada exportação gera um arquivo novo, nunca sobrescreve
 - **Backup automático antes do reset** — nenhum dado é apagado sem rastro
 - **Persistência automática** — ao sair pela opção 0, os dados são salvos; ao abrir, são restaurados
 
@@ -35,7 +35,7 @@ A arquitetura foi organizada em camadas bem definidas para separar interface, re
 | Linguagem | Java (JDK 17+) |
 | Paradigma | POO — herança, polimorfismo, classes abstratas |
 | Arquitetura | Camadas: `model / service / repository / ui / main` |
-| Persistência | CSV local (sem banco de dados externo) |
+| Persistência | TSV local (sem banco de dados externo) |
 | Versionamento | Git + GitHub |
 
 ---
@@ -56,7 +56,7 @@ sistemaFolha/
 │       ├── service/
 │       │   └── FolhaService.java          ← regras de negócio
 │       ├── repository/
-│       │   └── FuncionarioRepository.java ← leitura e escrita em CSV
+│       │   └── FuncionarioRepository.java ← leitura e escrita em TSV
 │       └── ui/
 │           └── ConsoleUI.java             ← toda a interface do terminal
 ├── docs/
@@ -72,7 +72,7 @@ Para adicionar um novo tipo de funcionário: crie a classe em `model/`, implemen
 ```mermaid
 flowchart TD
     A(["Início — main"])
-    A --> B{"database.csv\nexiste?"}
+    A --> B{"database.tsv\nexiste?"}
     B -- não --> C[/"exibe boas-vindas\nprimeiro acesso"/]
     C --> D
     B -- sim --> D
@@ -101,21 +101,21 @@ flowchart TD
     Z970 --> S{"é op.\n5 / 6 / 0?"}
     S -- "1/2/3/4" --> T["↻ retorna ao menu"]
     T -.-> E
-    S -- 5 --> U["service.exportar\ncria CSV com timestamp"]
-    U --> V[("exportados/\nfolha_timestamp.csv")]
+    S -- 5 --> U["service.exportar\ncria TSV com timestamp"]
+    U --> V[("exportados/\nfolha_timestamp.tsv")]
     V --> ZFim
     S -- 6 --> W[/"lê confirmação\ndigita CONFIRMAR"/]
     W --> X{"CONFIRMAR?"}
     X -- não --> E
     X -- sim --> Y["repository.resetar\nbackup automático"]
-    Y --> AA[("backups/\nbackup_timestamp.csv")]
+    Y --> AA[("backups/\nbackup_timestamp.tsv")]
     AA --> AB["lista.clear"]
     AB --> ZFim
     S -- 0 --> ZFim
     ZFim[ ]
     ZFim --> AC[["service.salvar\nrepository.salvar lista"]]
-    AC --> AD["escreverCSV\ncabeçalho + toCSV por registro"]
-    AD --> AE[("database.csv\nestado persistido")]
+    AC --> AD["escreverTSV\ncabeçalho + toTSV por registro"]
+    AD --> AE[("database.tsv\nestado persistido")]
     AE --> AF[/"exibe: Dados salvos. Volte sempre!"/]
     AF --> AG(["Fim — scanner.close"])
     classDef terminal fill:#E1F5EE,stroke:#0F6E56,color:#085041
@@ -214,7 +214,7 @@ Pressione ENTER. O menu principal vai aparecer:
   2 - Cadastrar Funcionario Comissionado
   3 - Cadastrar Funcionario de Producao
   4 - Gerar Folha de Pagamento
-  5 - Exportar CSV  (copia com data e hora)
+  5 - Exportar TSV  (copia com data e hora)
   6 - Resetar sistema  [ADM]
   0 - Sair
 ===========================================
@@ -289,13 +289,13 @@ Para cada funcionário, você vê:
 </details>
 
 <details>
-<summary><strong>Opção 5 — Exportar CSV</strong></summary>
+<summary><strong>Opção 5 — Exportar TSV</strong></summary>
 
-Gera uma cópia do cadastro atual em formato CSV, que abre direto no Excel.
+Gera uma cópia do cadastro atual em formato TSV, que abre direto no Excel.
 
 O arquivo é salvo em:
 ```
-exportados/folha_AAAA-MM-DD_HH-MM-SS.csv
+exportados/folha_AAAA-MM-DD_HH-MM-SS.tsv
 ```
 
 A data e hora no nome do arquivo garantem que você nunca sobrescreve uma exportação anterior. Cada vez que exportar, um novo arquivo é criado.
@@ -309,7 +309,7 @@ Apaga todos os funcionários e zera o sistema.
 
 **Antes de apagar qualquer coisa**, um backup automático é salvo em:
 ```
-backups/backup_AAAA-MM-DD_HH-MM-SS.csv
+backups/backup_AAAA-MM-DD_HH-MM-SS.tsv
 ```
 
 Para confirmar o reset, você precisa digitar exatamente a palavra: `CONFIRMAR`
@@ -321,7 +321,7 @@ Qualquer outra entrada cancela a operação.
 <details>
 <summary><strong>Opção 0 — Sair</strong></summary>
 
-Salva tudo automaticamente no arquivo `database.csv` e encerra o programa.
+Salva tudo automaticamente no arquivo `database.tsv` e encerra o programa.
 
 Na próxima vez que abrir, todos os dados estarão lá, exatamente como você deixou.
 
@@ -333,7 +333,7 @@ Na próxima vez que abrir, todos os dados estarão lá, exatamente como você de
 
 | Arquivo / Pasta | Função |
 |---|---|
-| `database.csv` | Banco de dados principal — carregado ao abrir, salvo ao sair |
+| `database.tsv` | Banco de dados principal — carregado ao abrir, salvo ao sair |
 | `exportados/` | Cópias manuais com data e hora (opção 5) |
 | `backups/` | Backups automáticos gerados antes de qualquer reset |
 

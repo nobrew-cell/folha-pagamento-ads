@@ -169,12 +169,12 @@
 <!-- ↓ 70→110 -->
 <line x1="430" y1="72" x2="430" y2="108" stroke="var(--arr)" stroke-width="1.2" marker-end="url(#arr)"/>
 
-<!-- 2. DECISÃO: database.csv existe? (losango) cx=430 cy=130 h≈50 -->
+<!-- 2. DECISÃO: database.tsv existe? (losango) cx=430 cy=130 h≈50 -->
 <!-- losango: pts (430,108) (530,130) (430,152) (330,130) -->
 <polygon points="430,108 540,130 430,152 320,130"
          fill="var(--c-decision-fill)" stroke="var(--c-decision-stroke)" stroke-width="1.2"/>
 <text x="430" y="126" text-anchor="middle" dominant-baseline="central"
-      font-size="12" font-weight="500" fill="var(--c-decision-text)">database.csv</text>
+      font-size="12" font-weight="500" fill="var(--c-decision-text)">database.tsv</text>
 <text x="430" y="141" text-anchor="middle" dominant-baseline="central"
       font-size="12" font-weight="500" fill="var(--c-decision-text)">existe?</text>
 
@@ -196,7 +196,7 @@
 <path d="M140 152 L140 188 L430 188" stroke="var(--arr)" stroke-width="1.2"
       fill="none" marker-end="url(#arr)"/>
 
-<!-- SIM → desce direto para carregar CSV -->
+<!-- SIM → desce direto para carregar TSV -->
 <line x1="430" y1="152" x2="430" y2="188" stroke="var(--arr)" stroke-width="1.2" marker-end="url(#arr)"/>
 <text x="445" y="175" font-size="11" fill="var(--arr)">sim</text>
 
@@ -471,7 +471,7 @@
 <text x="680" y="1126" text-anchor="middle" dominant-baseline="central"
       font-size="11" font-weight="500" fill="var(--c-process-text)">service.exportar()</text>
 <text x="680" y="1142" text-anchor="middle" dominant-baseline="central"
-      font-size="11" fill="var(--c-process-text)">cria CSV com timestamp</text>
+      font-size="11" fill="var(--c-process-text)">cria TSV com timestamp</text>
 
 <!-- ↓ -->
 <line x1="680" y1="1152" x2="680" y2="1200" stroke="var(--arr)" stroke-width="1.2" marker-end="url(#arr)"/>
@@ -487,7 +487,7 @@
 <text x="680" y="1233" text-anchor="middle" dominant-baseline="central"
       font-size="11" font-weight="500" fill="var(--c-storage-text)">exportados/</text>
 <text x="680" y="1248" text-anchor="middle" dominant-baseline="central"
-      font-size="11" fill="var(--c-storage-text)">folha_timestamp.csv</text>
+      font-size="11" fill="var(--c-storage-text)">folha_timestamp.tsv</text>
 
 <!-- ── OP. 6: Reset (esquerda) ── -->
 <path d="M310 1050 L180 1050 L180 1108" stroke="var(--arr)" stroke-width="1.2"
@@ -542,7 +542,7 @@
 <text x="180" y="1425" text-anchor="middle" dominant-baseline="central"
       font-size="11" font-weight="500" fill="var(--c-storage-text)">backups/</text>
 <text x="180" y="1440" text-anchor="middle" dominant-baseline="central"
-      font-size="11" fill="var(--c-storage-text)">backup_timestamp.csv</text>
+      font-size="11" fill="var(--c-storage-text)">backup_timestamp.tsv</text>
 
 <!-- ↓ -->
 <line x1="180" y1="1461" x2="180" y2="1499" stroke="var(--arr)" stroke-width="1.2" marker-end="url(#arr)"/>
@@ -597,18 +597,18 @@
 <!-- ↓ 1644→1690 -->
 <line x1="430" y1="1644" x2="430" y2="1690" stroke="var(--arr)" stroke-width="1.2" marker-end="url(#arr)"/>
 
-<!-- 26. PROCESSO: escreverCSV() y=1690 h=52 -->
+<!-- 26. PROCESSO: escreverTSV() y=1690 h=52 -->
 <rect x="300" y="1690" width="260" height="52" rx="3"
       fill="var(--c-process-fill)" stroke="var(--c-process-stroke)" stroke-width="1.2"/>
 <text x="430" y="1710" text-anchor="middle" dominant-baseline="central"
-      font-size="12" font-weight="500" fill="var(--c-process-text)">escreverCSV()</text>
+      font-size="12" font-weight="500" fill="var(--c-process-text)">escreverTSV()</text>
 <text x="430" y="1728" text-anchor="middle" dominant-baseline="central"
-      font-size="11" fill="var(--c-process-text)">cabeçalho + f.toCSV() por registro</text>
+      font-size="11" fill="var(--c-process-text)">cabeçalho + f.toTSV() por registro</text>
 
 <!-- ↓ 1742→1782 -->
 <line x1="430" y1="1742" x2="430" y2="1782" stroke="var(--arr)" stroke-width="1.2" marker-end="url(#arr)"/>
 
-<!-- 27. STORAGE: database.csv (cilindro) cy=1810 -->
+<!-- 27. STORAGE: database.tsv (cilindro) cy=1810 -->
 <rect x="350" y="1797" width="160" height="40" fill="var(--c-storage-fill)"
       stroke="var(--c-storage-stroke)" stroke-width="1.2"/>
 <ellipse cx="430" cy="1797" rx="80" ry="14"
@@ -616,7 +616,7 @@
 <ellipse cx="430" cy="1837" rx="80" ry="14"
          fill="var(--c-storage-fill)" stroke="var(--c-storage-stroke)" stroke-width="1.2"/>
 <text x="430" y="1815" text-anchor="middle" dominant-baseline="central"
-      font-size="12" font-weight="500" fill="var(--c-storage-text)">database.csv</text>
+      font-size="12" font-weight="500" fill="var(--c-storage-text)">database.tsv</text>
 <text x="430" y="1830" text-anchor="middle" dominant-baseline="central"
       font-size="11" fill="var(--c-storage-text)">estado persistido</text>
 
@@ -696,7 +696,7 @@
       <ellipse cx="22" cy="24" rx="20" ry="6"
                fill="var(--c-storage-fill)" stroke="var(--c-storage-stroke)" stroke-width="1.2"/>
     </svg>
-    Cilindro — armazenamento (CSV)
+    Cilindro — armazenamento (TSV)
   </div>
 
   <div class="legend-item">

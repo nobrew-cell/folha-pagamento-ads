@@ -7,7 +7,7 @@ sources.txt
 # Esses arquivos são criados pelo próprio sistema ao rodar.
 # Não pertencem ao repositório: podem conter dados pessoais
 # ou sensíveis de funcionários, e variam a cada execução.
-database.csv
+database.tsv
 backups/
 exportados/
 

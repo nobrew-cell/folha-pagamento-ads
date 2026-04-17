@@ -28,7 +28,7 @@ public class FuncionarioComissionado extends Funcionario {
     }
 
     @Override
-    public String toCSV() {
-        return "COMISSIONADO;" + nome + ";" + matricula + ";" + vendas + ";" + percentualComissao;
+    public String toTSV() {
+        return "COMISSIONADO\t" + nome + "\t" + matricula + "\t" + vendas + "\t" + percentualComissao;
     }
 }

@@ -7,12 +7,12 @@ import br.com.folha.service.FolhaService;
 
 /**
  * Toda a interface do terminal fica aqui.
- * Não contém regra de negócio. Conversa exclusivamente com FolhaService.
+ * Não contém nenhuma regra de negócio. Conversa exclusivamente com FolhaService.
  */
 public class ConsoleUI {
 
-    private static final String SEP = "===========================================";
-    private static final String LIN = "-------------------------------------------";
+    private static final String SEP = "======================================================";
+    private static final String LIN = "------------------------------------------------------";
 
     private final Scanner     sc;
     private final FolhaService service;
@@ -52,8 +52,8 @@ public class ConsoleUI {
 
     private void exibirBoasVindas() {
         System.out.println("\n" + SEP);
-        System.out.println(" Bem-vindo ao Sistema de Folha de Pagamento");
-        System.out.println("      Versao 2.0  |  Salarios mensais");
+        System.out.println("      Bem-vindo ao Sistema de Folha de Pagamento");
+        System.out.println("           Versao 2.0  |  Salarios mensais");
         System.out.println(SEP);
         System.out.println("  Este e o seu primeiro acesso.");
         System.out.println("  Nenhum funcionario cadastrado ainda.");
@@ -71,7 +71,7 @@ public class ConsoleUI {
         System.out.println("  2 - Cadastrar Funcionario Comissionado");
         System.out.println("  3 - Cadastrar Funcionario de Producao");
         System.out.println("  4 - Gerar Folha de Pagamento");
-        System.out.println("  5 - Exportar CSV  (copia com data e hora)");
+        System.out.println("  5 - Exportar TSV  (copia com data e hora)");
         System.out.println("  6 - Resetar sistema  [ADM]");
         System.out.println("  0 - Sair");
         System.out.println(SEP);
@@ -188,7 +188,7 @@ public class ConsoleUI {
 
     private void resetar() {
         System.out.println("\n" + LIN);
-        System.out.println("  MODO ADM - RESET TOTAL");
+        System.out.println("                MODO ADM - RESET TOTAL");
         System.out.println(LIN);
         System.out.println("  Isso apagara todos os funcionarios.");
         System.out.println("  Um backup automatico sera salvo antes.");

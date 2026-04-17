@@ -28,7 +28,7 @@ public class FuncionarioProducao extends Funcionario {
     }
 
     @Override
-    public String toCSV() {
-        return "PRODUCAO;" + nome + ";" + matricula + ";" + quantidadeProduzida + ";" + valorPorPeca;
+    public String toTSV() {
+        return "PRODUCAO\t" + nome + "\t" + matricula + "\t" + quantidadeProduzida + "\t" + valorPorPeca;
     }
 }

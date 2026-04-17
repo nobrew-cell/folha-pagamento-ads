@@ -26,7 +26,7 @@ public abstract class Funcionario {
     public abstract String getTipo();
     public abstract double calcularSalarioFinal();
     public abstract String getDetalheExtra();
-    public abstract String toCSV();
+    public abstract String toTSV();
 
     // ── formatação compartilhada ────────────────────────────────────────────
     public static String moeda(double valor) {

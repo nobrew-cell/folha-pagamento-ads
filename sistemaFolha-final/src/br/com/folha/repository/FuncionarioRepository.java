@@ -15,19 +15,19 @@ import br.com.folha.model.FuncionarioProducao;
 /**
  * Cuida de toda a persistência.
  *
- *   database.csv   → estado atual (carregado ao abrir, salvo ao fechar/resetar)
+ *   database.tsv   → estado atual (carregado ao abrir, salvo ao fechar/resetar)
  *   exportados/    → cópias com timestamp geradas pela opção 5
  *   backups/       → backup automático gerado ANTES de qualquer reset
  */
 public class FuncionarioRepository {
 
-    private static final String DATABASE  = "database.csv";
-    private static final String CABECALHO = "tipo;nome;matricula;campo1;campo2";
+    private static final String DATABASE  = "database.tsv";
+    private static final String CABECALHO = "tipo\tnome\tmatricula\tcampo1\tcampo2";
 
     // ── Banco fixo ───────────────────────────────────────────────────────────
 
     public void salvar(List<Funcionario> lista) {
-        escreverCSV(DATABASE, lista);
+        escreverTSV(DATABASE, lista);
     }
 
     public List<Funcionario> carregar() {
@@ -41,7 +41,7 @@ public class FuncionarioRepository {
             while (sc.hasNextLine()) {
                 String linha = sc.nextLine().trim();
                 if (linha.isEmpty()) continue;
-                String[] p = linha.split(";");
+                String[] p = linha.split("\t");
 
                 switch (p[0]) {
                     case "PADRAO" -> {
@@ -70,15 +70,15 @@ public class FuncionarioRepository {
     }
 
     /**
-     * Antes de resetar, salva um backup em backups/backup_<timestamp>.csv.
+     * Antes de resetar, salva um backup em backups/backup_<timestamp>.tsv.
      * Depois limpa o banco principal.
      * Retorna o caminho do backup gerado.
      */
     public String resetar(List<Funcionario> lista) {
         String timestamp = timestamp();
         new File("backups").mkdirs();
-        String caminhoBackup = "backups/backup_" + timestamp + ".csv";
-        escreverCSV(caminhoBackup, lista);
+        String caminhoBackup = "backups/backup_" + timestamp + ".tsv";
+        escreverTSV(caminhoBackup, lista);
 
         // limpa banco principal
         try (FileWriter fw = new FileWriter(DATABASE)) {
@@ -93,22 +93,22 @@ public class FuncionarioRepository {
     // ── Exportação ───────────────────────────────────────────────────────────
 
     /**
-     * Exporta um CSV imutável com timestamp em exportados/.
+     * Exporta um TSV imutável com timestamp em exportados/.
      * Retorna o caminho do arquivo ou null em caso de falha.
      */
     public String exportar(List<Funcionario> lista) {
         new File("exportados").mkdirs();
-        String caminho = "exportados/folha_" + timestamp() + ".csv";
-        return escreverCSV(caminho, lista) ? caminho : null;
+        String caminho = "exportados/folha_" + timestamp() + ".tsv";
+        return escreverTSV(caminho, lista) ? caminho : null;
     }
 
     // ── Utilitários internos ─────────────────────────────────────────────────
 
-    private boolean escreverCSV(String caminho, List<Funcionario> lista) {
+    private boolean escreverTSV(String caminho, List<Funcionario> lista) {
         try (FileWriter fw = new FileWriter(caminho)) {
             fw.write(CABECALHO + "\n");
             for (Funcionario f : lista) {
-                fw.write(f.toCSV() + "\n");
+                fw.write(f.toTSV() + "\n");
             }
             return true;
         } catch (IOException e) {

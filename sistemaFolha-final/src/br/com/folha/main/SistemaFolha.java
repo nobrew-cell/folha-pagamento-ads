@@ -8,12 +8,12 @@ import br.com.folha.ui.ConsoleUI;
 
 /**
  * Ponto de entrada. Monta as dependências e dá a partida.
- * Detecta se é a primeira execução pela ausência do database.csv.
+ * Detecta se é a primeira execução pela ausência do database.tsv.
  */
 public class SistemaFolha {
 
     public static void main(String[] args) {
-        boolean primeiraVez = !new File("database.csv").exists();
+        boolean primeiraVez = !new File("database.tsv").exists();
 
         FuncionarioRepository repository = new FuncionarioRepository();
         FolhaService          service    = new FolhaService(repository);
