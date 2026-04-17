@@ -82,8 +82,8 @@ public class ConsoleUI {
 
     private void cadastrarPadrao() {
         System.out.println("\n" + LIN);
-        System.out.println("  NOVO FUNCIONARIO PADRAO");
-        System.out.println("  (digite 0 em qualquer campo para cancelar)");
+        System.out.println("               NOVO FUNCIONARIO PADRAO");
+        System.out.println("      (digite 0 em qualquer campo para cancelar)");
         System.out.println(LIN);
 
         String nome = lerTexto("  Nome: ");
@@ -98,8 +98,8 @@ public class ConsoleUI {
 
     private void cadastrarComissionado() {
         System.out.println("\n" + LIN);
-        System.out.println("  NOVO FUNCIONARIO COMISSIONADO");
-        System.out.println("  (digite 0 em qualquer campo para cancelar)");
+        System.out.println("            NOVO FUNCIONARIO COMISSIONADO");
+        System.out.println("      (digite 0 em qualquer campo para cancelar)");
         System.out.println(LIN);
 
         String nome = lerTexto("  Nome: ");
@@ -122,8 +122,8 @@ public class ConsoleUI {
 
     private void cadastrarProducao() {
         System.out.println("\n" + LIN);
-        System.out.println("  NOVO FUNCIONARIO DE PRODUCAO");
-        System.out.println("  (digite 0 em qualquer campo para cancelar)");
+        System.out.println("             NOVO FUNCIONARIO DE PRODUCAO");
+        System.out.println("      (digite 0 em qualquer campo para cancelar)");
         System.out.println(LIN);
 
         String nome = lerTexto("  Nome: ");
@@ -139,7 +139,14 @@ public class ConsoleUI {
         System.out.print("  Valor por peca (R$): ");
         double vpeca = lerDoubleNaoNegativo();
         if (vpeca < 0) { cancelado(); return; }
-
+        if (service.bonusUltrapassaTeto(qtd, vpeca)) {
+        System.out.println("\n  [AVISO] O bonus calculado ultrapassa o teto permitido.");
+        System.out.printf ("          Teto:       %s%n", Funcionario.moeda(service.getTetoBonusProducao()));
+        System.out.printf ("          Calculado:  %s%n", Funcionario.moeda(qtd * vpeca));
+        System.out.print("  Confirmar mesmo assim? (S para continuar, qualquer tecla cancela): ");
+        String resp = sc.nextLine().trim();
+        if (!resp.equalsIgnoreCase("S")) { cancelado(); return; }
+    }
         service.cadastrarProducao(nome, mat, qtd, vpeca);
         System.out.println("\n  [OK] Funcionario cadastrado com sucesso.");
     }
@@ -150,8 +157,8 @@ public class ConsoleUI {
         var lista = service.listar();
 
         System.out.println("\n" + SEP);
-        System.out.println("        FOLHA DE PAGAMENTO MENSAL");
-        System.out.printf ("        Total de funcionarios: %d%n", lista.size());
+        System.out.println("              FOLHA DE PAGAMENTO MENSAL");
+        System.out.printf ("              Total de funcionarios: %d%n", lista.size());
         System.out.println(SEP);
 
         if (lista.isEmpty()) {

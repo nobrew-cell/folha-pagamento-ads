@@ -18,6 +18,9 @@ public class FolhaService {
     private final FuncionarioRepository repository;
     private final List<Funcionario>     lista;
 
+    /** Teto de bonus de producao: 200 % do salario base (R$ 4.000,00). */
+    private static final double TETO_BONUS = Funcionario.SALARIO_BASE * 2;
+
     public FolhaService(FuncionarioRepository repository) {
         this.repository = repository;
         this.lista      = repository.carregar();
@@ -36,6 +39,15 @@ public class FolhaService {
         return lista.stream().anyMatch(f -> f.getMatricula() == matricula);
     }
 
+    /** Retorna true se o bonus calculado ultrapassa o teto permitido. */
+    public boolean bonusUltrapassaTeto(int quantidade, double valorPorPeca) {
+        return (quantidade * valorPorPeca) > TETO_BONUS;
+    }
+
+    /** Retorna o valor do teto de bonus para exibicao na UI. */
+    public double getTetoBonusProducao() {
+        return TETO_BONUS;
+    }
     // ── Cadastros ────────────────────────────────────────────────────────────
 
     public void cadastrarPadrao(String nome, int matricula) {
