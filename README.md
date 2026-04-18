@@ -301,7 +301,8 @@ Gera automaticamente duas cópias do cadastro atual: uma em TSV (dados brutos) e
 
 Os arquivos são salvos em:
 ```
-exportados/folha_AAAA-MM-DD_HH-MM-SS.tsv
+    exportados/dados/folha_AAAA-MM-DD_HH-MM-SS.tsv
+    exportados/relatorios/folha_AAAA-MM-DD_HH-MM-SS.xls
 ```
 
 
