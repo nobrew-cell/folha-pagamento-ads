@@ -7,7 +7,7 @@
 
 ## 📌 Sobre o projeto
 
-Sistema de folha de pagamento via terminal (console) que gerencia três perfis de funcionários, escolhidos pela UC Dual. Ele calcula salários automaticamente e persiste/exporta os dados localmente em TSV — sem banco de dados externo, sem dependências, sem internet.
+Sistema de folha de pagamento via terminal (console) que gerencia três perfis de funcionários, escolhidos pela UC Dual. Ele calcula salários automaticamente e persiste/exporta os dados localmente em TSV e XLS — sem banco de dados externo, sem dependências, sem internet.
 
 A arquitetura foi organizada em camadas bem definidas para separar interface, regras de negócio e persistência. O projeto brinca bastante com pacotes em JAVA. Não sendo uma mera "maquiagem", pois cada camada faz exatamente o que o nome dela diz, e nada além disso.
 
@@ -22,7 +22,7 @@ A arquitetura foi organizada em camadas bem definidas para separar interface, re
 - **Matrícula única** — o sistema rejeita duplicatas na hora
 - **Nome normalizado automaticamente** — pode digitar em maiúsculo, minúsculo ou misturado
 - **Geração de folha** — exibe todos os funcionários ordenados por matrícula
-- **Exportação TSV com timestamp** — cada exportação gera um arquivo novo, nunca sobrescreve
+- **Exportação TSV e XLS com timestamp** — cada exportação gera um arquivo novo, nunca sobrescreve
 - **Backup automático antes do reset** — nenhum dado é apagado sem rastro
 - **Persistência automática** — ao sair pela opção 0, os dados são salvos; ao abrir, são restaurados
 
@@ -35,7 +35,7 @@ A arquitetura foi organizada em camadas bem definidas para separar interface, re
 | Linguagem | Java (JDK 17+) |
 | Paradigma | POO — herança, polimorfismo, classes abstratas |
 | Arquitetura | Camadas: `model / service / repository / ui / main` |
-| Persistência | TSV local (sem banco de dados externo) |
+| Persistência | TSV e XLS local (sem banco de dados externo) |
 | Versionamento | Git + GitHub |
 
 ---
@@ -56,7 +56,7 @@ sistemaFolha/
 │       ├── service/
 │       │   └── FolhaService.java          ← regras de negócio
 │       ├── repository/
-│       │   └── FuncionarioRepository.java ← leitura e escrita em TSV
+│       │   └── FuncionarioRepository.java ← leitura e escrita em TSV e XLS
 │       └── ui/
 │           └── ConsoleUI.java             ← toda a interface do terminal
 ├── docs/
@@ -101,9 +101,13 @@ flowchart TD
     Z970 --> S{"é op.\n5 / 6 / 0?"}
     S -- "1/2/3/4" --> T["↻ retorna ao menu"]
     T -.-> E
-    S -- 5 --> U["service.exportar\ncria TSV com timestamp"]
-    U --> V[("exportados/\nfolha_timestamp.tsv")]
-    V --> ZFim
+    S -- 5 --> U["service.exportar\ngerar TSV e XLS automaticamente"]
+    U --> V[("exportados/dados/\nfolha_timestamp.tsv")]
+    U --> V2[("exportados/relatorios/\nfolha_timestamp.xls")]
+    V --> MSG1[/"[OK] Dados (TSV) exportados"/]
+    V2 --> MSG2[/"[OK] Relatório (XLS) exportado"/]
+    MSG1 --> ZFim
+    MSG2 --> ZFim
     S -- 6 --> W[/"lê confirmação\ndigita CONFIRMAR"/]
     W --> X{"CONFIRMAR?"}
     X -- não --> E
@@ -118,6 +122,7 @@ flowchart TD
     AD --> AE[("database.tsv\nestado persistido")]
     AE --> AF[/"exibe: Dados salvos. Volte sempre!"/]
     AF --> AG(["Fim — scanner.close"])
+
     classDef terminal fill:#E1F5EE,stroke:#0F6E56,color:#085041
     classDef process  fill:#E6F1FB,stroke:#185FA5,color:#0C447C
     classDef io       fill:#EEEDFE,stroke:#534AB7,color:#3C3489
@@ -125,11 +130,12 @@ flowchart TD
     classDef storage  fill:#F1EFE8,stroke:#5F5E5A,color:#2C2C2A
     classDef sub      fill:#FBEAF0,stroke:#993556,color:#4B1528
     classDef ghost    fill:none,stroke:none,color:transparent
+
     class A,AG terminal
     class E,H,N,P,R,AB,AD process
-    class C,J,K,O,Q,W,I,AF io
+    class C,J,K,O,Q,W,I,AF,MSG1,MSG2 io
     class B,F,L,M,S,X decision
-    class V,AA,AE storage
+    class V,V2,AA,AE storage
     class D,G,AC sub
     class Z970,ZFim ghost
 ```
@@ -168,7 +174,7 @@ Pronto. O terminal integrado vai abrir e o sistema vai iniciar.
 ### Opção 3 — Terminal (PowerShell ou bash)
 
 1. Tenha o **JDK 17+** instalado na máquina.
-2. Abra o terminal dentro da pasta do projeto. Só entrar na pasta e digitar **powershell** no topo.
+2. Abra o terminal dentro da pasta do projeto. Só entrar na pasta e digitar **powershell** no topo, para windows.
 
 3. Compile:
 
@@ -214,7 +220,7 @@ Pressione ENTER. O menu principal vai aparecer:
   2 - Cadastrar Funcionario Comissionado
   3 - Cadastrar Funcionario de Producao
   4 - Gerar Folha de Pagamento
-  5 - Exportar TSV  (copia com data e hora)
+  5 - Exportar TSV e XLS  (copia com data e hora)
   6 - Resetar sistema  [ADM]
   0 - Sair
 ===========================================
@@ -233,7 +239,7 @@ Digite o número da opção desejada e pressione ENTER.
 Para quem recebe apenas o salário fixo mensal, sem comissão ou bônus.
 
 O sistema pede:
-- **Nome** (pode digitar em qualquer caixa: `jose`, `JOSE` ou `Jose` — o sistema normaliza)
+- **Nome** (pode digitar em qualquer caixa: `jose`, `JOSE` ou `Jose` — o sistema normaliza), evite acentos.
 - **Matrícula** (número único de identificação)
 
 </details>
@@ -289,16 +295,19 @@ Para cada funcionário, você vê:
 </details>
 
 <details>
-<summary><strong>Opção 5 — Exportar TSV</strong></summary>
+<summary><strong>Opção 5 — Exportar TSV e XLS</strong></summary>
 
-Gera uma cópia do cadastro atual em formato TSV, que abre direto no Excel.
+Gera automaticamente duas cópias do cadastro atual: uma em TSV (dados brutos) e outra em XLS (relatório pronto pra visualização no Excel).
 
-O arquivo é salvo em:
+Os arquivos são salvos em:
 ```
 exportados/folha_AAAA-MM-DD_HH-MM-SS.tsv
 ```
 
-A data e hora no nome do arquivo garantem que você nunca sobrescreve uma exportação anterior. Cada vez que exportar, um novo arquivo é criado.
+
+A data e hora no nome garantem que nada é sobrescrito — cada exportação cria um novo arquivo.
+
+Na prática, o TSV fica como base de dados (mais seguro pra manipulação), enquanto o XLS já vem formatado pra leitura mais direta.
 
 </details>
 
@@ -334,7 +343,8 @@ Na próxima vez que abrir, todos os dados estarão lá, exatamente como você de
 | Arquivo / Pasta | Função |
 |---|---|
 | `database.tsv` | Banco de dados principal — carregado ao abrir, salvo ao sair |
-| `exportados/` | Cópias manuais com data e hora (opção 5) |
+| `exportados/dados/` | Exportações em TSV (leitura por máquina e integração com Power BI) |
+| `exportados/relatorios/` | Exportações em XLS (visualização direta no Excel) |
 | `backups/` | Backups automáticos gerados antes de qualquer reset |
 
 > Esses arquivos não fazem parte do repositório (estão no `.gitignore`).  

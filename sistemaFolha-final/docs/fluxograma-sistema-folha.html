@@ -135,13 +135,6 @@
 <p class="subtitle">Simbologia: ANSI X3.5 · Notação: Big Four + Losango + Cilindro + Subprocesso</p>
 
 <div class="diagram-wrap">
-<!--
-  LAYOUT (largura lógica 860px):
-  Coluna central: x=330..530 (largura 200, cx=430)
-  Coluna esquerda: x=40..240 (cx=140)
-  Coluna direita: x=620..820 (cx=720)
-  Espaçamento vertical padrão: 60px entre formas de 40px de altura → 60px de gap
--->
 <svg class="flow" viewBox="0 0 860 2120" xmlns="http://www.w3.org/2000/svg">
 <defs>
   <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5"
@@ -170,7 +163,6 @@
 <line x1="430" y1="72" x2="430" y2="108" stroke="var(--arr)" stroke-width="1.2" marker-end="url(#arr)"/>
 
 <!-- 2. DECISÃO: database.tsv existe? (losango) cx=430 cy=130 h≈50 -->
-<!-- losango: pts (430,108) (530,130) (430,152) (330,130) -->
 <polygon points="430,108 540,130 430,152 320,130"
          fill="var(--c-decision-fill)" stroke="var(--c-decision-stroke)" stroke-width="1.2"/>
 <text x="430" y="126" text-anchor="middle" dominant-baseline="central"
@@ -179,12 +171,10 @@
       font-size="12" font-weight="500" fill="var(--c-decision-text)">existe?</text>
 
 <!-- NÃO → esquerda: boas-vindas (I/O paralelogramo) -->
-<!-- seta saindo do vértice esquerdo do losango (320,130) para cx=140 -->
 <line x1="320" y1="130" x2="218" y2="130" stroke="var(--arr)" stroke-width="1.2" marker-end="url(#arr)"/>
 <text x="268" y="122" text-anchor="middle" font-size="11" fill="var(--arr)">não</text>
 
 <!-- Boas-vindas (paralelogramo I/O) cx=140 y=108 h=44 -->
-<!-- Paralelogramo: deslocamento horizontal de 14px -->
 <polygon points="54,108 212,108 226,152 68,152"
          fill="var(--c-io-fill)" stroke="var(--c-io-stroke)" stroke-width="1.2"/>
 <text x="140" y="126" text-anchor="middle" dominant-baseline="central"
@@ -201,7 +191,6 @@
 <text x="445" y="175" font-size="11" fill="var(--arr)">sim</text>
 
 <!-- 3. SUBPROCESSO: Repository.carregar() (retângulo com barras laterais) y=188 h=44 -->
-<!-- Retângulo com linhas verticais internas a 12px das bordas -->
 <rect x="330" y="188" width="200" height="44" rx="3"
       fill="var(--c-sub-fill)" stroke="var(--c-sub-stroke)" stroke-width="1.2"/>
 <line x1="342" y1="188" x2="342" y2="232" stroke="var(--c-sub-stroke)" stroke-width="1.2"/>
@@ -221,7 +210,6 @@
       font-size="11" fill="var(--c-process-text)">lê opção do usuário</text>
 
 <!-- loop de retorno: seta voltando ao menu vindo da direita -->
-<!-- sai do lado direito do menu (550,296) vai para x=770 e volta de y=296 até y=1970 -->
 <path d="M550 296 L780 296 L780 1970 L550 1970"
       stroke="var(--arr-back)" stroke-width="1" stroke-dasharray="5 4" fill="none"
       marker-end="url(#arr-back)"/>
@@ -278,7 +266,6 @@
       font-size="11" fill="var(--c-io-text)">salário base + extra (polimorfismo)</text>
 
 <!-- ── OPÇÃO 1: Cadastrar Padrão — esquerda ── -->
-<!-- sai vértice esquerdo do losango (310,400) -->
 <path d="M310 400 L140 400 L140 478" stroke="var(--arr)" stroke-width="1.2"
       fill="none" marker-end="url(#arr)"/>
 <text x="218" y="392" text-anchor="middle" font-size="11" fill="var(--arr)">1</text>
@@ -339,19 +326,7 @@
 <text x="136" y="904" text-anchor="middle" dominant-baseline="central"
       font-size="11" font-weight="500" fill="var(--c-process-text)">cadastrarPadrao()</text>
 
-<!-- ── OPÇÃO 0: Sair — converge com Padrão em y=870 pela esquerda ── -->
-<!-- sai vértice esquerdo losango opção (310,400), desce pelo lado esquerdo externo -->
-<!-- Opção 0: sai de y=400 vértice esquerdo já usado para op.1 → usamos linha diferente -->
-<!-- vamos puxar do fundo esquerdo do losango direto para baixo -->
-<!-- na verdade op 0 sai da borda inferior do losango e vai para sair -->
-
-<!-- ── OPÇÃO 0: sair — saída pelo canto inferior do losango (430,440) bifurca ── -->
-<!-- já usamos o 430,440 para op.4; op.0 sai pela esquerda do losango (310,400) junto com op.1 -->
-<!-- Para não sobrepor: op.0 sai do vértice direito inferior via linha separada -->
-<!-- Vamos colocar op.0 descendo reto abaixo de op.4 depois do retorno de loop -->
-
 <!-- ── OPÇÃO 2: Cadastrar Comissionado — direita ── -->
-<!-- sai vértice direito (550,400) -->
 <path d="M550 400 L720 400 L720 478" stroke="var(--arr)" stroke-width="1.2"
       fill="none" marker-end="url(#arr)"/>
 <text x="635" y="392" text-anchor="middle" font-size="11" fill="var(--arr)">2</text>
@@ -386,61 +361,35 @@
 <text x="716" y="675" text-anchor="middle" dominant-baseline="central"
       font-size="11" fill="var(--c-process-text)">cadastrarComissionado()</text>
 
-<!-- ── OPÇÃO 3: Cadastrar Produção — bifurca do losango inferior (430,440) ── -->
-<!-- op.3 sai do meio-baixo entre os dois, usamos um desvio. -->
-<!-- sai do vértice inferior (430,440) junto com op.4, desviamos para a direita baixo -->
-<!-- Para ter espaço: op.3 sai abaixo do vértice direito do losango como sublinha -->
+<!-- ── OPÇÃO 3: Cadastrar Produção ── -->
 <path d="M510 440 L510 560 L626 560" stroke="var(--arr)" stroke-width="1.2"
       fill="none" marker-end="url(#arr)"/>
 <text x="520" y="453" font-size="11" fill="var(--arr)">3</text>
-
-<!-- OPÇÃO 5: Exportar — abaixo da coluna direita de Comissionado -->
-<!-- OPÇÃO 6: Reset -->
-<!-- OPÇÃO 0: Sair -->
-<!-- Todas essas saem do losango de opção, vamos adicionar linhas abaixo das bifurcações -->
 
 <!-- ══════════════════════════════════════════════════
      CONFLUÊNCIA: todos os cadastros →  y=970
      ══════════════════════════════════════════════════ -->
 
-<!-- padrão sobe de 914 → y=970 -->
 <line x1="136" y1="914" x2="136" y2="970" stroke="var(--arr)" stroke-width="1.2" marker-end="url(#arr)"/>
-<!-- comissionado desce de 686 → y=970 via coluna direita -->
 <path d="M716 686 L716 970" stroke="var(--arr)" stroke-width="1.2" fill="none" marker-end="url(#arr)"/>
-<!-- folha gerada (I/O) desce de 694 → y=970 -->
 <path d="M430 694 L430 970" stroke="var(--arr)" stroke-width="1.2" fill="none" marker-end="url(#arr)"/>
 
-<!-- ── Opção cancelar (campo=0) converge também ── -->
-<!-- campo=0 sim: sai esquerda losango cx=136 cy=680 → x=22 → desce para y=970 -->
+<!-- campo=0 sim: cancela -->
 <path d="M56 680 L22 680 L22 970 L310 970"
       stroke="var(--arr-back)" stroke-width="1" stroke-dasharray="4 3" fill="none"
       marker-end="url(#arr-back)"/>
 <text x="30" y="670" font-size="11" fill="var(--arr-back)">sim</text>
 <text x="30" y="682" font-size="11" fill="var(--arr-back)">(cancela)</text>
 
-<!-- ══ OPÇÕES 5, 6, 0 — via seta direta do losango de opção para baixo ══ -->
-
-<!-- op 5,6,0 saem pelo vértice inferior (430,440) abaixo do fluxo central -->
-<!-- mas o fluxo central já usa esse caminho para op.4. -->
-<!-- Separamos: op.5 vai para coluna direita y>700 -->
-<!-- Usamos uma seta que parte do topo do losango de opção e desce -->
-<!-- Vamos criar uma nova bifurcação abaixo do fluxo central, depois da confluência -->
-
 <!-- ════════════════════════════════════════════════════
      y=970: CONFLUÊNCIA — todos os caminhos chegam aqui
      ════════════════════════════════════════════════════ -->
 
-<!-- Linha horizontal de confluência -->
 <line x1="22" y1="970" x2="760" y2="970" stroke="var(--arr)" stroke-width="0.8"
       stroke-dasharray="3 3" fill="none"/>
 <text x="430" y="960" text-anchor="middle" font-size="10" fill="var(--arr)">confluência de retorno</text>
 
-<!-- ↓ confluência → próxima decisão -->
 <line x1="430" y1="970" x2="430" y2="1010" stroke="var(--arr)" stroke-width="1.2" marker-end="url(#arr)"/>
-
-<!-- ════════════════════════════════════════════════════
-     OPÇÕES 5, 6, 0 — segunda decisão
-     ════════════════════════════════════════════════════ -->
 
 <!-- 17. DECISÃO: é op. 5/6/0? (losango) -->
 <polygon points="430,1010 550,1050 430,1090 310,1050"
@@ -451,8 +400,7 @@
 <!-- não → retorna ao menu -->
 <line x1="430" y1="1090" x2="430" y2="1130" stroke="var(--arr)" stroke-width="1.2" marker-end="url(#arr)"/>
 <text x="445" y="1115" font-size="11" fill="var(--arr)">1/2/3/4</text>
-<!-- O loop de retorno chega aqui (ver seta pontilhada laranja acima) -->
-<!-- nó de retorno -->
+
 <rect x="330" y="1130" width="200" height="44" rx="20"
       fill="var(--c-process-fill)" stroke="var(--c-process-stroke)" stroke-width="1.2"/>
 <text x="430" y="1152" text-anchor="middle" dominant-baseline="central"
@@ -470,24 +418,43 @@
       fill="var(--c-process-fill)" stroke="var(--c-process-stroke)" stroke-width="1.2"/>
 <text x="680" y="1126" text-anchor="middle" dominant-baseline="central"
       font-size="11" font-weight="500" fill="var(--c-process-text)">service.exportar()</text>
+<!-- ✏️ ALTERAÇÃO 1: texto atualizado para refletir dupla saída TSV + XLS -->
 <text x="680" y="1142" text-anchor="middle" dominant-baseline="central"
-      font-size="11" fill="var(--c-process-text)">cria TSV com timestamp</text>
+      font-size="11" fill="var(--c-process-text)">gera TSV + XLS com timestamp</text>
 
-<!-- ↓ -->
-<line x1="680" y1="1152" x2="680" y2="1200" stroke="var(--arr)" stroke-width="1.2" marker-end="url(#arr)"/>
+<!-- ↓ bifurca para dois cilindros — centralizados em torno de cx=680 -->
+<!-- TSV cx=610, XLS cx=750 → spread de 140px cada lado do centro -->
+<line x1="680" y1="1152" x2="680" y2="1185" stroke="var(--arr)" stroke-width="1.2"/>
+<!-- linha horizontal de bifurcação -->
+<line x1="610" y1="1185" x2="750" y2="1185" stroke="var(--arr)" stroke-width="1.2"/>
+<!-- seta para TSV (esquerdo) -->
+<line x1="610" y1="1185" x2="610" y2="1200" stroke="var(--arr)" stroke-width="1.2" marker-end="url(#arr)"/>
+<!-- seta para XLS (direito) -->
+<line x1="750" y1="1185" x2="750" y2="1200" stroke="var(--arr)" stroke-width="1.2" marker-end="url(#arr)"/>
 
-<!-- 19. STORAGE: exportados/ (cilindro) cx=680 y=1200 h=56 -->
-<!-- Cilindro: rect + elipses top e bottom -->
-<rect x="600" y="1215" width="160" height="40" fill="var(--c-storage-fill)"
+<!-- STORAGE TSV (cilindro esquerdo) cx=610 rx=65 -->
+<rect x="545" y="1215" width="130" height="40" fill="var(--c-storage-fill)"
       stroke="var(--c-storage-stroke)" stroke-width="1.2"/>
-<ellipse cx="680" cy="1215" rx="80" ry="14"
+<ellipse cx="610" cy="1215" rx="65" ry="12"
          fill="var(--c-storage-fill)" stroke="var(--c-storage-stroke)" stroke-width="1.2"/>
-<ellipse cx="680" cy="1255" rx="80" ry="14"
+<ellipse cx="610" cy="1255" rx="65" ry="12"
          fill="var(--c-storage-fill)" stroke="var(--c-storage-stroke)" stroke-width="1.2"/>
-<text x="680" y="1233" text-anchor="middle" dominant-baseline="central"
-      font-size="11" font-weight="500" fill="var(--c-storage-text)">exportados/</text>
-<text x="680" y="1248" text-anchor="middle" dominant-baseline="central"
-      font-size="11" fill="var(--c-storage-text)">folha_timestamp.tsv</text>
+<text x="610" y="1231" text-anchor="middle" dominant-baseline="central"
+      font-size="10" font-weight="500" fill="var(--c-storage-text)">exportados/dados/</text>
+<text x="610" y="1246" text-anchor="middle" dominant-baseline="central"
+      font-size="10" fill="var(--c-storage-text)">folha_timestamp.tsv</text>
+
+<!-- STORAGE XLS (cilindro direito) cx=750 rx=65 -->
+<rect x="685" y="1215" width="130" height="40" fill="var(--c-storage-fill)"
+      stroke="var(--c-storage-stroke)" stroke-width="1.2"/>
+<ellipse cx="750" cy="1215" rx="65" ry="12"
+         fill="var(--c-storage-fill)" stroke="var(--c-storage-stroke)" stroke-width="1.2"/>
+<ellipse cx="750" cy="1255" rx="65" ry="12"
+         fill="var(--c-storage-fill)" stroke="var(--c-storage-stroke)" stroke-width="1.2"/>
+<text x="750" y="1231" text-anchor="middle" dominant-baseline="central"
+      font-size="10" font-weight="500" fill="var(--c-storage-text)">exportados/relatorios/</text>
+<text x="750" y="1246" text-anchor="middle" dominant-baseline="central"
+      font-size="10" fill="var(--c-storage-text)">folha_timestamp.xls</text>
 
 <!-- ── OP. 6: Reset (esquerda) ── -->
 <path d="M310 1050 L180 1050 L180 1108" stroke="var(--arr)" stroke-width="1.2"
@@ -554,24 +521,19 @@
       font-size="12" font-weight="500" fill="var(--c-process-text)">lista.clear()</text>
 
 <!-- ══════════════════════════════════════════
-     OP. 0: Sair — linha central abaixo
-     ══════════════════════════════════════════ -->
-<!-- op.0 sai do vértice inferior do losango de opcao (430,1090) mas op1/2/3/4 já usam -->
-<!-- usamos o caminho direto: do losango de opção, op.0 sai pelo vértice inferior  -->
-<!-- já ocupado por ops 1/2/3/4... então fazemos op.0 ser alcançado após o bloco 17 -->
-<!-- já modelamos acima: losango 17 → não (1/2/3/4) vai para bloco de retorno -->
-<!-- O caminho op.0 = sair: após o menu lê opção 0, fluxo desce direto -->
-<!-- Adicionamos: do losango 17, op.0 desce pelo centro -->
-<!-- Mas o centro já vai para retorno. Solução: depois do bloco retorno (y=1174), op.0 sai do losango pelo lado direito  -->
-
-<!-- ══════════════════════════════════════════
      CONFLUÊNCIA FINAL — todos terminam em
      service.salvar() e encerrar
      ══════════════════════════════════════════ -->
 
-<!-- Todos convergem para y=1600 -->
-<!-- exportar: de y=1269 (cilindro exportados bottom) -->
-<path d="M680 1269 L680 1600 L550 1600"
+<!-- ponto de reunião dos dois cilindros em x=680 (centro do processo exportar) -->
+<!-- TSV (cx=610) bottom → reunião -->
+<path d="M610 1267 L610 1290 L680 1290"
+      stroke="var(--arr)" stroke-width="1.2" fill="none"/>
+<!-- XLS (cx=750) bottom → reunião -->
+<path d="M750 1267 L750 1290 L680 1290"
+      stroke="var(--arr)" stroke-width="1.2" fill="none"/>
+<!-- reunião desce para confluência final -->
+<path d="M680 1290 L680 1600 L550 1600"
       stroke="var(--arr)" stroke-width="1.2" fill="none" marker-end="url(#arr)"/>
 
 <!-- reset: de lista.clear() y=1543 -->
@@ -581,7 +543,6 @@
 <!-- op.0 sair — vértice direito do losango 17 -->
 <path d="M550 1050 L840 1050 L840 1600 L550 1600"
       stroke="var(--arr)" stroke-width="1.2" fill="none" marker-end="url(#arr)"/>
-<!-- texto op.0 próximo ao desvio (sobrepõe com linha de retorno — usando posição diferente) -->
 <text x="758" y="1046" font-size="11" fill="var(--arr)">0</text>
 
 <!-- 25. SUBPROCESSO: service.salvar() y=1600 h=44 cx=430 -->
@@ -638,14 +599,9 @@
 <text x="430" y="1992" text-anchor="middle" dominant-baseline="central"
       font-size="13" font-weight="500" fill="var(--c-terminal-text)">Fim — scanner.close()</text>
 
-<!-- ══════════════════════════
-     RÓTULOS DAS OPÇÕES NO LOSANGO PRINCIPAL
-     ══════════════════════════ -->
+<!-- rótulos das opções no losango principal -->
 <text x="364" y="395" font-size="11" fill="var(--arr)">1</text>
 <text x="540" y="395" font-size="11" fill="var(--arr)">2</text>
-
-<!-- Opção 3: rótulo junto à seta que vai para produção -->
-<!-- já adicionado acima -->
 
 </svg>
 </div>
@@ -657,8 +613,6 @@
     <svg width="44" height="24" viewBox="0 0 44 24">
       <ellipse cx="22" cy="12" rx="20" ry="10"
                fill="var(--c-terminal-fill)" stroke="var(--c-terminal-stroke)" stroke-width="1.2"/>
-      <text x="22" y="12" text-anchor="middle" dominant-baseline="central"
-            font-size="9" fill="var(--c-terminal-text)" font-family="sans-serif"></text>
     </svg>
     Oval — terminal (início/fim)
   </div>
@@ -688,15 +642,15 @@
   </div>
 
   <div class="legend-item">
-    <svg width="44" height="28" viewBox="0 0 44 28">
-      <rect x="2" y="10" width="40" height="14" fill="var(--c-storage-fill)"
+    <svg width="44" height="36" viewBox="0 0 44 36">
+      <rect x="2" y="10" width="40" height="16" fill="var(--c-storage-fill)"
             stroke="var(--c-storage-stroke)" stroke-width="1.2"/>
-      <ellipse cx="22" cy="10" rx="20" ry="6"
+      <ellipse cx="22" cy="10" rx="20" ry="7"
                fill="var(--c-storage-fill)" stroke="var(--c-storage-stroke)" stroke-width="1.2"/>
-      <ellipse cx="22" cy="24" rx="20" ry="6"
+      <ellipse cx="22" cy="26" rx="20" ry="7"
                fill="var(--c-storage-fill)" stroke="var(--c-storage-stroke)" stroke-width="1.2"/>
     </svg>
-    Cilindro — armazenamento (TSV)
+    Cilindro — armazenamento (TSV/XLS)
   </div>
 
   <div class="legend-item">

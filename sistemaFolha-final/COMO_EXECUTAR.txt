@@ -55,7 +55,7 @@
     2 - Cadastrar Funcionario Comissionado
     3 - Cadastrar Funcionario de Producao
     4 - Gerar Folha de Pagamento
-    5 - Exportar TSV  (copia com data e hora)
+    5 - Exportar TSV e XLS  (copia com data e hora)
     6 - Resetar sistema  [ADM]
     0 - Sair
   ===========================================
@@ -121,14 +121,15 @@
     - Total mensal a receber
 
 ------------------------------------------------------------
-  OPCAO 5 - Exportar TSV
+  OPCAO 5 - Exportar TSV e XLS
 ------------------------------------------------------------
 
-  Gera uma copia do cadastro atual em formato TSV,
-  que abre direto no Excel.
+  Gera uma copia do cadastro atual em formato TSV e XLS,
+  que abrem direto no Excel.
 
   O arquivo e salvo em:
-    exportados/folha_AAAA-MM-DD_HH-MM-SS.tsv
+    exportados/dados/folha_AAAA-MM-DD_HH-MM-SS.tsv
+    exportados/relatorios/folha_AAAA-MM-DD_HH-MM-SS.xls
 
   A data e hora no nome do arquivo garantem que voce
   nunca sobrescreve uma exportacao anterior.
@@ -164,7 +165,8 @@
 ------------------------------------------------------------
 
   database.tsv    → banco de dados principal do sistema
-  exportados/     → copias manuais com data e hora
+| exportados/dados/   → Exportações em TSV (leitura por máquina e integração com Power BI)
+| exportados/relatorios/   → Exportações em XLS (visualização direta no Excel)
   backups/        → backups automaticos gerados pelo reset
 
   O sistema usa o relogio do proprio computador para
