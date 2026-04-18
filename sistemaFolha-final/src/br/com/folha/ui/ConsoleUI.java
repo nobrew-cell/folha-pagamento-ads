@@ -221,7 +221,7 @@ public class ConsoleUI {
     private void encerrar() {
         service.salvar();
         System.out.println("\n" + SEP);
-        System.out.println("  Dados salvos. Volte sempre!");
+        System.out.println("              Dados salvos. Volte sempre!");
         System.out.println(SEP + "\n");
     }
 
