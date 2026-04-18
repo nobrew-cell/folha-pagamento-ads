@@ -15,10 +15,12 @@ import br.com.folha.model.FuncionarioProducao;
 /**
  * Cuida de toda a persistência.
  *
- *   database.tsv   → estado atual (carregado ao abrir, salvo ao fechar/resetar)
- *   exportados/    → cópias com timestamp geradas pela opção 5
- *   backups/       → backup automático gerado ANTES de qualquer reset
+ *   database.tsv          → estado atual (carregado ao abrir, salvo ao fechar/resetar)
+ *   exportados/dados/     → TSV com timestamp gerado pela opcao 5
+ *   exportados/relatorios/→ XLS com timestamp gerado pela opcao 5
+ *   backups/              → backup automatico gerado ANTES de qualquer reset
  */
+
 public class FuncionarioRepository {
 
     private static final String DATABASE  = "database.tsv";
@@ -93,13 +95,23 @@ public class FuncionarioRepository {
     // ── Exportação ───────────────────────────────────────────────────────────
 
     /**
-     * Exporta um TSV imutável com timestamp em exportados/.
-     * Retorna o caminho do arquivo ou null em caso de falha.
+     * Exporta dois arquivos com timestamp:
+     *   exportados/dados/       → TSV (leitura por maquina e Power BI)
+     *   exportados/relatorios/  → XLS (visualizacao humana no Excel)
+     * Retorna array com os dois caminhos, ou null em cada posicao em caso de falha.
      */
-    public String exportar(List<Funcionario> lista) {
-        new File("exportados").mkdirs();
-        String caminho = "exportados/folha_" + timestamp() + ".tsv";
-        return escreverTSV(caminho, lista) ? caminho : null;
+    public String[] exportar(List<Funcionario> lista) {
+        new File("exportados/dados").mkdirs();
+        new File("exportados/relatorios").mkdirs();
+        String ts  = timestamp();
+        String tsv = "exportados/dados/folha_"       + ts + ".tsv";
+        String xls = "exportados/relatorios/folha_"  + ts + ".xls";
+        boolean okTsv = escreverTSV(tsv, lista);
+        boolean okXls = escreverXLS(xls, lista);
+        return new String[] {
+            okTsv ? tsv : null,
+            okXls ? xls : null
+        };
     }
 
     // ── Utilitários internos ─────────────────────────────────────────────────
@@ -113,6 +125,23 @@ public class FuncionarioRepository {
             return true;
         } catch (IOException e) {
             System.out.println("Erro ao escrever arquivo: " + e.getMessage());
+            return false;
+        }
+    }
+    private boolean escreverXLS(String caminho, List<Funcionario> lista) {
+        try (FileWriter fw = new FileWriter(caminho)) {
+            fw.write("<html><meta charset='utf-8'><body>");
+            fw.write("<table border='1' style='font-family: Arial; border-collapse: collapse;'>");
+            fw.write("<tr style='background-color: #1F3864; color: white; font-weight: bold;'>");
+            fw.write("<td>TIPO</td><td>NOME</td><td>MATRICULA</td><td>CAMPO1</td><td>CAMPO2</td>");
+            fw.write("</tr>");
+            for (Funcionario f : lista) {
+                fw.write(f.toXLS() + "\n");
+            }
+            fw.write("</table></body></html>");
+            return true;
+        } catch (IOException e) {
+            System.out.println("Erro ao escrever relatorio: " + e.getMessage());
             return false;
         }
     }

@@ -31,4 +31,10 @@ public class FuncionarioComissionado extends Funcionario {
     public String toTSV() {
         return "COMISSIONADO\t" + nome + "\t" + matricula + "\t" + vendas + "\t" + percentualComissao;
     }
+    @Override public String toXLS() {
+        return "<tr style='background-color: #FCE4D6;'>" +
+            "<td>COMISSIONADO</td><td>" + nome + "</td><td>" + matricula + "</td>" +
+            "<td>" + vendas + "</td><td>" + percentualComissao + "</td>" +
+            "</tr>";
+    }
 }

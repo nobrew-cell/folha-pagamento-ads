@@ -53,7 +53,7 @@ public class ConsoleUI {
     private void exibirBoasVindas() {
         System.out.println("\n" + SEP);
         System.out.println("      Bem-vindo ao Sistema de Folha de Pagamento");
-        System.out.println("           Versao 2.0  |  Salarios mensais");
+        System.out.println("           Versao 3.1  |  Salarios mensais");
         System.out.println(SEP);
         System.out.println("  Este e o seu primeiro acesso.");
         System.out.println("  Nenhum funcionario cadastrado ainda.");
@@ -71,7 +71,7 @@ public class ConsoleUI {
         System.out.println("  2 - Cadastrar Funcionario Comissionado");
         System.out.println("  3 - Cadastrar Funcionario de Producao");
         System.out.println("  4 - Gerar Folha de Pagamento");
-        System.out.println("  5 - Exportar TSV  (copia com data e hora)");
+        System.out.println("  5 - Exportar TSV e XLS  (copia com data e hora)");
         System.out.println("  6 - Resetar sistema  [ADM]");
         System.out.println("  0 - Sair");
         System.out.println(SEP);
@@ -140,13 +140,13 @@ public class ConsoleUI {
         double vpeca = lerDoubleNaoNegativo();
         if (vpeca < 0) { cancelado(); return; }
         if (service.bonusUltrapassaTeto(qtd, vpeca)) {
-        System.out.println("\n  [AVISO] O bonus calculado ultrapassa o teto permitido.");
-        System.out.printf ("          Teto:       %s%n", Funcionario.moeda(service.getTetoBonusProducao()));
-        System.out.printf ("          Calculado:  %s%n", Funcionario.moeda(qtd * vpeca));
-        System.out.print("  Confirmar mesmo assim? (S para continuar, qualquer tecla cancela): ");
-        String resp = sc.nextLine().trim();
-        if (!resp.equalsIgnoreCase("S")) { cancelado(); return; }
-    }
+            System.out.println("\n  [BLOQUEIO] Bonus de " + Funcionario.moeda(qtd * vpeca) +
+                            " ultrapassa o teto de 200% do salario base.");
+            System.out.println("  Teto permitido: " + Funcionario.moeda(service.getTetoBonusProducao()));
+            System.out.println("  Cadastro bloqueado. Consulte a diretoria para casos excepcionais.");
+            aguardar("\n  Pressione ENTER para voltar ao menu...");
+            return;
+        }
         service.cadastrarProducao(nome, mat, qtd, vpeca);
         System.out.println("\n  [OK] Funcionario cadastrado com sucesso.");
     }
@@ -183,12 +183,16 @@ public class ConsoleUI {
     // ── Exportar ─────────────────────────────────────────────────────────────
 
     private void exportar() {
-        String caminho = service.exportar();
-        if (caminho != null) {
-            System.out.println("\n  [OK] Exportado: " + caminho);
-        } else {
-            System.out.println("\n  [ERRO] Nao foi possivel exportar o arquivo.");
-        }
+        String[] caminhos = service.exportar();
+        System.out.println();
+        if (caminhos[0] != null)
+            System.out.println("  [OK] Dados (TSV):      " + caminhos[0]);
+        else
+            System.out.println("  [ERRO] Falha ao exportar TSV.");
+        if (caminhos[1] != null)
+            System.out.println("  [OK] Relatorio (XLS):  " + caminhos[1]);
+        else
+            System.out.println("  [ERRO] Falha ao exportar relatorio.");
     }
 
     // ── Reset ────────────────────────────────────────────────────────────────

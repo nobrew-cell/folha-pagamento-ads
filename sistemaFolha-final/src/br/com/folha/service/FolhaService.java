@@ -72,8 +72,8 @@ public class FolhaService {
         repository.salvar(lista);
     }
 
-    /** Retorna caminho do arquivo exportado, ou null em falha. */
-    public String exportar() {
+    /** Retorna array com caminho TSV [0] e XLS [1], ou null em cada posicao em falha. */
+    public String[] exportar() {
         return repository.exportar(lista);
     }
 

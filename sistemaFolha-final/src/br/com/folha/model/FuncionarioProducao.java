@@ -31,4 +31,10 @@ public class FuncionarioProducao extends Funcionario {
     public String toTSV() {
         return "PRODUCAO\t" + nome + "\t" + matricula + "\t" + quantidadeProduzida + "\t" + valorPorPeca;
     }
+    @Override public String toXLS() {
+        return "<tr style='background-color: #EBE6F4;'>" +
+            "<td>PRODUCAO</td><td>" + nome + "</td><td>" + matricula + "</td>" +
+            "<td>" + quantidadeProduzida + "</td><td>" + valorPorPeca + "</td>" +
+            "</tr>";
+    }
 }
