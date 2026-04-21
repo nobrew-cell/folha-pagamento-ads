@@ -26,7 +26,7 @@ public class SistemaFolha {
         try {
             service = new FolhaService(repository);
         } catch (Exception e) {
-            // Isso aqui é uma gambiarra com propósito, vou deixar ela aqui, em vez do ConsoleUI.
+            // Isso aqui é uma gambiarra com propósito, vou deixar ela aqui, em vez do ConsoleUI;
             System.out.println("\n======================================================");
             System.out.println("  ERRO CRÍTICO NA INICIALIZAÇÃO");
             System.out.println("======================================================");
