@@ -21,9 +21,9 @@ public class FolhaService {
     /** Teto de bonus de producao: 200 % do salario base (R$ 4.000,00). */
     private static final double TETO_BONUS = Funcionario.SALARIO_BASE * 2;
 
-    public FolhaService(FuncionarioRepository repository) {
+    public FolhaService(FuncionarioRepository repository) throws Exception {
         this.repository = repository;
-        this.lista      = repository.carregar();
+        this.lista      = repository.carregar();  // pode lançar Exception
     }
 
     // ── Consultas ────────────────────────────────────────────────────────────

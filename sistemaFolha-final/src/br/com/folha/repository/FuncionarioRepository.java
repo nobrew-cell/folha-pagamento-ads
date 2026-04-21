@@ -32,40 +32,90 @@ public class FuncionarioRepository {
         escreverTSV(DATABASE, lista);
     }
 
-    public List<Funcionario> carregar() {
+    /**
+     * Carrega a lista do arquivo database.tsv.
+     * Se o arquivo não existir, retorna lista vazia (primeira execução).
+     * Se existir e estiver corrompido, lança Exception com detalhes da linha.
+     */
+    public List<Funcionario> carregar() throws Exception {
         List<Funcionario> lista = new ArrayList<>();
         File arquivo = new File(DATABASE);
         if (!arquivo.exists()) return lista;
 
+        int numeroLinha = 0;
         try (Scanner sc = new Scanner(arquivo)) {
-            if (sc.hasNextLine()) sc.nextLine(); // pula cabeçalho
+            // cabeçalho
+            if (sc.hasNextLine()) {
+                sc.nextLine();
+                numeroLinha++;
+            } else {
+                throw new Exception("Arquivo vazio ou sem cabeçalho.");
+            }
 
             while (sc.hasNextLine()) {
+                numeroLinha++;
                 String linha = sc.nextLine().trim();
                 if (linha.isEmpty()) continue;
+
                 String[] p = linha.split("\t");
 
-                switch (p[0]) {
-                    case "PADRAO" -> {
-                        if (p.length >= 3)
-                            lista.add(new FuncionarioPadrao(p[1], Integer.parseInt(p[2])));
-                    }
-                    case "COMISSIONADO" -> {
-                        if (p.length >= 5)
-                            lista.add(new FuncionarioComissionado(
-                                    p[1], Integer.parseInt(p[2]),
-                                    Double.parseDouble(p[3]), Double.parseDouble(p[4])));
-                    }
-                    case "PRODUCAO" -> {
-                        if (p.length >= 5)
-                            lista.add(new FuncionarioProducao(
-                                    p[1], Integer.parseInt(p[2]),
-                                    Integer.parseInt(p[3]), Double.parseDouble(p[4])));
-                    }
+                // valida colunas mínimas (tipo, nome, matricula)
+                if (p.length < 3) {
+                    throw new Exception("Linha " + numeroLinha + ": poucas colunas (mínimo 3)");
+                }
+
+                String tipo = p[0];
+                String nome = p[1];
+                String matriculaStr = p[2];
+
+                // valida matrícula
+                int matricula;
+                try {
+                    matricula = Integer.parseInt(matriculaStr);
+                    if (matricula <= 0) throw new NumberFormatException();
+                } catch (NumberFormatException e) {
+                    throw new Exception("Linha " + numeroLinha + ": matrícula inválida ('" + matriculaStr + "')");
+                }
+
+                switch (tipo) {
+                    case "PADRAO":
+                        // Padrão precisa de pelo menos 3 colunas (já validado)
+                        lista.add(new FuncionarioPadrao(nome, matricula));
+                        break;
+                    case "COMISSIONADO":
+                        if (p.length < 5) {
+                            throw new Exception("Linha " + numeroLinha + ": COMISSIONADO precisa de 5 colunas");
+                        }
+                        double vendas, percentual;
+                        try {
+                            vendas = Double.parseDouble(p[3]);
+                            percentual = Double.parseDouble(p[4]);
+                        } catch (NumberFormatException e) {
+                            throw new Exception("Linha " + numeroLinha + ": vendas ou percentual inválido");
+                        }
+                        lista.add(new FuncionarioComissionado(nome, matricula, vendas, percentual));
+                        break;
+                    case "PRODUCAO":
+                        if (p.length < 5) {
+                            throw new Exception("Linha " + numeroLinha + ": PRODUCAO precisa de 5 colunas");
+                        }
+                        int qtd;
+                        double valorPeca;
+                        try {
+                            qtd = Integer.parseInt(p[3]);
+                            valorPeca = Double.parseDouble(p[4]);
+                        } catch (NumberFormatException e) {
+                            throw new Exception("Linha " + numeroLinha + ": quantidade ou valor por peça inválido");
+                        }
+                        lista.add(new FuncionarioProducao(nome, matricula, qtd, valorPeca));
+                        break;
+                    default:
+                        throw new Exception("Linha " + numeroLinha + ": tipo desconhecido '" + tipo + "'");
                 }
             }
         } catch (Exception e) {
-            System.out.println("Aviso: erro ao carregar dados. " + e.getMessage());
+            // relança com contexto do arquivo
+            throw new Exception("ERRO AO CARREGAR " + DATABASE + "\n" + e.getMessage());
         }
 
         return lista;
