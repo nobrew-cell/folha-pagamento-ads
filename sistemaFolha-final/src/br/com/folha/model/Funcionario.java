@@ -49,4 +49,12 @@ public abstract class Funcionario {
         }
         return sb.toString();
     }
+
+    // ── Retorna "MES\tANO" para as duas últimas colunas do TSV ────────────
+    public static String getMesAnoAtual() {
+        java.time.LocalDateTime agora = java.time.LocalDateTime.now();
+        int mes = agora.getMonthValue();
+        int ano = agora.getYear();
+        return mes + "\t" + ano;
+    }
 }

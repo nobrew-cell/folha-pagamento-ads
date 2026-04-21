@@ -20,11 +20,11 @@ import br.com.folha.model.FuncionarioProducao;
  *   exportados/relatorios/→ XLS com timestamp gerado pela opcao 5
  *   backups/              → backup automatico gerado ANTES de qualquer reset
  */
-
 public class FuncionarioRepository {
 
     private static final String DATABASE  = "database.tsv";
-    private static final String CABECALHO = "tipo\tnome\tmatricula\tcampo1\tcampo2";
+    // NOVO CABEÇALHO COM 11 COLUNAS, adicionando mais colunas que o anterior.
+    private static final String CABECALHO = "MATRICULA\tNOME\tTIPO\tSALARIO_BASE\tVENDAS\tPERCENTUAL\tQTD_PECA\tVALOR_PECA\tSALARIO_TOTAL\tMES\tANO";
 
     // ── Banco fixo ───────────────────────────────────────────────────────────
 
@@ -44,7 +44,7 @@ public class FuncionarioRepository {
 
         int numeroLinha = 0;
         try (Scanner sc = new Scanner(arquivo)) {
-            // cabeçalho
+            // pula cabeçalho
             if (sc.hasNextLine()) {
                 sc.nextLine();
                 numeroLinha++;
@@ -58,52 +58,42 @@ public class FuncionarioRepository {
                 if (linha.isEmpty()) continue;
 
                 String[] p = linha.split("\t");
-
-                // valida colunas mínimas (tipo, nome, matricula)
-                if (p.length < 3) {
-                    throw new Exception("Linha " + numeroLinha + ": poucas colunas (mínimo 3)");
+                if (p.length < 11) {
+                    throw new Exception("Linha " + numeroLinha + ": esperadas 11 colunas, encontradas " + p.length);
                 }
 
-                String tipo = p[0];
-                String nome = p[1];
-                String matriculaStr = p[2];
-
-                // valida matrícula
+                // colunas: 0=matricula, 1=nome, 2=tipo, 3=salario_base, 4=vendas, 5=percentual, 6=qtd_peca, 7=valor_peca, 8=salario_total, 9=mes, 10=ano
                 int matricula;
                 try {
-                    matricula = Integer.parseInt(matriculaStr);
+                    matricula = Integer.parseInt(p[0]);
                     if (matricula <= 0) throw new NumberFormatException();
                 } catch (NumberFormatException e) {
-                    throw new Exception("Linha " + numeroLinha + ": matrícula inválida ('" + matriculaStr + "')");
+                    throw new Exception("Linha " + numeroLinha + ": matrícula inválida '" + p[0] + "'");
                 }
+                String nome = p[1];
+                String tipo = p[2];
+                // salario_base (p[3]) é ignorado, usamos a constante da classe
 
                 switch (tipo) {
                     case "PADRAO":
-                        // Padrão precisa de pelo menos 3 colunas (já validado)
                         lista.add(new FuncionarioPadrao(nome, matricula));
                         break;
                     case "COMISSIONADO":
-                        if (p.length < 5) {
-                            throw new Exception("Linha " + numeroLinha + ": COMISSIONADO precisa de 5 colunas");
-                        }
                         double vendas, percentual;
                         try {
-                            vendas = Double.parseDouble(p[3]);
-                            percentual = Double.parseDouble(p[4]);
+                            vendas = Double.parseDouble(p[4]);
+                            percentual = Double.parseDouble(p[5]);
                         } catch (NumberFormatException e) {
                             throw new Exception("Linha " + numeroLinha + ": vendas ou percentual inválido");
                         }
                         lista.add(new FuncionarioComissionado(nome, matricula, vendas, percentual));
                         break;
                     case "PRODUCAO":
-                        if (p.length < 5) {
-                            throw new Exception("Linha " + numeroLinha + ": PRODUCAO precisa de 5 colunas");
-                        }
                         int qtd;
                         double valorPeca;
                         try {
-                            qtd = Integer.parseInt(p[3]);
-                            valorPeca = Double.parseDouble(p[4]);
+                            qtd = Integer.parseInt(p[6]);
+                            valorPeca = Double.parseDouble(p[7]);
                         } catch (NumberFormatException e) {
                             throw new Exception("Linha " + numeroLinha + ": quantidade ou valor por peça inválido");
                         }
@@ -114,7 +104,6 @@ public class FuncionarioRepository {
                 }
             }
         } catch (Exception e) {
-            // relança com contexto do arquivo
             throw new Exception("ERRO AO CARREGAR " + DATABASE + "\n" + e.getMessage());
         }
 
@@ -178,12 +167,17 @@ public class FuncionarioRepository {
             return false;
         }
     }
+
+    // NOVO escreverXLS com 11 colunas
     private boolean escreverXLS(String caminho, List<Funcionario> lista) {
         try (FileWriter fw = new FileWriter(caminho)) {
             fw.write("<html><meta charset='utf-8'><body>");
             fw.write("<table border='1' style='font-family: Arial; border-collapse: collapse;'>");
+            // cabeçalho com 11 colunas
             fw.write("<tr style='background-color: #1F3864; color: white; font-weight: bold;'>");
-            fw.write("<td>TIPO</td><td>NOME</td><td>MATRICULA</td><td>CAMPO1</td><td>CAMPO2</td>");
+            fw.write("<td>MATRICULA</th><th>NOME</th><th>TIPO</th><th>SALARIO_BASE</th>");
+            fw.write("<th>VENDAS</th><th>PERCENTUAL</th><th>QTD_PECA</th><th>VALOR_PECA</th>");
+            fw.write("<th>SALARIO_TOTAL</th><th>MES</th><th>ANO</th>");
             fw.write("</tr>");
             for (Funcionario f : lista) {
                 fw.write(f.toXLS() + "\n");

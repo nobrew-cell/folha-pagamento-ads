@@ -27,14 +27,32 @@ public class FuncionarioComissionado extends Funcionario {
                 moeda(calcularComissao()), percentualComissao, moeda(vendas));
     }
 
+    // ── TSV com 11 colunas ──
     @Override
     public String toTSV() {
-        return "COMISSIONADO\t" + nome + "\t" + matricula + "\t" + vendas + "\t" + percentualComissao;
+        return matricula + "\t" +
+               nome + "\t" +
+               "COMISSIONADO\t" +
+               SALARIO_BASE + "\t" +
+               vendas + "\t" +
+               percentualComissao + "\t" +
+               "0\t0\t" +
+               calcularSalarioFinal() + "\t" +
+               getMesAnoAtual();
     }
-    @Override public String toXLS() {
+
+    // ── XLS com 11 colunas ──
+    @Override
+    public String toXLS() {
+        java.time.LocalDateTime agora = java.time.LocalDateTime.now();
         return "<tr style='background-color: #FCE4D6;'>" +
-            "<td>COMISSIONADO</td><td>" + nome + "</td><td>" + matricula + "</td>" +
-            "<td>" + vendas + "</td><td>" + percentualComissao + "</td>" +
-            "</tr>";
+               "<td>" + matricula + "</td><td>" + nome + "</td><td>COMISSIONADO\n" +
+               "<td>" + SALARIO_BASE + "</td><td>" + vendas + "</td>" +
+               "<td>" + percentualComissao + "</td><td>0\n" +
+               "<td>0\n" +
+               "<td>" + calcularSalarioFinal() + "</td>" +
+               "<td>" + agora.getMonthValue() + "</td>" +
+               "<td>" + agora.getYear() + "</td>" +
+               "</tr>";
     }
 }

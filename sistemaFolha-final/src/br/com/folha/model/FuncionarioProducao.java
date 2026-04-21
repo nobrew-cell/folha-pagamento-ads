@@ -27,14 +27,33 @@ public class FuncionarioProducao extends Funcionario {
                 moeda(calcularBonus()), quantidadeProduzida, moeda(valorPorPeca));
     }
 
+    // ── TSV com 11 colunas ──
     @Override
     public String toTSV() {
-        return "PRODUCAO\t" + nome + "\t" + matricula + "\t" + quantidadeProduzida + "\t" + valorPorPeca;
+        return matricula + "\t" +
+               nome + "\t" +
+               "PRODUCAO\t" +
+               SALARIO_BASE + "\t" +
+               "0\t0\t" +
+               quantidadeProduzida + "\t" +
+               valorPorPeca + "\t" +
+               calcularSalarioFinal() + "\t" +
+               getMesAnoAtual();
     }
-    @Override public String toXLS() {
+
+    // ── XLS com 11 colunas ──
+    @Override
+    public String toXLS() {
+        java.time.LocalDateTime agora = java.time.LocalDateTime.now();
         return "<tr style='background-color: #EBE6F4;'>" +
-            "<td>PRODUCAO</td><td>" + nome + "</td><td>" + matricula + "</td>" +
-            "<td>" + quantidadeProduzida + "</td><td>" + valorPorPeca + "</td>" +
-            "</tr>";
+               "<td>" + matricula + "</td><td>" + nome + "</td><td>PRODUCAO\n" +
+               "<td>" + SALARIO_BASE + "</td><td>0\n" +
+               "<td>0\n" +
+               "<td>" + quantidadeProduzida + "</td>" +
+               "<td>" + valorPorPeca + "</td>" +
+               "<td>" + calcularSalarioFinal() + "</td>" +
+               "<td>" + agora.getMonthValue() + "</td>" +
+               "<td>" + agora.getYear() + "</td>" +
+               "</tr>";
     }
 }
