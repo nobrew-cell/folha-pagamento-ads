@@ -3,6 +3,7 @@ package br.com.folha.service;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.ArrayList;
 
 import br.com.folha.model.Funcionario;
 import br.com.folha.model.FuncionarioComissionado;
@@ -85,13 +86,55 @@ public class FolhaService {
         salvar();
     }
 
+    // Método existente (agora chama o novo com false para manter compatibilidade)
     public String iniciarNovoMes() throws Exception {
+        return iniciarNovoMes(false);
+    }
+
+    // Novo método com opção de copiar funcionários (zerando valores)
+    public String iniciarNovoMes(boolean copiarFuncionarios) throws Exception {
+        // 1. Salva histórico do mês atual
         String arquivoHistorico = repository.salvarHistorico(lista);
-        repository.limparDados();
-        lista.clear();
+        
+        if (copiarFuncionarios) {
+            // Cria uma nova lista com os mesmos funcionários, mas zerando os campos variáveis
+            List<Funcionario> novaLista = new ArrayList<>();
+            for (Funcionario f : lista) {
+                Funcionario copia = clonarComZeros(f);
+                novaLista.add(copia);
+            }
+            // Substitui a lista atual pela nova lista zerada
+            lista.clear();
+            lista.addAll(novaLista);
+            repository.limparDados();          // limpa o arquivo
+            repository.salvar(lista);          // salva a nova lista
+        } else {
+            // Comportamento antigo: limpa completamente
+            repository.limparDados();
+            lista.clear();
+        }
         return arquivoHistorico;
     }
 
+    // Método auxiliar para clonar funcionário com valores zerados
+    private Funcionario clonarComZeros(Funcionario original) {
+        String nome = original.getNome();
+        int matricula = original.getMatricula();
+        String tipo = original.getTipo();
+        
+        if (tipo.equals("Padrao")) {
+            return new FuncionarioPadrao(nome, matricula);
+        } else if (tipo.equals("Comissionado")) {
+            // Zera vendas e percentual
+            return new FuncionarioComissionado(nome, matricula, 0.0, 0.0);
+        } else if (tipo.equals("Producao")) {
+            // Zera quantidade e valor por peça
+            return new FuncionarioProducao(nome, matricula, 0, 0.0);
+        }
+        return original; // fallback
+    }
+
+    // ── Métodos auxiliares para obter campos específicos ──
     public Funcionario buscarPorMatricula(int matricula) {
         return lista.stream()
                 .filter(f -> f.getMatricula() == matricula)
@@ -99,7 +142,6 @@ public class FolhaService {
                 .orElse(null);
     }
 
-    // Métodos auxiliares para obter campos específicos (usados na edição)
     public double getVendasFuncionario(int matricula) {
         Funcionario f = buscarPorMatricula(matricula);
         if (f instanceof FuncionarioComissionado) {
@@ -132,9 +174,18 @@ public class FolhaService {
         return 0;
     }
 
+    // Método de edição original (mantido para compatibilidade, mas agora chama o completo)
     public void editarFuncionario(int matricula, String novoNome,
                                   Double novasVendas, Double novoPercentual,
                                   Integer novaQtd, Double novoValorPeca) throws Exception {
+        editarFuncionarioCompleto(matricula, novoNome, null, 
+                novasVendas, novoPercentual, novaQtd, novoValorPeca);
+    }
+
+    // Novo método de edição que permite troca de tipo
+    public void editarFuncionarioCompleto(int matricula, String novoNome, String novoTipo,
+                                          Double novasVendas, Double novoPercentual,
+                                          Integer novaQtd, Double novoValorPeca) throws Exception {
         Funcionario antigo = buscarPorMatricula(matricula);
         if (antigo == null) throw new Exception("Matricula nao encontrada.");
 
@@ -142,24 +193,34 @@ public class FolhaService {
                 ? Funcionario.normalizarNome(novoNome)
                 : antigo.getNome();
 
+        // Determina o tipo final (se novoTipo for null, mantém o antigo)
+        String tipoFinal = (novoTipo != null) ? novoTipo : antigo.getTipo();
         int idx = lista.indexOf(antigo);
 
-        if (antigo instanceof FuncionarioPadrao) {
-            lista.set(idx, new FuncionarioPadrao(nomeFinal, matricula));
+        Funcionario novoFuncionario = null;
+
+        switch (tipoFinal) {
+            case "Padrao":
+                novoFuncionario = new FuncionarioPadrao(nomeFinal, matricula);
+                break;
+            case "Comissionado":
+                double vendas = (novasVendas != null && novasVendas >= 0) ? novasVendas : getVendasFuncionario(matricula);
+                double perc   = (novoPercentual != null && novoPercentual >= 0) ? novoPercentual : getPercentualFuncionario(matricula);
+                novoFuncionario = new FuncionarioComissionado(nomeFinal, matricula, vendas, perc);
+                break;
+            case "Producao":
+                int qtd = (novaQtd != null && novaQtd >= 0) ? novaQtd : getQuantidadePecasFuncionario(matricula);
+                double valor = (novoValorPeca != null && novoValorPeca >= 0) ? novoValorPeca : getValorPecaFuncionario(matricula);
+                if (bonusUltrapassaTeto(qtd, valor)) {
+                    throw new Exception("Bonus ultrapassa o teto de 200% do salario base.");
+                }
+                novoFuncionario = new FuncionarioProducao(nomeFinal, matricula, qtd, valor);
+                break;
+            default:
+                throw new Exception("Tipo invalido: " + tipoFinal);
         }
-        else if (antigo instanceof FuncionarioComissionado) {
-            double vendas = (novasVendas != null && novasVendas >= 0) ? novasVendas : getVendasFuncionario(matricula);
-            double perc   = (novoPercentual != null && novoPercentual >= 0) ? novoPercentual : getPercentualFuncionario(matricula);
-            lista.set(idx, new FuncionarioComissionado(nomeFinal, matricula, vendas, perc));
-        }
-        else if (antigo instanceof FuncionarioProducao) {
-            int qtd = (novaQtd != null && novaQtd >= 0) ? novaQtd : getQuantidadePecasFuncionario(matricula);
-            double valor = (novoValorPeca != null && novoValorPeca >= 0) ? novoValorPeca : getValorPecaFuncionario(matricula);
-            if (bonusUltrapassaTeto(qtd, valor)) {
-                throw new Exception("Bonus ultrapassa o teto de 200% do salario base.");
-            }
-            lista.set(idx, new FuncionarioProducao(nomeFinal, matricula, qtd, valor));
-        }
+
+        lista.set(idx, novoFuncionario);
         salvar();
     }
 

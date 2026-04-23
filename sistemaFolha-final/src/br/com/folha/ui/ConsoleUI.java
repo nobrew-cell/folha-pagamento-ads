@@ -129,20 +129,27 @@ public class ConsoleUI {
         aguardar("\n  Pressione ENTER para continuar...");
     }
 
-    // ── Novo mês ─────────────────────────────────────────────────────────────
+    // ── NOVO MÊS com opção de copiar funcionários ───────────────────────────
     private void novoMes() {
         System.out.println("\n" + LIN);
         System.out.println("                  INICIAR NOVO MES");
         System.out.println(LIN);
         System.out.println("  Isso salvara o mes atual na pasta 'historico/'");
-        System.out.println("  e limpara a base para comecar um novo ciclo.");
+        System.out.print("  Deseja copiar os funcionarios do mes anterior (zerando vendas/pecas)? (S/N): ");
+        String copiar = sc.nextLine().trim().toUpperCase();
+        boolean copiarFuncionarios = copiar.equals("S");
+
         System.out.print("  Deseja continuar? (S/N): ");
         String conf = sc.nextLine().trim().toUpperCase();
         if (conf.equals("S")) {
             try {
-                String arquivoHistorico = service.iniciarNovoMes();
+                String arquivoHistorico = service.iniciarNovoMes(copiarFuncionarios);
                 System.out.println("\n  [OK] Historico salvo em: " + arquivoHistorico);
-                System.out.println("  Base limpa. Novo mes iniciado.");
+                if (copiarFuncionarios) {
+                    System.out.println("  Funcionarios copiados (com valores zerados).");
+                } else {
+                    System.out.println("  Base limpa. Novo mes iniciado.");
+                }
             } catch (Exception e) {
                 System.out.println("\n  [ERRO] " + e.getMessage());
             }
@@ -152,7 +159,7 @@ public class ConsoleUI {
         aguardar("\n  Pressione ENTER para continuar...");
     }
 
-    // ── Editar funcionário ───────────────────────────────────────────────────
+    // ── EDIÇÃO DE FUNCIONÁRIO com troca de tipo integrada ────────────────────
     private void editarFuncionario() {
         System.out.println("\n" + LIN);
         System.out.println("                 EDITAR FUNCIONARIO");
@@ -166,6 +173,7 @@ public class ConsoleUI {
             return;
         }
 
+        // Exibe dados atuais
         System.out.println("\n  Dados atuais:");
         System.out.println("  Nome: " + f.getNome());
         System.out.println("  Tipo: " + f.getTipo());
@@ -181,6 +189,37 @@ public class ConsoleUI {
             System.out.println("  Valor por peca: R$ " + valor);
         }
 
+        // Pergunta se deseja alterar o tipo
+        System.out.println(LIN);
+        System.out.println("  Deseja alterar o tipo do funcionario?");
+        System.out.println("  1 - Padrao");
+        System.out.println("  2 - Comissionado");
+        System.out.println("  3 - Producao");
+        System.out.println("  ENTER - manter atual");
+        System.out.print("  Opcao: ");
+        String tipoInput = sc.nextLine().trim();
+        String novoTipo = null;
+        boolean tipoAlterado = false;
+
+        if (!tipoInput.isEmpty()) {
+            int tipoOpcao = Integer.parseInt(tipoInput);
+            switch (tipoOpcao) {
+                case 1 -> novoTipo = "Padrao";
+                case 2 -> novoTipo = "Comissionado";
+                case 3 -> novoTipo = "Producao";
+                default -> System.out.println("  Opcao invalida. Tipo mantido.");
+            }
+            if (novoTipo != null) {
+                if (novoTipo.equals(f.getTipo())) {
+                    System.out.println("  Esse e o tipo atual. Nenhuma alteracao realizada.");
+                } else {
+                    tipoAlterado = true;
+                    System.out.println("  Tipo alterado para: " + novoTipo);
+                }
+            }
+        }
+
+        // Coleta novo nome
         System.out.println(LIN);
         System.out.println("  Deixe em branco para manter o valor atual.");
         System.out.print("  Novo nome: ");
@@ -192,24 +231,50 @@ public class ConsoleUI {
         Integer novaQtd = null;
         Double novoValorPeca = null;
 
-        if (f.getTipo().equals("Comissionado")) {
-            System.out.print("  Novo total de vendas (R$) (0 para manter): ");
-            double v = lerDoubleEdicao();
-            if (v >= 0) novasVendas = v;
-            System.out.print("  Novo percentual de comissao (%) (0 para manter): ");
-            double p = lerDoubleEdicao();
-            if (p >= 0) novoPercentual = p;
-        } else if (f.getTipo().equals("Producao")) {
-            System.out.print("  Nova quantidade de pecas (0 para manter): ");
-            int q = lerInteiroEdicao();
-            if (q >= 0) novaQtd = q;
-            System.out.print("  Novo valor por peca (R$) (0 para manter): ");
-            double vp = lerDoubleEdicao();
-            if (vp >= 0) novoValorPeca = vp;
+        // Se o tipo foi alterado, precisamos dos campos específicos do NOVO tipo
+        if (tipoAlterado) {
+            System.out.println(LIN);
+            System.out.println("  Novo tipo: " + novoTipo);
+            if (novoTipo.equals("Comissionado")) {
+                System.out.println("  Preencha os campos abaixo (ENTER pula - pode editar depois):");
+                System.out.print("  Total de vendas (R$): ");
+                double v = lerDoubleEdicao();
+                if (v >= 0) novasVendas = v;
+                System.out.print("  Percentual de comissao (%): ");
+                double p = lerDoubleEdicao();
+                if (p >= 0) novoPercentual = p;
+            } else if (novoTipo.equals("Producao")) {
+                System.out.println("  Preencha os campos abaixo (ENTER pula - pode editar depois):");
+                System.out.print("  Quantidade de pecas: ");
+                int q = lerInteiroEdicao();
+                if (q >= 0) novaQtd = q;
+                System.out.print("  Valor por peca (R$): ");
+                double vp = lerDoubleEdicao();
+                if (vp >= 0) novoValorPeca = vp;
+            }
+            // Padrão não tem campos extras
+        } else {
+            // Mantém tipo atual, edita os campos conforme o tipo existente
+            if (f.getTipo().equals("Comissionado")) {
+                System.out.print("  Novo total de vendas (R$) (0 para manter): ");
+                double v = lerDoubleEdicao();
+                if (v >= 0) novasVendas = v;
+                System.out.print("  Novo percentual de comissao (%) (0 para manter): ");
+                double p = lerDoubleEdicao();
+                if (p >= 0) novoPercentual = p;
+            } else if (f.getTipo().equals("Producao")) {
+                System.out.print("  Nova quantidade de pecas (0 para manter): ");
+                int q = lerInteiroEdicao();
+                if (q >= 0) novaQtd = q;
+                System.out.print("  Novo valor por peca (R$) (0 para manter): ");
+                double vp = lerDoubleEdicao();
+                if (vp >= 0) novoValorPeca = vp;
+            }
         }
 
         try {
-            service.editarFuncionario(mat, novoNome, novasVendas, novoPercentual, novaQtd, novoValorPeca);
+            service.editarFuncionarioCompleto(mat, novoNome, novoTipo, 
+                    novasVendas, novoPercentual, novaQtd, novoValorPeca);
             System.out.println("\n  [OK] Funcionario editado com sucesso.");
         } catch (Exception e) {
             System.out.println("\n  [ERRO] " + e.getMessage());
@@ -264,7 +329,7 @@ public class ConsoleUI {
     }
 
     // ── Métodos existentes (cadastros, folha, exportar, resetar, encerrar, utilitários) ──
-    // (Copiados exatamente do seu código original, sem alterações)
+    // (todos mantidos exatamente como estavam)
 
     private void cadastrarPadrao() {
         System.out.println("\n" + LIN);
@@ -403,7 +468,7 @@ public class ConsoleUI {
         System.out.println(SEP + "\n");
     }
 
-    // Utilitários de leitura (exatamente iguais aos seus)
+    // Utilitários de leitura (exatamente iguais)
     private String lerTexto(String prompt) {
         System.out.print(prompt);
         String v = sc.nextLine().trim();
