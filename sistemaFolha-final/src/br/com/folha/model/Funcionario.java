@@ -2,21 +2,24 @@ package br.com.folha.model;
 
 import java.util.Locale;
 
-/**
- * Classe base abstrata.
- * Para adicionar um novo tipo: estenda esta classe, implemente os quatro
- * métodos abstratos e adicione o case correspondente em FuncionarioRepository.
- */
 public abstract class Funcionario {
 
-    /** Salário fixo mensal comum a todos os tipos. Altere somente aqui. */
-    public static final double SALARIO_BASE = 2000.00;
+    // Agora mutável, via configuração
+    private static double salarioBase = 2000.00;
+
+    public static double getSalarioBase() {
+        return salarioBase;
+    }
+
+    public static void setSalarioBase(double novoSalario) {
+        salarioBase = novoSalario;
+    }
 
     protected final String nome;
-    protected final int    matricula;
+    protected final int matricula;
 
     public Funcionario(String nome, int matricula) {
-        this.nome      = nome;
+        this.nome = nome;
         this.matricula = matricula;
     }
 
@@ -29,15 +32,10 @@ public abstract class Funcionario {
     public abstract String toTSV();
     public abstract String toXLS();
 
-    // ── formatação compartilhada ────────────────────────────────────────────
     public static String moeda(double valor) {
         return String.format(Locale.US, "R$ %.2f", valor).replace(".", ",");
     }
 
-    /**
-     * Normaliza um nome: capitaliza a primeira letra de cada palavra,
-     * o restante em minúsculo. Ex: "JOSE DA SILVA" → "Jose Da Silva".
-     */
     public static String normalizarNome(String raw) {
         if (raw == null || raw.isBlank()) return raw;
         String[] partes = raw.trim().toLowerCase().split("\\s+");
@@ -50,11 +48,8 @@ public abstract class Funcionario {
         return sb.toString();
     }
 
-    // ── Retorna "MES\tANO" para as duas últimas colunas do TSV ────────────
     public static String getMesAnoAtual() {
         java.time.LocalDateTime agora = java.time.LocalDateTime.now();
-        int mes = agora.getMonthValue();
-        int ano = agora.getYear();
-        return mes + "\t" + ano;
+        return agora.getMonthValue() + "\t" + agora.getYear();
     }
 }

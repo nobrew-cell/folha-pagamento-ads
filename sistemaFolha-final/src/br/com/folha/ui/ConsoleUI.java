@@ -2,6 +2,8 @@ package br.com.folha.ui;
 
 import java.util.List;
 import java.util.Scanner;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import br.com.folha.model.Funcionario;
 import br.com.folha.service.FolhaService;
@@ -59,7 +61,7 @@ public class ConsoleUI {
     private void exibirBoasVindas() {
         System.out.println("\n" + SEP);
         System.out.println("      Bem-vindo ao Sistema de Folha de Pagamento");
-        System.out.println("           Versao 4.1  |  Salarios mensais");
+        System.out.println("           Versao 5.0  |  Salarios mensais");
         System.out.println(SEP);
         System.out.println("  Este e o seu primeiro acesso.");
         System.out.println("  Nenhum funcionario cadastrado ainda.");
@@ -80,6 +82,7 @@ public class ConsoleUI {
             System.out.println("  4 - Editar funcionario");
             System.out.println("  5 - Remover funcionario");
             System.out.println("  6 - Resetar sistema (backup automatico)");
+            System.out.println("  7 - Configuracoes do sistema");
             System.out.println("  0 - Voltar ao menu principal");
             System.out.println(SEP);
             System.out.print("  Opcao: ");
@@ -92,23 +95,30 @@ public class ConsoleUI {
                 case 4 -> editarFuncionario();
                 case 5 -> removerFuncionario();
                 case 6 -> resetar();
+                case 7 -> configuracoes();
                 case 0 -> System.out.println("  Voltando ao menu principal...");
                 default -> System.out.println("  Opcao invalida.");
             }
         }
     }
 
-    // ── Importar TSV ─────────────────────────────────────────────────────────
+    // ── IMPORTAR com JFileChooser ────────────────────────────────────────────
     private void importarArquivo() {
         System.out.println("\n" + LIN);
         System.out.println("            IMPORTAR DADOS DE ARQUIVO TSV");
         System.out.println(LIN);
-        System.out.print("  Caminho do arquivo (ex: exportados/dados/folha_2025-04-01_10-30-00.tsv): ");
-        String caminho = sc.nextLine().trim();
-        if (caminho.isEmpty()) {
-            System.out.println("  Operacao cancelada.");
+        System.out.println("  Abrindo seletor de arquivos...");
+
+        JFileChooser chooser = new JFileChooser(".");
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Arquivos TSV", "tsv");
+        chooser.setFileFilter(filter);
+        int resultado = chooser.showOpenDialog(null);
+        if (resultado != JFileChooser.APPROVE_OPTION) {
+            System.out.println("  Importacao cancelada.");
             return;
         }
+        String caminho = chooser.getSelectedFile().getAbsolutePath();
+        System.out.println("  Arquivo selecionado: " + caminho);
 
         System.out.println("\n  Validando arquivo...");
         try {
@@ -129,7 +139,7 @@ public class ConsoleUI {
         aguardar("\n  Pressione ENTER para continuar...");
     }
 
-    // ── NOVO MÊS com opção de copiar funcionários ───────────────────────────
+    // ── NOVO MÊS ─────────────────────────────────────────────────────────────
     private void novoMes() {
         System.out.println("\n" + LIN);
         System.out.println("                  INICIAR NOVO MES");
@@ -159,7 +169,7 @@ public class ConsoleUI {
         aguardar("\n  Pressione ENTER para continuar...");
     }
 
-    // ── EDIÇÃO DE FUNCIONÁRIO com troca de tipo integrada ────────────────────
+    // ── EDIÇÃO com troca de tipo ────────────────────────────────────────────
     private void editarFuncionario() {
         System.out.println("\n" + LIN);
         System.out.println("                 EDITAR FUNCIONARIO");
@@ -173,7 +183,6 @@ public class ConsoleUI {
             return;
         }
 
-        // Exibe dados atuais
         System.out.println("\n  Dados atuais:");
         System.out.println("  Nome: " + f.getNome());
         System.out.println("  Tipo: " + f.getTipo());
@@ -186,10 +195,9 @@ public class ConsoleUI {
             int qtd = service.getQuantidadePecasFuncionario(mat);
             double valor = service.getValorPecaFuncionario(mat);
             System.out.println("  Pecas produzidas: " + qtd);
-            System.out.println("  Valor por peca: R$ " + valor);
+            System.out.println("  Valor por peca (bonus liquido por unidade): R$ " + valor);
         }
 
-        // Pergunta se deseja alterar o tipo
         System.out.println(LIN);
         System.out.println("  Deseja alterar o tipo do funcionario?");
         System.out.println("  1 - Padrao");
@@ -219,7 +227,6 @@ public class ConsoleUI {
             }
         }
 
-        // Coleta novo nome
         System.out.println(LIN);
         System.out.println("  Deixe em branco para manter o valor atual.");
         System.out.print("  Novo nome: ");
@@ -231,7 +238,6 @@ public class ConsoleUI {
         Integer novaQtd = null;
         Double novoValorPeca = null;
 
-        // Se o tipo foi alterado, precisamos dos campos específicos do NOVO tipo
         if (tipoAlterado) {
             System.out.println(LIN);
             System.out.println("  Novo tipo: " + novoTipo);
@@ -248,13 +254,11 @@ public class ConsoleUI {
                 System.out.print("  Quantidade de pecas: ");
                 int q = lerInteiroEdicao();
                 if (q >= 0) novaQtd = q;
-                System.out.print("  Valor por peca (R$): ");
+                System.out.print("  Valor por peca (bonus liquido por unidade) (R$): ");
                 double vp = lerDoubleEdicao();
                 if (vp >= 0) novoValorPeca = vp;
             }
-            // Padrão não tem campos extras
         } else {
-            // Mantém tipo atual, edita os campos conforme o tipo existente
             if (f.getTipo().equals("Comissionado")) {
                 System.out.print("  Novo total de vendas (R$) (0 para manter): ");
                 double v = lerDoubleEdicao();
@@ -266,14 +270,14 @@ public class ConsoleUI {
                 System.out.print("  Nova quantidade de pecas (0 para manter): ");
                 int q = lerInteiroEdicao();
                 if (q >= 0) novaQtd = q;
-                System.out.print("  Novo valor por peca (R$) (0 para manter): ");
+                System.out.print("  Novo valor por peca (bonus liquido por unidade) (R$) (0 para manter): ");
                 double vp = lerDoubleEdicao();
                 if (vp >= 0) novoValorPeca = vp;
             }
         }
 
         try {
-            service.editarFuncionarioCompleto(mat, novoNome, novoTipo, 
+            service.editarFuncionarioCompleto(mat, novoNome, novoTipo,
                     novasVendas, novoPercentual, novaQtd, novoValorPeca);
             System.out.println("\n  [OK] Funcionario editado com sucesso.");
         } catch (Exception e) {
@@ -282,7 +286,7 @@ public class ConsoleUI {
         aguardar("\n  Pressione ENTER para continuar...");
     }
 
-    // ── Remover funcionário ──────────────────────────────────────────────────
+    // ── REMOVER ──────────────────────────────────────────────────────────────
     private void removerFuncionario() {
         System.out.println("\n" + LIN);
         System.out.println("                REMOVER FUNCIONARIO");
@@ -307,30 +311,98 @@ public class ConsoleUI {
         aguardar("\n  Pressione ENTER para continuar...");
     }
 
-    // ── Métodos auxiliares para edição (retornam -1 ou valor negativo para manter) ──
-    private double lerDoubleEdicao() {
-        String linha = sc.nextLine().trim().replace(",", ".");
-        if (linha.isEmpty()) return -1;
-        try {
-            return Double.parseDouble(linha);
-        } catch (NumberFormatException e) {
-            return -1;
+    // ── CONFIGURAÇÕES DO SISTEMA ─────────────────────────────────────────────
+    private void configuracoes() {
+        int op = -1;
+        while (op != 0) {
+            System.out.println("\n" + LIN);
+            System.out.println("           CONFIGURACOES DO SISTEMA");
+            System.out.println(LIN);
+            System.out.println("  Salario base atual: " + Funcionario.moeda(service.getSalarioBase()));
+            System.out.println("  Teto de bonus (%%) do salario base: " + service.getTetoPercentual() + "%");
+            System.out.println("  (Teto absoluto: " + Funcionario.moeda(service.getTetoBonusProducao()) + ")");
+            System.out.println(LIN);
+            System.out.println("  1 - Alterar salario base");
+            System.out.println("  2 - Alterar teto de bonus (%)");
+            System.out.println("  0 - Voltar");
+            System.out.print("  Opcao: ");
+            op = lerInteiro();
+
+            switch (op) {
+                case 1 -> {
+                    System.out.print("  Novo salario base (R$): ");
+                    double novo = lerDouble();
+                    if (novo > 0) {
+                        service.setSalarioBase(novo);
+                        System.out.println("  [OK] Salario base alterado. Todos os calculos serao atualizados.");
+                    } else {
+                        System.out.println("  Valor invalido. Operacao cancelada.");
+                    }
+                }
+                case 2 -> {
+                    System.out.print("  Novo percentual do teto de bonus (%% do salario base): ");
+                    double novoPct = lerDouble();
+                    if (novoPct > 0) {
+                        service.setTetoPercentual(novoPct);
+                        System.out.println("  [OK] Teto de bonus alterado.");
+                    } else {
+                        System.out.println("  Percentual invalido. Operacao cancelada.");
+                    }
+                }
+                case 0 -> System.out.println("  Voltando...");
+                default -> System.out.println("  Opcao invalida.");
+            }
         }
     }
 
-    private int lerInteiroEdicao() {
-        String linha = sc.nextLine().trim();
-        if (linha.isEmpty()) return -1;
-        try {
-            return Integer.parseInt(linha);
-        } catch (NumberFormatException e) {
-            return -1;
+    // ── GERAR FOLHA com total no final ───────────────────────────────────────
+    private void gerarFolha() {
+        var lista = service.listar();
+
+        System.out.println("\n" + SEP);
+        System.out.println("              FOLHA DE PAGAMENTO MENSAL");
+        System.out.printf ("              Total de funcionarios: %d%n", lista.size());
+        System.out.println(SEP);
+
+        if (lista.isEmpty()) {
+            System.out.println("  Nenhum funcionario cadastrado ainda.");
+            System.out.println(SEP);
+            return;
         }
+
+        for (Funcionario f : lista) {
+            System.out.println(LIN);
+            System.out.println("  Nome:         " + f.getNome());
+            System.out.println("  Matricula:    " + f.getMatricula());
+            System.out.println("  Tipo:         " + f.getTipo());
+            System.out.println("  Salario base: " + Funcionario.moeda(Funcionario.getSalarioBase()) + " / mes");
+            System.out.println("  " + f.getDetalheExtra());
+            System.out.println("  Total mensal: " + Funcionario.moeda(f.calcularSalarioFinal()));
+        }
+
+        double total = service.calcularTotalFolha();
+        System.out.println(LIN);
+        System.out.println("  TOTAL DA FOLHA: " + Funcionario.moeda(total));
+        System.out.println(SEP);
     }
 
-    // ── Métodos existentes (cadastros, folha, exportar, resetar, encerrar, utilitários) ──
-    // (todos mantidos exatamente como estavam)
+    // ── EXPORTAR com feedback melhorado ──────────────────────────────────────
+    private void exportar() {
+        System.out.println("\n  Exportando dados...");
+        String[] caminhos = service.exportar();
+        System.out.println();
+        if (caminhos[0] != null)
+            System.out.println("  ✔ TSV gerado: " + caminhos[0]);
+        else
+            System.out.println("  ❌ Falha ao gerar TSV.");
 
+        if (caminhos[1] != null)
+            System.out.println("  ✔ XLS gerado: " + caminhos[1]);
+        else
+            System.out.println("  ❌ Falha ao gerar XLS. Verifique as permissoes da pasta 'exportados'.");
+    }
+
+    // ── CADASTRO PADRÃO ──────────────────────────────────────────────────────
     private void cadastrarPadrao() {
         System.out.println("\n" + LIN);
         System.out.println("               NOVO FUNCIONARIO PADRAO");
@@ -347,6 +419,7 @@ public class ConsoleUI {
         System.out.println("\n  [OK] Funcionario cadastrado com sucesso.");
     }
 
+    // ── CADASTRO COMISSIONADO ────────────────────────────────────────────────
     private void cadastrarComissionado() {
         System.out.println("\n" + LIN);
         System.out.println("            NOVO FUNCIONARIO COMISSIONADO");
@@ -371,6 +444,7 @@ public class ConsoleUI {
         System.out.println("\n  [OK] Funcionario cadastrado com sucesso.");
     }
 
+    // ── CADASTRO PRODUÇÃO (com mensagem clara) ───────────────────────────────
     private void cadastrarProducao() {
         System.out.println("\n" + LIN);
         System.out.println("             NOVO FUNCIONARIO DE PRODUCAO");
@@ -387,13 +461,12 @@ public class ConsoleUI {
         int qtd = lerInteiroPositivoOuZero();
         if (qtd == 0) { cancelado(); return; }
 
-        System.out.print("  Valor por peca (R$): ");
+        System.out.print("  Valor por peca (bonus liquido por unidade) (R$): ");
         double vpeca = lerDoubleNaoNegativo();
         if (vpeca < 0) { cancelado(); return; }
         if (service.bonusUltrapassaTeto(qtd, vpeca)) {
             System.out.println("\n  [BLOQUEIO] Bonus de " + Funcionario.moeda(qtd * vpeca) +
-                            " ultrapassa o teto de 200% do salario base.");
-            System.out.println("  Teto permitido: " + Funcionario.moeda(service.getTetoBonusProducao()));
+                            " ultrapassa o teto de " + Funcionario.moeda(service.getTetoBonusProducao()));
             System.out.println("  Cadastro bloqueado. Consulte a diretoria para casos excepcionais.");
             aguardar("\n  Pressione ENTER para voltar ao menu...");
             return;
@@ -402,46 +475,7 @@ public class ConsoleUI {
         System.out.println("\n  [OK] Funcionario cadastrado com sucesso.");
     }
 
-    private void gerarFolha() {
-        var lista = service.listar();
-
-        System.out.println("\n" + SEP);
-        System.out.println("              FOLHA DE PAGAMENTO MENSAL");
-        System.out.printf ("              Total de funcionarios: %d%n", lista.size());
-        System.out.println(SEP);
-
-        if (lista.isEmpty()) {
-            System.out.println("  Nenhum funcionario cadastrado ainda.");
-            System.out.println(SEP);
-            return;
-        }
-
-        for (Funcionario f : lista) {
-            System.out.println(LIN);
-            System.out.println("  Nome:         " + f.getNome());
-            System.out.println("  Matricula:    " + f.getMatricula());
-            System.out.println("  Tipo:         " + f.getTipo());
-            System.out.println("  Salario base: " + Funcionario.moeda(Funcionario.SALARIO_BASE) + " / mes");
-            System.out.println("  " + f.getDetalheExtra());
-            System.out.println("  Total mensal: " + Funcionario.moeda(f.calcularSalarioFinal()));
-        }
-
-        System.out.println(SEP);
-    }
-
-    private void exportar() {
-        String[] caminhos = service.exportar();
-        System.out.println();
-        if (caminhos[0] != null)
-            System.out.println("  [OK] Dados (TSV):      " + caminhos[0]);
-        else
-            System.out.println("  [ERRO] Falha ao exportar TSV.");
-        if (caminhos[1] != null)
-            System.out.println("  [OK] Relatorio (XLS):  " + caminhos[1]);
-        else
-            System.out.println("  [ERRO] Falha ao exportar relatorio.");
-    }
-
+    // ── RESET ────────────────────────────────────────────────────────────────
     private void resetar() {
         System.out.println("\n" + LIN);
         System.out.println("                MODO ADM - RESET TOTAL");
@@ -461,6 +495,7 @@ public class ConsoleUI {
         }
     }
 
+    // ── ENCERRAR ────────────────────────────────────────────────────────────
     private void encerrar() {
         service.salvar();
         System.out.println("\n" + SEP);
@@ -468,7 +503,8 @@ public class ConsoleUI {
         System.out.println(SEP + "\n");
     }
 
-    // Utilitários de leitura (exatamente iguais)
+    // ── UTILITÁRIOS DE LEITURA (todos implementados) ────────────────────────
+
     private String lerTexto(String prompt) {
         System.out.print(prompt);
         String v = sc.nextLine().trim();
@@ -503,8 +539,11 @@ public class ConsoleUI {
 
     private int lerInteiro() {
         while (true) {
-            try { return Integer.parseInt(sc.nextLine().trim()); }
-            catch (NumberFormatException e) { System.out.print("  Inteiro invalido: "); }
+            try {
+                return Integer.parseInt(sc.nextLine().trim());
+            } catch (NumberFormatException e) {
+                System.out.print("  Inteiro invalido: ");
+            }
         }
     }
 
@@ -531,6 +570,36 @@ public class ConsoleUI {
             } catch (NumberFormatException e) {
                 System.out.print("  Decimal invalido: ");
             }
+        }
+    }
+
+    private double lerDouble() {
+        while (true) {
+            try {
+                return Double.parseDouble(sc.nextLine().trim().replace(",", "."));
+            } catch (NumberFormatException e) {
+                System.out.print("  Numero invalido: ");
+            }
+        }
+    }
+
+    private double lerDoubleEdicao() {
+        String linha = sc.nextLine().trim().replace(",", ".");
+        if (linha.isEmpty()) return -1;
+        try {
+            return Double.parseDouble(linha);
+        } catch (NumberFormatException e) {
+            return -1;
+        }
+    }
+
+    private int lerInteiroEdicao() {
+        String linha = sc.nextLine().trim();
+        if (linha.isEmpty()) return -1;
+        try {
+            return Integer.parseInt(linha);
+        } catch (NumberFormatException e) {
+            return -1;
         }
     }
 
