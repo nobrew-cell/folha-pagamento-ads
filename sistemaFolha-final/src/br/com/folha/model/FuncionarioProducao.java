@@ -56,4 +56,13 @@ public class FuncionarioProducao extends Funcionario {
                "<td>" + agora.getYear() + "</td>" +
                "</tr>";
     }
+
+    // ── Getters para edição ──
+    public int getQuantidadeProduzida() {
+        return quantidadeProduzida;
+    }
+
+    public double getValorPorPeca() {
+        return valorPorPeca;
+    }
 }

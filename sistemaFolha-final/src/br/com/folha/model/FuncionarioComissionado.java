@@ -55,4 +55,13 @@ public class FuncionarioComissionado extends Funcionario {
                "<td>" + agora.getYear() + "</td>" +
                "</tr>";
     }
+
+    // ── Getters para edição ──
+    public double getVendas() {
+        return vendas;
+    }
+
+    public double getPercentualComissao() {
+        return percentualComissao;
+    }
 }
