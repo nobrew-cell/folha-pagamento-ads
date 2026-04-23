@@ -48,12 +48,12 @@ public class ConsoleUI {
         System.out.println("\n" + SEP);
         System.out.println("        FOLHA DE PAGAMENTO  (salarios mensais)");
         System.out.println(SEP);
-        System.out.println("  1 - Cadastrar Funcionario Padrao");
-        System.out.println("  2 - Cadastrar Funcionario Comissionado");
-        System.out.println("  3 - Cadastrar Funcionario de Producao");
-        System.out.println("  4 - Gerar Folha de Pagamento");
-        System.out.println("  5 - Menu ADM (Manutenção de Dados)");
-        System.out.println("  0 - Sair");
+        System.out.println("  [1] - Cadastrar Funcionario Padrao");
+        System.out.println("  [2] - Cadastrar Funcionario Comissionado");
+        System.out.println("  [3] - Cadastrar Funcionario de Producao");
+        System.out.println("  [4] - Gerar Folha de Pagamento");
+        System.out.println("  [5] - Menu ADM (Manutenção de Dados)");
+        System.out.println("  [0] - Sair");
         System.out.println(SEP);
         System.out.print("  Opcao: ");
     }
@@ -69,7 +69,7 @@ public class ConsoleUI {
         aguardar("  Pressione ENTER para continuar...");
     }
 
-    // ── SUBMENU ADM ──────────────────────────────────────────────────────────
+    // ── SUBMENU ADM com navegação inteligente ─────────────────────────────────
     private void menuADM() {
         int opcao = -1;
         while (opcao != 0) {
@@ -88,22 +88,27 @@ public class ConsoleUI {
             System.out.print("  Opcao: ");
 
             opcao = lerInteiro();
+            boolean success = false;
             switch (opcao) {
-                case 1 -> exportar();
-                case 2 -> importarArquivo();
-                case 3 -> novoMes();
-                case 4 -> editarFuncionario();
-                case 5 -> removerFuncionario();
-                case 6 -> resetar();
+                case 1 -> success = exportar();
+                case 2 -> success = importarArquivo();
+                case 3 -> success = novoMes();
+                case 4 -> success = editarFuncionario();
+                case 5 -> success = removerFuncionario();
+                case 6 -> success = resetar();
                 case 7 -> configuracoes();
                 case 0 -> System.out.println("  Voltando ao menu principal...");
                 default -> System.out.println("  Opcao invalida.");
             }
+            if (success) {
+                System.out.println("\n  Operacao concluida. Retornando ao menu principal...");
+                return;
+            }
         }
     }
 
-    // ── IMPORTAR com JFileChooser ────────────────────────────────────────────
-    private void importarArquivo() {
+    // ── IMPORTAR com JFileChooser (retorna true se sucesso) ───────────────────
+    private boolean importarArquivo() {
         System.out.println("\n" + LIN);
         System.out.println("            IMPORTAR DADOS DE ARQUIVO TSV");
         System.out.println(LIN);
@@ -115,7 +120,7 @@ public class ConsoleUI {
         int resultado = chooser.showOpenDialog(null);
         if (resultado != JFileChooser.APPROVE_OPTION) {
             System.out.println("  Importacao cancelada.");
-            return;
+            return false;
         }
         String caminho = chooser.getSelectedFile().getAbsolutePath();
         System.out.println("  Arquivo selecionado: " + caminho);
@@ -129,18 +134,20 @@ public class ConsoleUI {
             if (conf.equals("S")) {
                 service.importarArquivo(caminho);
                 System.out.println("\n  [OK] Importacao concluida com sucesso.");
+                return true;
             } else {
                 System.out.println("  Importacao cancelada.");
+                return false;
             }
         } catch (Exception e) {
             System.out.println("\n  ERRO: " + e.getMessage());
             System.out.println("  Importacao cancelada.");
+            return false;
         }
-        aguardar("\n  Pressione ENTER para continuar...");
     }
 
-    // ── NOVO MÊS ─────────────────────────────────────────────────────────────
-    private void novoMes() {
+    // ── NOVO MÊS (retorna true se sucesso) ───────────────────────────────────
+    private boolean novoMes() {
         System.out.println("\n" + LIN);
         System.out.println("                  INICIAR NOVO MES");
         System.out.println(LIN);
@@ -160,17 +167,19 @@ public class ConsoleUI {
                 } else {
                     System.out.println("  Base limpa. Novo mes iniciado.");
                 }
+                return true;
             } catch (Exception e) {
                 System.out.println("\n  [ERRO] " + e.getMessage());
+                return false;
             }
         } else {
             System.out.println("  Operacao cancelada.");
+            return false;
         }
-        aguardar("\n  Pressione ENTER para continuar...");
     }
 
-    // ── EDIÇÃO com troca de tipo ────────────────────────────────────────────
-    private void editarFuncionario() {
+    // ── EDIÇÃO com troca de tipo (retorna true se sucesso) ────────────────────
+    private boolean editarFuncionario() {
         System.out.println("\n" + LIN);
         System.out.println("                 EDITAR FUNCIONARIO");
         System.out.println(LIN);
@@ -180,7 +189,7 @@ public class ConsoleUI {
         if (f == null) {
             System.out.println("  Matricula nao encontrada.");
             aguardar("  Pressione ENTER para continuar...");
-            return;
+            return false;
         }
 
         System.out.println("\n  Dados atuais:");
@@ -280,14 +289,16 @@ public class ConsoleUI {
             service.editarFuncionarioCompleto(mat, novoNome, novoTipo,
                     novasVendas, novoPercentual, novaQtd, novoValorPeca);
             System.out.println("\n  [OK] Funcionario editado com sucesso.");
+            return true;
         } catch (Exception e) {
             System.out.println("\n  [ERRO] " + e.getMessage());
+            aguardar("\n  Pressione ENTER para continuar...");
+            return false;
         }
-        aguardar("\n  Pressione ENTER para continuar...");
     }
 
-    // ── REMOVER ──────────────────────────────────────────────────────────────
-    private void removerFuncionario() {
+    // ── REMOVER (retorna true se sucesso) ─────────────────────────────────────
+    private boolean removerFuncionario() {
         System.out.println("\n" + LIN);
         System.out.println("                REMOVER FUNCIONARIO");
         System.out.println(LIN);
@@ -297,7 +308,7 @@ public class ConsoleUI {
         if (f == null) {
             System.out.println("  Matricula nao encontrada.");
             aguardar("  Pressione ENTER para continuar...");
-            return;
+            return false;
         }
         System.out.println("  Funcionario encontrado: " + f.getNome() + " (" + f.getTipo() + ")");
         System.out.print("  Confirmar remocao? (S/N): ");
@@ -305,13 +316,14 @@ public class ConsoleUI {
         if (conf.equals("S")) {
             service.removerFuncionario(mat);
             System.out.println("\n  [OK] Funcionario removido.");
+            return true;
         } else {
             System.out.println("  Operacao cancelada.");
+            return false;
         }
-        aguardar("\n  Pressione ENTER para continuar...");
     }
 
-    // ── CONFIGURAÇÕES DO SISTEMA ─────────────────────────────────────────────
+    // ── CONFIGURAÇÕES (loop interno) ─────────────────────────────────────────
     private void configuracoes() {
         int op = -1;
         while (op != 0) {
@@ -355,7 +367,7 @@ public class ConsoleUI {
         }
     }
 
-    // ── GERAR FOLHA com total no final ───────────────────────────────────────
+    // ── GERAR FOLHA COM TOTAL ────────────────────────────────────────────────
     private void gerarFolha() {
         var lista = service.listar();
 
@@ -386,8 +398,8 @@ public class ConsoleUI {
         System.out.println(SEP);
     }
 
-    // ── EXPORTAR com feedback melhorado ──────────────────────────────────────
-    private void exportar() {
+    // ── EXPORTAR (retorna true se sucesso) ────────────────────────────────────
+    private boolean exportar() {
         System.out.println("\n  Exportando dados...");
         String[] caminhos = service.exportar();
         System.out.println();
@@ -400,9 +412,33 @@ public class ConsoleUI {
             System.out.println("  ✔ XLS gerado: " + caminhos[1]);
         else
             System.out.println("  ❌ Falha ao gerar XLS. Verifique as permissoes da pasta 'exportados'.");
+
+        return caminhos[0] != null;
     }
 
-    // ── CADASTRO PADRÃO ──────────────────────────────────────────────────────
+    // ── RESET (retorna true se sucesso) ───────────────────────────────────────
+    private boolean resetar() {
+        System.out.println("\n" + LIN);
+        System.out.println("                MODO ADM - RESET TOTAL");
+        System.out.println(LIN);
+        System.out.println("  Isso apagara todos os funcionarios.");
+        System.out.println("  Um backup automatico sera salvo antes.");
+        System.out.println(LIN);
+        System.out.print("  Digite CONFIRMAR para prosseguir: ");
+        String confirm = sc.nextLine().trim();
+
+        if (confirm.equals("CONFIRMAR")) {
+            String backup = service.resetar();
+            System.out.println("\n  [OK] Sistema resetado.");
+            System.out.println("  Backup salvo em: " + backup);
+            return true;
+        } else {
+            System.out.println("  Operacao cancelada.");
+            return false;
+        }
+    }
+
+    // ── CADASTRO PADRÃO (original) ───────────────────────────────────────────
     private void cadastrarPadrao() {
         System.out.println("\n" + LIN);
         System.out.println("               NOVO FUNCIONARIO PADRAO");
@@ -419,7 +455,7 @@ public class ConsoleUI {
         System.out.println("\n  [OK] Funcionario cadastrado com sucesso.");
     }
 
-    // ── CADASTRO COMISSIONADO ────────────────────────────────────────────────
+    // ── CADASTRO COMISSIONADO (original) ─────────────────────────────────────
     private void cadastrarComissionado() {
         System.out.println("\n" + LIN);
         System.out.println("            NOVO FUNCIONARIO COMISSIONADO");
@@ -444,7 +480,7 @@ public class ConsoleUI {
         System.out.println("\n  [OK] Funcionario cadastrado com sucesso.");
     }
 
-    // ── CADASTRO PRODUÇÃO (com mensagem clara) ───────────────────────────────
+    // ── CADASTRO PRODUÇÃO (original com mensagem clara) ──────────────────────
     private void cadastrarProducao() {
         System.out.println("\n" + LIN);
         System.out.println("             NOVO FUNCIONARIO DE PRODUCAO");
@@ -475,27 +511,7 @@ public class ConsoleUI {
         System.out.println("\n  [OK] Funcionario cadastrado com sucesso.");
     }
 
-    // ── RESET ────────────────────────────────────────────────────────────────
-    private void resetar() {
-        System.out.println("\n" + LIN);
-        System.out.println("                MODO ADM - RESET TOTAL");
-        System.out.println(LIN);
-        System.out.println("  Isso apagara todos os funcionarios.");
-        System.out.println("  Um backup automatico sera salvo antes.");
-        System.out.println(LIN);
-        System.out.print("  Digite CONFIRMAR para prosseguir: ");
-        String confirm = sc.nextLine().trim();
-
-        if (confirm.equals("CONFIRMAR")) {
-            String backup = service.resetar();
-            System.out.println("\n  [OK] Sistema resetado.");
-            System.out.println("  Backup salvo em: " + backup);
-        } else {
-            System.out.println("  Operacao cancelada.");
-        }
-    }
-
-    // ── ENCERRAR ────────────────────────────────────────────────────────────
+    // ── ENCERRAR (original) ──────────────────────────────────────────────────
     private void encerrar() {
         service.salvar();
         System.out.println("\n" + SEP);
@@ -503,8 +519,7 @@ public class ConsoleUI {
         System.out.println(SEP + "\n");
     }
 
-    // ── UTILITÁRIOS DE LEITURA (todos implementados) ────────────────────────
-
+    // ── UTILITÁRIOS DE LEITURA (idênticos aos originais) ─────────────────────
     private String lerTexto(String prompt) {
         System.out.print(prompt);
         String v = sc.nextLine().trim();
