@@ -69,12 +69,12 @@ public class ConsoleUI {
         aguardar("  Pressione ENTER para continuar...");
     }
 
-    // ── SUBMENU ADM com navegação inteligente ─────────────────────────────────
+    // ── SUBMENU ADM (navegação inteligente) ─────────────────────────────────
     private void menuADM() {
         int opcao = -1;
         while (opcao != 0) {
             System.out.println("\n" + SEP);
-            System.out.println("               MENU ADMINISTRATIVO");
+            System.out.println("                  MENU ADMINISTRATIVO");
             System.out.println(SEP);
             System.out.println("  1 - Exportar TSV e XLS");
             System.out.println("  2 - Importar arquivo TSV (substitui todos os dados)");
@@ -107,7 +107,7 @@ public class ConsoleUI {
         }
     }
 
-    // ── IMPORTAR com JFileChooser (retorna true se sucesso) ───────────────────
+    // ── IMPORTAR (JFileChooser) ─────────────────────────────────────────────
     private boolean importarArquivo() {
         System.out.println("\n" + LIN);
         System.out.println("            IMPORTAR DADOS DE ARQUIVO TSV");
@@ -146,7 +146,7 @@ public class ConsoleUI {
         }
     }
 
-    // ── NOVO MÊS (retorna true se sucesso) ───────────────────────────────────
+    // ── NOVO MÊS ───────────────────────────────────────────────────────────
     private boolean novoMes() {
         System.out.println("\n" + LIN);
         System.out.println("                  INICIAR NOVO MES");
@@ -178,7 +178,7 @@ public class ConsoleUI {
         }
     }
 
-    // ── EDIÇÃO com troca de tipo (retorna true se sucesso) ────────────────────
+    // ── EDIÇÃO (com verificação de nome duplicado) ─────────────────────────
     private boolean editarFuncionario() {
         System.out.println("\n" + LIN);
         System.out.println("                 EDITAR FUNCIONARIO");
@@ -193,7 +193,7 @@ public class ConsoleUI {
         }
 
         System.out.println("\n  Dados atuais:");
-        System.out.println("  Nome: " + f.getNome());
+        System.out.println("  Nome: " + f.getNomeExibicao());
         System.out.println("  Tipo: " + f.getTipo());
         if (f.getTipo().equals("Comissionado")) {
             double vendas = service.getVendasFuncionario(mat);
@@ -241,6 +241,23 @@ public class ConsoleUI {
         System.out.print("  Novo nome: ");
         String novoNome = sc.nextLine().trim();
         if (novoNome.isEmpty()) novoNome = f.getNome();
+
+        // Verifica se o novo nome é similar a algum outro funcionário (ignorando este)
+        if (!novoNome.equals(f.getNome())) {
+            List<Funcionario> similares = service.buscarPorNomeSimilar(novoNome, mat);
+            if (!similares.isEmpty()) {
+                System.out.println("\n  ⚠ Nome semelhante ja cadastrado:");
+                for (Funcionario s : similares) {
+                    System.out.println("    " + s.getNomeExibicao() + " (matricula " + s.getMatricula() + ")");
+                }
+                System.out.print("  Continuar mesmo assim? (S/N): ");
+                String confirm = sc.nextLine().trim().toUpperCase();
+                if (!confirm.equals("S")) {
+                    System.out.println("  Operacao cancelada.");
+                    return false;
+                }
+            }
+        }
 
         Double novasVendas = null;
         Double novoPercentual = null;
@@ -297,7 +314,7 @@ public class ConsoleUI {
         }
     }
 
-    // ── REMOVER (retorna true se sucesso) ─────────────────────────────────────
+    // ── REMOVER ─────────────────────────────────────────────────────────────
     private boolean removerFuncionario() {
         System.out.println("\n" + LIN);
         System.out.println("                REMOVER FUNCIONARIO");
@@ -310,7 +327,7 @@ public class ConsoleUI {
             aguardar("  Pressione ENTER para continuar...");
             return false;
         }
-        System.out.println("  Funcionario encontrado: " + f.getNome() + " (" + f.getTipo() + ")");
+        System.out.println("  Funcionario encontrado: " + f.getNomeExibicao() + " (" + f.getTipo() + ")");
         System.out.print("  Confirmar remocao? (S/N): ");
         String conf = sc.nextLine().trim().toUpperCase();
         if (conf.equals("S")) {
@@ -323,7 +340,7 @@ public class ConsoleUI {
         }
     }
 
-    // ── CONFIGURAÇÕES (loop interno) ─────────────────────────────────────────
+    // ── CONFIGURAÇÕES ───────────────────────────────────────────────────────
     private void configuracoes() {
         int op = -1;
         while (op != 0) {
@@ -367,7 +384,7 @@ public class ConsoleUI {
         }
     }
 
-    // ── GERAR FOLHA COM TOTAL ────────────────────────────────────────────────
+    // ── GERAR FOLHA (com total e nomes sem acentos) ─────────────────────────
     private void gerarFolha() {
         var lista = service.listar();
 
@@ -384,7 +401,7 @@ public class ConsoleUI {
 
         for (Funcionario f : lista) {
             System.out.println(LIN);
-            System.out.println("  Nome:         " + f.getNome());
+            System.out.println("  Nome:         " + f.getNomeExibicao());
             System.out.println("  Matricula:    " + f.getMatricula());
             System.out.println("  Tipo:         " + f.getTipo());
             System.out.println("  Salario base: " + Funcionario.moeda(Funcionario.getSalarioBase()) + " / mes");
@@ -398,7 +415,7 @@ public class ConsoleUI {
         System.out.println(SEP);
     }
 
-    // ── EXPORTAR (retorna true se sucesso) ────────────────────────────────────
+    // ── EXPORTAR ────────────────────────────────────────────────────────────
     private boolean exportar() {
         System.out.println("\n  Exportando dados...");
         String[] caminhos = service.exportar();
@@ -416,7 +433,7 @@ public class ConsoleUI {
         return caminhos[0] != null;
     }
 
-    // ── RESET (retorna true se sucesso) ───────────────────────────────────────
+    // ── RESET ───────────────────────────────────────────────────────────────
     private boolean resetar() {
         System.out.println("\n" + LIN);
         System.out.println("                MODO ADM - RESET TOTAL");
@@ -438,7 +455,7 @@ public class ConsoleUI {
         }
     }
 
-    // ── CADASTRO PADRÃO (original) ───────────────────────────────────────────
+    // ── CADASTRO PADRÃO (com aviso de nome duplicado) ───────────────────────
     private void cadastrarPadrao() {
         System.out.println("\n" + LIN);
         System.out.println("               NOVO FUNCIONARIO PADRAO");
@@ -451,11 +468,26 @@ public class ConsoleUI {
         int mat = lerMatricula("  Matricula: ");
         if (mat == 0) { cancelado(); return; }
 
+        // Verifica duplicata de nome (ignora acentos e caixa)
+        List<Funcionario> similares = service.buscarPorNomeSimilar(nome, -1);
+        if (!similares.isEmpty()) {
+            System.out.println("\n  ⚠ Nome semelhante ja cadastrado:");
+            for (Funcionario s : similares) {
+                System.out.println("    " + s.getNomeExibicao() + " (matricula " + s.getMatricula() + ")");
+            }
+            System.out.print("  Continuar mesmo assim? (S/N): ");
+            String confirm = sc.nextLine().trim().toUpperCase();
+            if (!confirm.equals("S")) {
+                System.out.println("  Cadastro cancelado.");
+                return;
+            }
+        }
+
         service.cadastrarPadrao(nome, mat);
         System.out.println("\n  [OK] Funcionario cadastrado com sucesso.");
     }
 
-    // ── CADASTRO COMISSIONADO (original) ─────────────────────────────────────
+    // ── CADASTRO COMISSIONADO (com aviso de nome duplicado) ─────────────────
     private void cadastrarComissionado() {
         System.out.println("\n" + LIN);
         System.out.println("            NOVO FUNCIONARIO COMISSIONADO");
@@ -467,6 +499,20 @@ public class ConsoleUI {
 
         int mat = lerMatricula("  Matricula: ");
         if (mat == 0) { cancelado(); return; }
+
+        List<Funcionario> similares = service.buscarPorNomeSimilar(nome, -1);
+        if (!similares.isEmpty()) {
+            System.out.println("\n  ⚠ Nome semelhante ja cadastrado:");
+            for (Funcionario s : similares) {
+                System.out.println("    " + s.getNomeExibicao() + " (matricula " + s.getMatricula() + ")");
+            }
+            System.out.print("  Continuar mesmo assim? (S/N): ");
+            String confirm = sc.nextLine().trim().toUpperCase();
+            if (!confirm.equals("S")) {
+                System.out.println("  Cadastro cancelado.");
+                return;
+            }
+        }
 
         System.out.print("  Total de vendas mensais (R$): ");
         double vendas = lerDoubleNaoNegativo();
@@ -480,7 +526,7 @@ public class ConsoleUI {
         System.out.println("\n  [OK] Funcionario cadastrado com sucesso.");
     }
 
-    // ── CADASTRO PRODUÇÃO (original com mensagem clara) ──────────────────────
+    // ── CADASTRO PRODUÇÃO (com aviso de nome duplicado) ─────────────────────
     private void cadastrarProducao() {
         System.out.println("\n" + LIN);
         System.out.println("             NOVO FUNCIONARIO DE PRODUCAO");
@@ -492,6 +538,20 @@ public class ConsoleUI {
 
         int mat = lerMatricula("  Matricula: ");
         if (mat == 0) { cancelado(); return; }
+
+        List<Funcionario> similares = service.buscarPorNomeSimilar(nome, -1);
+        if (!similares.isEmpty()) {
+            System.out.println("\n  ⚠ Nome semelhante ja cadastrado:");
+            for (Funcionario s : similares) {
+                System.out.println("    " + s.getNomeExibicao() + " (matricula " + s.getMatricula() + ")");
+            }
+            System.out.print("  Continuar mesmo assim? (S/N): ");
+            String confirm = sc.nextLine().trim().toUpperCase();
+            if (!confirm.equals("S")) {
+                System.out.println("  Cadastro cancelado.");
+                return;
+            }
+        }
 
         System.out.print("  Pecas produzidas no mes: ");
         int qtd = lerInteiroPositivoOuZero();
@@ -511,7 +571,7 @@ public class ConsoleUI {
         System.out.println("\n  [OK] Funcionario cadastrado com sucesso.");
     }
 
-    // ── ENCERRAR (original) ──────────────────────────────────────────────────
+    // ── ENCERRAR ────────────────────────────────────────────────────────────
     private void encerrar() {
         service.salvar();
         System.out.println("\n" + SEP);
@@ -519,7 +579,7 @@ public class ConsoleUI {
         System.out.println(SEP + "\n");
     }
 
-    // ── UTILITÁRIOS DE LEITURA (idênticos aos originais) ─────────────────────
+    // ── UTILITÁRIOS DE LEITURA (idênticos aos originais) ────────────────────
     private String lerTexto(String prompt) {
         System.out.print(prompt);
         String v = sc.nextLine().trim();

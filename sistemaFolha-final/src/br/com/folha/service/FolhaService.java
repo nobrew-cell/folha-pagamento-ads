@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import br.com.folha.model.Funcionario;
 import br.com.folha.model.FuncionarioComissionado;
@@ -19,9 +20,7 @@ public class FolhaService {
     private final List<Funcionario> lista;
 
     public FolhaService(FuncionarioRepository repository) throws Exception {
-        // Carrega as configurações do arquivo
         ConfiguracaoRepository.carregar();
-        // Sincroniza o salário base na classe Funcionario
         Funcionario.setSalarioBase(Configuracao.getSalarioBase());
 
         this.repository = repository;
@@ -37,7 +36,6 @@ public class FolhaService {
         return lista.stream().anyMatch(f -> f.getMatricula() == matricula);
     }
 
-    // Teto dinâmico baseado na configuração
     public boolean bonusUltrapassaTeto(int quantidade, double valorPorPeca) {
         double bonus = quantidade * valorPorPeca;
         return bonus > Configuracao.getTetoBonusAbsoluto();
@@ -45,6 +43,15 @@ public class FolhaService {
 
     public double getTetoBonusProducao() {
         return Configuracao.getTetoBonusAbsoluto();
+    }
+
+    // ── Nome similar (ignora caixa e acentos, devolve lista de funcionários com nome parecido) ──
+    public List<Funcionario> buscarPorNomeSimilar(String nome, int matriculaIgnorar) {
+        String nomeNormalizado = Funcionario.normalizarComparacao(nome);
+        return lista.stream()
+                .filter(f -> f.getMatricula() != matriculaIgnorar)
+                .filter(f -> Funcionario.normalizarComparacao(f.getNome()).equals(nomeNormalizado))
+                .collect(Collectors.toList());
     }
 
     // ── Cadastros ──
@@ -79,7 +86,7 @@ public class FolhaService {
         return backup;
     }
 
-    // ── Importação, novo mês, edição, remoção (mantidos iguais) ──
+    // ── Importação, novo mês, edição, remoção ──
     public List<Funcionario> validarArquivoImportacao(String caminho) throws Exception {
         return repository.importarDeArquivo(caminho);
     }
@@ -117,21 +124,17 @@ public class FolhaService {
         String nome = original.getNome();
         int matricula = original.getMatricula();
         String tipo = original.getTipo();
-        
+
         if (tipo.equals("Padrao")) {
             return new FuncionarioPadrao(nome, matricula);
-        } 
-        else if (tipo.equals("Comissionado")) {
-            // Mantém o percentual de comissão, zera apenas o valor de vendas
+        } else if (tipo.equals("Comissionado")) {
             double percentual = ((FuncionarioComissionado) original).getPercentualComissao();
             return new FuncionarioComissionado(nome, matricula, 0.0, percentual);
-        } 
-        else if (tipo.equals("Producao")) {
-            // Mantém o valor por peça, zera apenas a quantidade produzida
+        } else if (tipo.equals("Producao")) {
             double valorPeca = ((FuncionarioProducao) original).getValorPorPeca();
             return new FuncionarioProducao(nome, matricula, 0, valorPeca);
         }
-        return original; // fallback
+        return original;
     }
 
     public Funcionario buscarPorMatricula(int matricula) {
@@ -173,7 +176,9 @@ public class FolhaService {
                                           Integer novaQtd, Double novoValorPeca) throws Exception {
         Funcionario antigo = buscarPorMatricula(matricula);
         if (antigo == null) throw new Exception("Matricula nao encontrada.");
-        String nomeFinal = (novoNome != null && !novoNome.trim().isEmpty()) ? Funcionario.normalizarNome(novoNome) : antigo.getNome();
+        String nomeFinal = (novoNome != null && !novoNome.trim().isEmpty())
+                ? Funcionario.normalizarNome(novoNome)
+                : antigo.getNome();
         String tipoFinal = (novoTipo != null) ? novoTipo : antigo.getTipo();
         int idx = lista.indexOf(antigo);
         Funcionario novo = null;
@@ -205,7 +210,7 @@ public class FolhaService {
         salvar();
     }
 
-    // ── Configurações do sistema ──
+    // ── Configurações ──
     public double getSalarioBase() {
         return Configuracao.getSalarioBase();
     }
@@ -218,8 +223,6 @@ public class FolhaService {
         Configuracao.setSalarioBase(novoSalario);
         Funcionario.setSalarioBase(novoSalario);
         ConfiguracaoRepository.salvar();
-        // Recálculo automático? Os funcionários já usam getSalarioBase() ao calcular,
-        // então não precisa recriar a lista.
     }
 
     public void setTetoPercentual(double novoPercentual) {
@@ -227,7 +230,6 @@ public class FolhaService {
         ConfiguracaoRepository.salvar();
     }
 
-    // ── NOVO MÉTODO para calcular total da folha ──
     public double calcularTotalFolha() {
         return lista.stream().mapToDouble(Funcionario::calcularSalarioFinal).sum();
     }
