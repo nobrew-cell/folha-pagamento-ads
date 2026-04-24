@@ -16,8 +16,12 @@ public class FuncionarioComissionado extends Funcionario {
         return (vendas * percentualComissao) / 100.0;
     }
 
-    @Override public String getTipo()              { return "Comissionado"; }
-    @Override public double calcularSalarioFinal() { return getSalarioBase() + calcularComissao(); }
+    @Override public String getTipo() { return "Comissionado"; }
+
+    @Override
+    public double calcularSalarioFinal(double salarioBase) {
+        return salarioBase + calcularComissao();
+    }
 
     @Override
     public String getDetalheExtra() {
@@ -26,32 +30,36 @@ public class FuncionarioComissionado extends Funcionario {
     }
 
     @Override
-    public String toTSV() {
+    public String toTSV(double salarioBase) {
         return matricula + "\t" +
                nome + "\t" +
                "COMISSIONADO\t" +
-               getSalarioBase() + "\t" +
+               salarioBase + "\t" +
                vendas + "\t" +
                percentualComissao + "\t" +
                "0\t0\t" +
-               calcularSalarioFinal() + "\t" +
+               calcularSalarioFinal(salarioBase) + "\t" +
                getMesAnoAtual();
     }
 
     @Override
-    public String toXLS() {
+    public String toXLS(double salarioBase) {
         java.time.LocalDateTime agora = java.time.LocalDateTime.now();
         return "<tr style='background-color: #FCE4D6;'>" +
-               "<td>" + matricula + "</td><td>" + nome + "</td><td>COMISSIONADO\n" +
-               "<td>" + getSalarioBase() + "</td><td>" + vendas + "</td>" +
-               "<td>" + percentualComissao + "</td><td>0\n" +
-               "<td>0\n" +
-               "<td>" + calcularSalarioFinal() + "</td>" +
-               "<td>" + agora.getMonthValue() + "</td>" +
-               "<td>" + agora.getYear() + "</td>" +
-               "</table>";
+               "<td>" + matricula                              + "</td>" +
+               "<td>" + nome                                   + "</td>" +
+               "<td>COMISSIONADO</td>"                                   +
+               "<td>" + salarioBase                            + "</td>" +
+               "<td>" + vendas                                 + "</td>" +
+               "<td>" + percentualComissao                     + "</td>" +
+               "<td>0</td>"                                              +
+               "<td>0</td>"                                              +
+               "<td>" + calcularSalarioFinal(salarioBase)      + "</td>" +
+               "<td>" + agora.getMonthValue()                  + "</td>" +
+               "<td>" + agora.getYear()                        + "</td>" +
+               "</tr>";
     }
 
-    public double getVendas() { return vendas; }
-    public double getPercentualComissao() { return percentualComissao; }
+    public double getVendas()              { return vendas; }
+    public double getPercentualComissao()  { return percentualComissao; }
 }
