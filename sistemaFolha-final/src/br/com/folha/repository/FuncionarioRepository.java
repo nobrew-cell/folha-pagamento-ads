@@ -3,8 +3,11 @@ package br.com.folha.repository;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Scanner;
 
 import br.com.folha.model.Funcionario;
@@ -21,6 +24,11 @@ import br.com.folha.model.FuncionarioProducao;
  *   Linhas 3+: dados dos funcionários
  *
  * Arquivos antigos (sem linha #CONFIG) são aceitos com valores padrão.
+ *
+ * CORREÇÃO (regressão 3.3 / 3.4):
+ *   toXLS() e toTSV() de FuncionarioProducao agora recebem o salário
+ *   pré-calculado com teto, garantindo que o valor exportado seja
+ *   idêntico ao exibido na folha da tela.
  */
 public class FuncionarioRepository {
 
@@ -31,6 +39,16 @@ public class FuncionarioRepository {
     // Valores padrão usados quando o arquivo não tem linha #CONFIG
     private static final double DEFAULT_SALARIO_BASE    = 2000.00;
     private static final double DEFAULT_TETO_PERCENTUAL = 200.0;
+
+    // Formatadores de data para nomes de arquivo
+    private static final DateTimeFormatter FMT_TIMESTAMP =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
+    private static final DateTimeFormatter FMT_MES_ANO =
+            DateTimeFormatter.ofPattern("yyyy-MM");
+    private static final String[] MESES_PT = {
+        "", "janeiro", "fevereiro", "marco", "abril", "maio", "junho",
+        "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"
+    };
 
     // ── Container para o resultado do carregamento ────────────────────────
 
@@ -185,7 +203,7 @@ public class FuncionarioRepository {
      */
     public String resetar(List<Funcionario> lista,
                           double salarioBase, double tetoPercentual) throws IOException {
-        String timestamp    = timestamp();
+        String timestamp     = timestamp();
         new File("backups").mkdirs();
         String caminhoBackup = "backups/backup_" + timestamp + ".tsv";
         escreverTSV(caminhoBackup, lista, salarioBase, tetoPercentual);
@@ -217,11 +235,17 @@ public class FuncionarioRepository {
         return new String[]{ okTsv ? tsv : null, okXls ? xls : null };
     }
 
+    /**
+     * Salva histórico do mês com nome no formato YYYY-MM_nome-do-mes.tsv
+     * para facilitar ordenação e leitura humana.
+     */
     public String salvarHistorico(List<Funcionario> lista,
                                   double salarioBase, double tetoPercentual) throws IOException {
         new File("historico").mkdirs();
-        String timestamp = timestamp();
-        String caminho   = "historico/folha_" + timestamp + ".tsv";
+        LocalDateTime agora = LocalDateTime.now();
+        String mesAno  = agora.format(FMT_MES_ANO);
+        String nomeMes = MESES_PT[agora.getMonthValue()];
+        String caminho = "historico/" + mesAno + "_" + nomeMes + "_" + timestamp() + ".tsv";
         if (!escreverTSV(caminho, lista, salarioBase, tetoPercentual)) {
             throw new IOException("Falha ao salvar historico.");
         }
@@ -237,13 +261,23 @@ public class FuncionarioRepository {
 
     // ── Métodos privados de escrita ───────────────────────────────────────
 
+    /**
+     * Escreve TSV com salário correto (com teto) para FuncionarioProducao.
+     * Resolve a regressão 3.3 / 3.4 do segundo relatório.
+     */
     private boolean escreverTSV(String caminho, List<Funcionario> lista,
                                 double salarioBase, double tetoPercentual) {
         try (FileWriter fw = new FileWriter(caminho)) {
             fw.write("#CONFIG\t" + salarioBase + "\t" + tetoPercentual + "\n");
             fw.write(CABECALHO + "\n");
             for (Funcionario f : lista) {
-                fw.write(f.toTSV(salarioBase) + "\n");
+                if (f instanceof FuncionarioProducao fp) {
+                    double teto = salarioBase * (tetoPercentual / 100.0);
+                    double salarioComTeto = fp.calcularSalarioFinal(salarioBase, teto);
+                    fw.write(fp.toTSV(salarioBase, salarioComTeto) + "\n");
+                } else {
+                    fw.write(f.toTSV(salarioBase) + "\n");
+                }
             }
             return true;
         } catch (IOException e) {
@@ -252,6 +286,10 @@ public class FuncionarioRepository {
         }
     }
 
+    /**
+     * Escreve XLS com salário correto (com teto) para FuncionarioProducao.
+     * Resolve a regressão 3.3 do segundo relatório.
+     */
     private boolean escreverXLS(String caminho, List<Funcionario> lista,
                                 double salarioBase, double tetoPercentual) {
         try (FileWriter fw = new FileWriter(caminho)) {
@@ -265,15 +303,19 @@ public class FuncionarioRepository {
             fw.write("<th>SALARIO_TOTAL</th><th>MES</th><th>ANO</th>");
             fw.write("</tr>\n");
 
-            // Linhas de funcionários
+            // Linhas de funcionários — CORREÇÃO: produção usa salário com teto
             double total = 0;
+            double teto  = salarioBase * (tetoPercentual / 100.0);
             for (Funcionario f : lista) {
-                double salario = (f instanceof FuncionarioProducao)
-                        ? ((FuncionarioProducao) f).calcularSalarioFinal(
-                                salarioBase, salarioBase * (tetoPercentual / 100.0))
-                        : f.calcularSalarioFinal(salarioBase);
-                total += salario;
-                fw.write(f.toXLS(salarioBase) + "\n");
+                if (f instanceof FuncionarioProducao fp) {
+                    double salarioComTeto = fp.calcularSalarioFinal(salarioBase, teto);
+                    total += salarioComTeto;
+                    fw.write(fp.toXLS(salarioBase, salarioComTeto) + "\n");
+                } else {
+                    double salario = f.calcularSalarioFinal(salarioBase);
+                    total += salario;
+                    fw.write(f.toXLS(salarioBase) + "\n");
+                }
             }
 
             // Linha de total
@@ -292,7 +334,6 @@ public class FuncionarioRepository {
     }
 
     private String timestamp() {
-        return java.time.LocalDateTime.now()
-                .format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss"));
+        return LocalDateTime.now().format(FMT_TIMESTAMP);
     }
 }

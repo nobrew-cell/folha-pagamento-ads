@@ -33,10 +33,10 @@ public class FuncionarioProducao extends Funcionario {
     }
 
     /**
-     * Sobrecarga sem teto — aplicada quando o contexto não tem teto disponível
-     * (ex: importação antes de carregar as configurações).
-     * NÃO deve ser usada para exibição em folha nem para exportação;
-     * nesses contextos sempre passe o teto explicitamente.
+     * Sobrecarga sem teto — mantida apenas para compatibilidade com a interface
+     * abstrata. NÃO deve ser usada para exibição em folha nem para exportação;
+     * nesses contextos sempre use calcularSalarioFinal(base, teto) ou
+     * FolhaService.calcularSalarioFinalCompleto().
      */
     @Override
     public double calcularSalarioFinal(double salarioBase) {
@@ -49,8 +49,14 @@ public class FuncionarioProducao extends Funcionario {
                 moeda(calcularBonus()), quantidadeProduzida, moeda(valorPorPeca));
     }
 
-    @Override
-    public String toTSV(double salarioBase) {
+    /**
+     * Serialização TSV — recebe o salário já calculado com teto pelo FolhaService
+     * para garantir consistência entre o valor exibido na tela e o gravado em arquivo.
+     *
+     * @param salarioBase       valor do salário base (gravado na coluna SALARIO_BASE)
+     * @param salarioCalculado  valor final já com teto aplicado (gravado em SALARIO_TOTAL)
+     */
+    public String toTSV(double salarioBase, double salarioCalculado) {
         return matricula + "\t" +
                nome + "\t" +
                "PRODUCAO\t" +
@@ -58,26 +64,51 @@ public class FuncionarioProducao extends Funcionario {
                "0\t0\t" +
                quantidadeProduzida + "\t" +
                valorPorPeca + "\t" +
-               calcularSalarioFinal(salarioBase) + "\t" +
+               salarioCalculado + "\t" +
                getMesAnoAtual();
     }
 
+    /**
+     * Sobrecarga de compatibilidade — usa calcularSalarioFinal sem teto.
+     * Usada apenas em contextos onde o teto não está disponível (ex: importação).
+     * Para exportação real, prefira toTSV(salarioBase, salarioCalculado).
+     */
     @Override
-    public String toXLS(double salarioBase) {
+    public String toTSV(double salarioBase) {
+        return toTSV(salarioBase, calcularSalarioFinal(salarioBase));
+    }
+
+    /**
+     * Serialização XLS — recebe o salário já calculado com teto pelo FolhaService
+     * para garantir consistência entre o valor exibido na tela e o exportado.
+     *
+     * @param salarioBase       valor do salário base (exibido na coluna SALARIO_BASE)
+     * @param salarioCalculado  valor final já com teto aplicado (exibido em SALARIO_TOTAL)
+     */
+    public String toXLS(double salarioBase, double salarioCalculado) {
         java.time.LocalDateTime agora = java.time.LocalDateTime.now();
         return "<tr style='background-color: #EBE6F4;'>" +
-               "<td>" + matricula                         + "</td>" +
-               "<td>" + nome                              + "</td>" +
-               "<td>PRODUCAO</td>"                                  +
-               "<td>" + salarioBase                        + "</td>" +
-               "<td>0</td>"                                         +
-               "<td>0</td>"                                         +
-               "<td>" + quantidadeProduzida                + "</td>" +
-               "<td>" + valorPorPeca                       + "</td>" +
-               "<td>" + calcularSalarioFinal(salarioBase)  + "</td>" +
-               "<td>" + agora.getMonthValue()              + "</td>" +
-               "<td>" + agora.getYear()                    + "</td>" +
+               "<td>" + matricula                  + "</td>" +
+               "<td>" + nome                       + "</td>" +
+               "<td>PRODUCAO</td>"                          +
+               "<td>" + salarioBase                + "</td>" +
+               "<td>0</td>"                                 +
+               "<td>0</td>"                                 +
+               "<td>" + quantidadeProduzida        + "</td>" +
+               "<td>" + valorPorPeca               + "</td>" +
+               "<td>" + salarioCalculado           + "</td>" +
+               "<td>" + agora.getMonthValue()      + "</td>" +
+               "<td>" + agora.getYear()            + "</td>" +
                "</tr>";
+    }
+
+    /**
+     * Sobrecarga de compatibilidade — usa calcularSalarioFinal sem teto.
+     * Para exportação real, prefira toXLS(salarioBase, salarioCalculado).
+     */
+    @Override
+    public String toXLS(double salarioBase) {
+        return toXLS(salarioBase, calcularSalarioFinal(salarioBase));
     }
 
     public int    getQuantidadeProduzida() { return quantidadeProduzida; }
