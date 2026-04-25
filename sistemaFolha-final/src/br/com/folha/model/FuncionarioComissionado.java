@@ -25,7 +25,7 @@ public class FuncionarioComissionado extends Funcionario {
 
     @Override
     public String getDetalheExtra() {
-        return String.format("Comissao     : %s  (%.1f%% sobre vendas de %s)",
+        return String.format("Comissao     : %s  \n  (%.1f%% sobre vendas de %s)",
                 moeda(calcularComissao()), percentualComissao, moeda(vendas));
     }
 

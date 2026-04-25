@@ -156,14 +156,40 @@ public class FolhaService {
         return backup;
     }
 
-    // ── Importação ────────────────────────────────────────────────────────
+    // ── Importação com backup automático ──────────────────────────────────
 
     public List<Funcionario> validarArquivoImportacao(String caminho) throws Exception {
         return repository.importarDeArquivo(caminho);
     }
 
+    /**
+     * Importa um arquivo TSV, substituindo completamente os dados atuais.
+     * Antes de qualquer alteração, cria um backup do estado atual na pasta backups/.
+     *
+     * @param caminho caminho do arquivo TSV a ser importado
+     * @throws Exception se a leitura do arquivo ou a criação do backup falhar
+     */
     public void importarArquivo(String caminho) throws Exception {
+        // 1. Cria backup do estado atual antes de qualquer alteração
+        String backupPath = null;
+        try {
+            backupPath = repository.criarBackup("antes_import", lista, salarioBase, tetoBonusPercentual);
+            System.out.println("\n  Backup: " + backupPath);
+            System.out.println("  Dica: Restaure manualmente se necessário.");
+        } catch (IOException e) {
+            // Se o backup falhar, avisa mas dá opção de continuar (perguntar ao usuário)
+            System.out.println("  [AVISO] Nao foi possivel criar backup: " + e.getMessage());
+            System.out.print("  Deseja continuar a importacao mesmo assim? (S/N): ");
+            // Nota: esta pergunta depende de Scanner; será feita na UI.
+            // Por isso, a UI deve captar a exceção e perguntar.
+            // Para manter a camada service limpa, vamos relançar a exceção e deixar a UI decidir.
+            throw new IOException("Falha ao criar backup. Importacao cancelada para sua seguranca.", e);
+        }
+
+        // 2. Lê o novo arquivo
         List<Funcionario> novaLista = repository.importarDeArquivo(caminho);
+
+        // 3. Substitui os dados
         lista.clear();
         lista.addAll(novaLista);
         salvar();

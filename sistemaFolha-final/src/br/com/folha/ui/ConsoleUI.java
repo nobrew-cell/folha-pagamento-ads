@@ -13,9 +13,12 @@ import br.com.folha.service.FolhaService;
 import br.com.folha.util.LoggerUtil;
 
 public class ConsoleUI {
-
+    // SEP (Separator): Utilizada em Menus Principais para delimitar cabeçalhos e rodapés de navegação.
     private static final String SEP = "======================================================";
+    // LIN (Line): Linha divisora estática, aplicada majoritariamente em tabelas e listagens de dados (leitura).
     private static final String LIN = "------------------------------------------------------";
+    // SEA (Wave): Linha dinâmica (ondas), exclusiva para áreas de edição, alertas críticos ou entrada de dados (escrita).
+    private static final String SEA = "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
 
     private final Scanner      sc;
     private final FolhaService service;
@@ -70,7 +73,7 @@ public class ConsoleUI {
     private void exibirBoasVindas() {
         System.out.println("\n" + SEP);
         System.out.println("      Bem-vindo ao Sistema de Folha de Pagamento");
-        System.out.println("           Versao 5.2  |  Salarios mensais");
+        System.out.println("           Versao 4.1  |  Salarios mensais");
         System.out.println(SEP);
         System.out.println("  Este e o seu primeiro acesso.");
         System.out.println("  Nenhum funcionario cadastrado ainda.");
@@ -79,28 +82,21 @@ public class ConsoleUI {
     }
 
     // ── Menu ADM ──────────────────────────────────────────────────────────
-    //
-    // CORREÇÃO (bug 3.2 do segundo relatório):
-    //   Operações repetíveis (editar, remover, configurações, editar lote)
-    //   permanecem no menu ADM após a conclusão.
-    //   Apenas operações únicas/destrutivas (exportar, importar, novo mês, reset)
-    //   fecham o menu ADM e retornam ao menu principal após sucesso.
-
     private void menuADM() {
         int opcao = -1;
         while (opcao != 0) {
             System.out.println("\n" + SEP);
             System.out.println("                  MENU ADMINISTRATIVO");
             System.out.println(SEP);
-            System.out.println("  1 - Exportar TSV e XLS");
-            System.out.println("  2 - Importar arquivo TSV (substitui todos os dados)");
-            System.out.println("  3 - Novo mes (arquiva atual e limpa a base)");
-            System.out.println("  4 - Editar funcionario");
-            System.out.println("  5 - Remover funcionario");
-            System.out.println("  6 - Resetar sistema (backup automatico)");
-            System.out.println("  7 - Configuracoes do sistema");
-            System.out.println("  8 - Editar funcionarios em lote (por tipo)");
-            System.out.println("  0 - Voltar ao menu principal");
+            System.out.println("  (1) - Exportar TSV e XLS");
+            System.out.println("  (2) - Importar arquivo TSV (substitui todos os dados)");
+            System.out.println("  (3) - Novo mes (arquiva atual e limpa a base)");
+            System.out.println("  (4) - Editar funcionario");
+            System.out.println("  (5) - Remover funcionario");
+            System.out.println("  (6) - Resetar sistema (backup automatico)");
+            System.out.println("  (7) - Configuracoes do sistema");
+            System.out.println("  (8) - Editar funcionarios em lote (por tipo)");
+            System.out.println("  (0) - Voltar ao menu principal");
             System.out.println(SEP);
             System.out.print("  Opcao: ");
 
@@ -129,15 +125,13 @@ public class ConsoleUI {
     }
 
     // ── Importar ──────────────────────────────────────────────────────────
-
     private boolean importarArquivo() {
-        System.out.println("\n" + LIN);
+        System.out.println("\n" + SEA);
         System.out.println("            IMPORTAR DADOS DE ARQUIVO TSV");
-        System.out.println(LIN);
+        System.out.println(SEA);
 
         String caminho = null;
 
-        // Tenta abrir o seletor gráfico; cai para entrada manual em headless
         try {
             System.out.println("  Abrindo seletor de arquivos...");
             JFileChooser chooser = new JFileChooser(".");
@@ -163,7 +157,7 @@ public class ConsoleUI {
         try {
             List<Funcionario> importados = service.validarArquivoImportacao(caminho);
             System.out.println("  Arquivo valido. " + importados.size() + " funcionario(s) encontrado(s).");
-            System.out.print("  Isso substituira TODOS os dados atuais. Confirmar? (S/N): ");
+            System.out.print("  Isso substituira TODOS os dados atuais. \n  Confirmar? (S/N): ");
             String conf = sc.nextLine().trim().toUpperCase();
             if (conf.equals("S")) {
                 service.importarArquivo(caminho);
@@ -183,13 +177,12 @@ public class ConsoleUI {
     }
 
     // ── Novo mês ──────────────────────────────────────────────────────────
-
     private boolean novoMes() {
-        System.out.println("\n" + LIN);
+        System.out.println("\n" + SEA);
         System.out.println("                  INICIAR NOVO MES");
-        System.out.println(LIN);
+        System.out.println(SEA);
         System.out.println("  Isso salvara o mes atual na pasta 'historico/'");
-        System.out.print("  Deseja copiar os funcionarios do mes anterior (zerando vendas/pecas)? (S/N): ");
+        System.out.print("  Deseja copiar os funcionarios do mes anterior \n  (zerando vendas/pecas)? (S/N): ");
         String copiar = sc.nextLine().trim().toUpperCase();
         boolean copiarFuncionarios = copiar.equals("S");
 
@@ -216,13 +209,12 @@ public class ConsoleUI {
         }
     }
 
-    // ── Editar funcionário ────────────────────────────────────────────────
-
+    // ── Editar funcionário (individual) ───────────────────────────────────
     private void editarFuncionario() {
-        System.out.println("\n" + LIN);
+        System.out.println("\n" + SEA);
         System.out.println("                 EDITAR FUNCIONARIO");
-        System.out.println(LIN);
-        System.out.print("  Digite a matricula do funcionario (0 para cancelar): ");
+        System.out.println(SEA);
+        System.out.print("  Digite a matricula (0 para cancelar): ");
         int mat = lerInteiro();
         if (mat == 0) { System.out.println("  Operacao cancelada."); return; }
 
@@ -236,10 +228,6 @@ public class ConsoleUI {
         editarFuncionarioComDados(mat, f);
     }
 
-    /**
-     * Lógica de edição compartilhada entre editarFuncionario() e editarLote().
-     * Retorna true se a edição foi concluída com sucesso.
-     */
     private boolean editarFuncionarioComDados(int mat, Funcionario f) {
         System.out.println("\n  Dados atuais:");
         System.out.println("  Nome: " + f.getNomeExibicao());
@@ -252,9 +240,13 @@ public class ConsoleUI {
             System.out.println("  Bonus por peca: " + Funcionario.moeda(service.getValorPecaFuncionario(mat)));
         }
 
-        System.out.println(LIN);
+        System.out.println("------------------ ANTES DISSO... --------------------");
         System.out.println("  Deseja alterar o tipo do funcionario?");
-        System.out.println("  1 - Padrao  |  2 - Comissionado  |  3 - Producao  |  ENTER - manter atual");
+        System.out.println("------------------------------------------------------");
+        System.out.println("    1 - Padrao       |     2 - Comissionado             ");
+        System.out.println("    3 - Producao     |     ENTER - Manter (" + f.getTipo() + ")");
+        System.out.println("------------------------------------------------------");
+
         System.out.print("  Opcao: ");
         String tipoInput = sc.nextLine().trim();
         String novoTipo  = null;
@@ -364,17 +356,15 @@ public class ConsoleUI {
     }
 
     // ── Edição em lote ────────────────────────────────────────────────────
-    //
-    // Permite editar todos os funcionários de um determinado tipo em sequência.
-    // E = editar atual, N = pular, Q = sair do lote.
-    // Não remove nem fecha o menu ADM — é uma operação repetível.
-
     private void editarLote() {
-        System.out.println("\n" + LIN);
-        System.out.println("           EDICAO EM LOTE POR TIPO");
-        System.out.println(LIN);
+        System.out.println("\n" + SEA);
+        System.out.println("              EDICAO EM LOTE POR TIPO");
+        System.out.println(SEA);
         System.out.println("  Escolha o tipo a editar em lote:");
-        System.out.println("  1 - Padrao  |  2 - Comissionado  |  3 - Producao  |  0 - Cancelar");
+        System.out.println("------------------------------------------------------");
+        System.out.println("    |    1 - Padrao     |    2 - Comissionado    |");
+        System.out.println("    |    3 - Producao   |    0 - Cancelar        |");
+        System.out.println("------------------------------------------------------");
         System.out.print("  Opcao: ");
 
         int opcaoTipo = lerInteiro();
@@ -407,7 +397,7 @@ public class ConsoleUI {
 
         for (int i = 0; i < filtrados.size(); i++) {
             Funcionario f = filtrados.get(i);
-            System.out.println("\n" + LIN);
+            System.out.println("\n" + SEA);
             System.out.printf("  (%d/%d) %s  |  Matricula: %d%n",
                     i + 1, filtrados.size(), f.getNomeExibicao(), f.getMatricula());
             System.out.print("  Acao [E/N/Q]: ");
@@ -424,9 +414,8 @@ public class ConsoleUI {
                 }
                 case "Q" -> {
                     System.out.println("  Saindo do lote.");
-                    // soma os restantes como pulados
                     pulados += filtrados.size() - i - 1;
-                    i = filtrados.size(); // encerra o loop
+                    i = filtrados.size();
                 }
                 default -> {
                     System.out.println("  Opcao invalida. Pulando.");
@@ -442,11 +431,10 @@ public class ConsoleUI {
     }
 
     // ── Remover funcionário ───────────────────────────────────────────────
-
     private void removerFuncionario() {
-        System.out.println("\n" + LIN);
+        System.out.println("\n" + SEA);
         System.out.println("                REMOVER FUNCIONARIO");
-        System.out.println(LIN);
+        System.out.println(SEA);
         System.out.print("  Digite a matricula (0 para cancelar): ");
         int mat = lerInteiro();
         if (mat == 0) { System.out.println("  Operacao cancelada."); return; }
@@ -469,13 +457,12 @@ public class ConsoleUI {
     }
 
     // ── Configurações ─────────────────────────────────────────────────────
-
     private void configuracoes() {
         int op = -1;
         while (op != 0) {
-            System.out.println("\n" + LIN);
+            System.out.println("\n" + SEA);
             System.out.println("           CONFIGURACOES DO SISTEMA");
-            System.out.println(LIN);
+            System.out.println(SEA);
             System.out.println("  Salario base atual : " + Funcionario.moeda(service.getSalarioBase()));
             System.out.println("  Teto de bonus      : " + service.getTetoPercentual()
                     + "% do salario base  (" + Funcionario.moeda(service.getTetoBonusAbsoluto()) + ")");
@@ -518,7 +505,6 @@ public class ConsoleUI {
     }
 
     // ── Gerar folha ───────────────────────────────────────────────────────
-
     private void gerarFolha() {
         var lista = service.listar();
 
@@ -550,8 +536,10 @@ public class ConsoleUI {
     }
 
     // ── Exportar ──────────────────────────────────────────────────────────
-
     private boolean exportar() {
+        System.out.println("\n" + SEA);
+        System.out.println("                 EXPORTAR TSV E XLS");
+        System.out.println(SEA);
         System.out.println("\n  Exportando dados...");
         String[] caminhos = service.exportar();
         System.out.println();
@@ -573,14 +561,13 @@ public class ConsoleUI {
     }
 
     // ── Reset ─────────────────────────────────────────────────────────────
-
     private boolean resetar() {
-        System.out.println("\n" + LIN);
-        System.out.println("                MODO ADM - RESET TOTAL");
-        System.out.println(LIN);
-        System.out.println("  Isso apagara todos os funcionarios.");
+        System.out.println("\n" + SEA);
+        System.out.println("              RESET DE DADOS DO SISTEMA");
+        System.out.println(SEA);
+        System.out.println("  ATENCAO: Esta acao apagara todos os funcionarios.");
         System.out.println("  Um backup automatico sera salvo antes.");
-        System.out.println(LIN);
+        System.out.println(SEA);
         System.out.print("  Digite CONFIRMAR para prosseguir: ");
         String confirm = sc.nextLine().trim();
 
@@ -604,17 +591,12 @@ public class ConsoleUI {
         }
     }
 
-    // ── Cadastro padrão ───────────────────────────────────────────────────
-    //
-    // CORREÇÃO (bug 3.1 do segundo relatório):
-    //   Mensagem e comportamento unificados — "0" cancela em qualquer campo de texto,
-    //   ENTER cancela em campos numéricos (onde 0 é valor legítimo).
-
+    // ── Cadastro Padrão (cancelamento só com 0 no nome/matrícula) ──────────
     private void cadastrarPadrao() {
-        System.out.println("\n" + LIN);
+        System.out.println("\n" + SEA);
         System.out.println("               NOVO FUNCIONARIO PADRAO");
         System.out.println("      (nome/matricula: digite 0 para cancelar)");
-        System.out.println(LIN);
+        System.out.println(SEA);
 
         String nome = lerTexto("  Nome: ");
         if (nome.equals("0")) { cancelado(); return; }
@@ -640,13 +622,12 @@ public class ConsoleUI {
         System.out.println("\n  [OK] Funcionario cadastrado com sucesso.");
     }
 
-    // ── Cadastro comissionado ─────────────────────────────────────────────
-
+    // ── Cadastro Comissionado (campos numéricos obrigatórios; ENTER não cancela) ──
     private void cadastrarComissionado() {
-        System.out.println("\n" + LIN);
+        System.out.println("\n" + SEA);
         System.out.println("            NOVO FUNCIONARIO COMISSIONADO");
-        System.out.println("      (nome/matricula: 0 cancela | valores: ENTER cancela, 0 = zero)");
-        System.out.println(LIN);
+        System.out.println("             (0 cancela campos de texto)");
+        System.out.println(SEA);
 
         String nome = lerTexto("  Nome: ");
         if (nome.equals("0")) { cancelado(); return; }
@@ -667,26 +648,20 @@ public class ConsoleUI {
             }
         }
 
-        System.out.print("  Total de vendas mensais (R$): ");
-        Double vendas = lerDoubleComCancelamento();
-        if (vendas == null) { cancelado(); return; }
-
-        System.out.print("  Percentual de comissao (%): ");
-        Double perc = lerDoubleComCancelamento();
-        if (perc == null) { cancelado(); return; }
+        double vendas = lerDoubleObrigatorio("  Total de vendas mensais (R$): ");
+        double perc   = lerDoubleObrigatorio("  Percentual de comissao (%): ");
 
         service.cadastrarComissionado(nome, mat, vendas, perc);
         LoggerUtil.logCadastro("Comissionado", nome, mat);
         System.out.println("\n  [OK] Funcionario cadastrado com sucesso.");
     }
 
-    // ── Cadastro produção ─────────────────────────────────────────────────
-
+    // ── Cadastro Produção (campos numéricos obrigatórios; ENTER não cancela) ──
     private void cadastrarProducao() {
-        System.out.println("\n" + LIN);
+        System.out.println("\n" + SEA);
         System.out.println("             NOVO FUNCIONARIO DE PRODUCAO");
-        System.out.println("      (nome/matricula: 0 cancela | valores: ENTER cancela, 0 = zero)");
-        System.out.println(LIN);
+        System.out.println("             (0  cancela campos de texto)");
+        System.out.println(SEA);
 
         String nome = lerTexto("  Nome: ");
         if (nome.equals("0")) { cancelado(); return; }
@@ -707,13 +682,8 @@ public class ConsoleUI {
             }
         }
 
-        System.out.print("  Pecas produzidas no mes: ");
-        Integer qtd = lerInteiroComCancelamento();
-        if (qtd == null) { cancelado(); return; }
-
-        System.out.print("  Bonus por peca - valor liquido por unidade (R$): ");
-        Double vpeca = lerDoubleComCancelamento();
-        if (vpeca == null) { cancelado(); return; }
+        int qtd = lerInteiroObrigatorio("  Pecas produzidas no mes: ");
+        double vpeca = lerDoubleObrigatorio("  Bonus por peca - valor liquido (R$): ");
 
         if (service.bonusUltrapassaTeto(qtd, vpeca)) {
             System.out.println("\n  [BLOQUEIO] Bonus de " + Funcionario.moeda(qtd * vpeca) +
@@ -728,28 +698,36 @@ public class ConsoleUI {
         System.out.println("\n  [OK] Funcionario cadastrado com sucesso.");
     }
 
-    // ── Encerrar ──────────────────────────────────────────────────────────
-
-    private void encerrar() {
-        boolean salvo = service.salvar();
-        System.out.println("\n" + SEP);
-        if (salvo) {
-            System.out.println("              Dados salvos. Volte sempre!");
-        } else {
-            System.out.println("  [AVISO] Falha ao salvar os dados!");
-            System.out.println("  Os dados desta sessao podem ter sido perdidos.");
-            System.out.println("  Verifique permissoes de escrita na pasta do sistema.");
+    // ── NOVOS MÉTODOS DE LEITURA OBRIGATÓRIA (sem cancelamento por ENTER) ──
+    private double lerDoubleObrigatorio(String prompt) {
+        System.out.print(prompt);
+        while (true) {
+            String linha = sc.nextLine().trim().replace(",", ".");
+            try {
+                double v = Double.parseDouble(linha);
+                if (v >= 0) return v;
+                System.out.print("  Nao pode ser negativo. Digite novamente: ");
+            } catch (NumberFormatException e) {
+                System.out.print("  Numero invalido. Digite novamente: ");
+            }
         }
-        System.out.println(SEP + "\n");
     }
 
-    // ── Utilitários de leitura ────────────────────────────────────────────
+    private int lerInteiroObrigatorio(String prompt) {
+        System.out.print(prompt);
+        while (true) {
+            String linha = sc.nextLine().trim();
+            try {
+                int v = Integer.parseInt(linha);
+                if (v >= 0) return v;
+                System.out.print("  Nao pode ser negativo. Digite novamente: ");
+            } catch (NumberFormatException e) {
+                System.out.print("  Numero invalido. Digite novamente: ");
+            }
+        }
+    }
 
-    /**
-     * Lê texto obrigatório.
-     * ENTER em branco → loop (campo obrigatório, com lembrete de usar "0" para cancelar).
-     * "0" → sinaliza cancelamento (quem chama verifica).
-     */
+    // ── MÉTODOS EXISTENTES (preservados e inalterados) ────────────────────
     private String lerTexto(String prompt) {
         System.out.print(prompt);
         String v = sc.nextLine().trim();
@@ -792,74 +770,6 @@ public class ConsoleUI {
         }
     }
 
-    /**
-     * Lê um double para campos de cadastro onde zero é valor legítimo.
-     * ENTER em branco → retorna null (sinal de cancelamento).
-     * "0" ou qualquer número ≥ 0 → retorna o valor.
-     * Número negativo → solicita novamente.
-     */
-    private Double lerDoubleComCancelamento() {
-        while (true) {
-            String linha = sc.nextLine().trim().replace(",", ".");
-            if (linha.isEmpty()) return null; // ENTER = cancelar
-            try {
-                double v = Double.parseDouble(linha);
-                if (v < 0) {
-                    System.out.print("  Nao pode ser negativo (ENTER para cancelar): ");
-                    continue;
-                }
-                return v;
-            } catch (NumberFormatException e) {
-                System.out.print("  Decimal invalido (ENTER para cancelar): ");
-            }
-        }
-    }
-
-    /**
-     * Lê um inteiro para campos de cadastro onde zero é valor legítimo.
-     * ENTER em branco → retorna null (sinal de cancelamento).
-     * 0 ou qualquer inteiro ≥ 0 → retorna o valor.
-     * Negativo → solicita novamente.
-     */
-    private Integer lerInteiroComCancelamento() {
-        while (true) {
-            String linha = sc.nextLine().trim();
-            if (linha.isEmpty()) return null; // ENTER = cancelar
-            try {
-                int v = Integer.parseInt(linha);
-                if (v < 0) {
-                    System.out.print("  Nao pode ser negativo (ENTER para cancelar): ");
-                    continue;
-                }
-                return v;
-            } catch (NumberFormatException e) {
-                System.out.print("  Numero invalido (ENTER para cancelar): ");
-            }
-        }
-    }
-
-    /** Usado na edição: ENTER → -1 (manter atual), número ≥ 0 → novo valor. */
-    private double lerDoubleEdicao() {
-        String linha = sc.nextLine().trim().replace(",", ".");
-        if (linha.isEmpty()) return -1;
-        try {
-            return Double.parseDouble(linha);
-        } catch (NumberFormatException e) {
-            return -1;
-        }
-    }
-
-    /** Usado na edição: ENTER → -1 (manter atual), número ≥ 0 → novo valor. */
-    private int lerInteiroEdicao() {
-        String linha = sc.nextLine().trim();
-        if (linha.isEmpty()) return -1;
-        try {
-            return Integer.parseInt(linha);
-        } catch (NumberFormatException e) {
-            return -1;
-        }
-    }
-
     private double lerDouble() {
         while (true) {
             try {
@@ -870,9 +780,42 @@ public class ConsoleUI {
         }
     }
 
+    private double lerDoubleEdicao() {
+        String linha = sc.nextLine().trim().replace(",", ".");
+        if (linha.isEmpty()) return -1;
+        try {
+            return Double.parseDouble(linha);
+        } catch (NumberFormatException e) {
+            return -1;
+        }
+    }
+
+    private int lerInteiroEdicao() {
+        String linha = sc.nextLine().trim();
+        if (linha.isEmpty()) return -1;
+        try {
+            return Integer.parseInt(linha);
+        } catch (NumberFormatException e) {
+            return -1;
+        }
+    }
+
     private void aguardar(String msg) {
         System.out.print(msg);
         sc.nextLine();
+    }
+
+    private void encerrar() {
+        boolean salvo = service.salvar();
+        System.out.println("\n" + SEP);
+        if (salvo) {
+            System.out.println("              Dados salvos. Volte sempre!");
+        } else {
+            System.out.println("  [AVISO] Falha ao salvar os dados!");
+            System.out.println("  Os dados desta sessao podem ter sido perdidos.");
+            System.out.println("  Verifique permissoes de escrita na pasta do sistema.");
+        }
+        System.out.println(SEP + "\n");
     }
 
     private void cancelado() {

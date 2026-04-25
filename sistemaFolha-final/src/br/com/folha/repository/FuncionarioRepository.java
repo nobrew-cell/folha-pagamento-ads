@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Scanner;
 
 import br.com.folha.model.Funcionario;
@@ -192,6 +191,29 @@ public class FuncionarioRepository {
     public boolean salvar(List<Funcionario> lista,
                           double salarioBase, double tetoPercentual) {
         return escreverTSV(DATABASE, lista, salarioBase, tetoPercentual);
+    }
+
+    /**
+     * Cria um backup completo do estado atual na pasta backups/.
+     * Utilizado antes de importações, resets, etc.
+     *
+     * @param prefixo       identificador da operação (ex: "antes_import")
+     * @param lista         lista atual de funcionários
+     * @param salarioBase   salário base atual
+     * @param tetoPercentual teto percentual atual
+     * @return caminho do arquivo de backup
+     * @throws IOException se falhar ao escrever o arquivo de backup
+     */
+    public String criarBackup(String prefixo, List<Funcionario> lista,
+                              double salarioBase, double tetoPercentual) throws IOException {
+        String timestamp = timestamp();
+        new File("backups").mkdirs();
+        String caminhoBackup = "backups/backup_" + prefixo + "_" + timestamp + ".tsv";
+        boolean ok = escreverTSV(caminhoBackup, lista, salarioBase, tetoPercentual);
+        if (!ok) {
+            throw new IOException("Falha ao criar backup: " + caminhoBackup);
+        }
+        return caminhoBackup;
     }
 
     /**
