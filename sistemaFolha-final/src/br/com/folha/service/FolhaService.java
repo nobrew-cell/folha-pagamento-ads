@@ -25,7 +25,9 @@ public class FolhaService {
 
     // ── Configurações ─────────────────────────────────────────────────────
     private double salarioBase;
-    private double tetoBonusPercentual; // percentual do salárioBase (ex: 200 = 200%)
+    private double tetoBonusPercentual;
+    private int    limiteMaximoMatricula = 0;     // 0 = sem limite
+    private boolean modoSequenciaRigido  = false; // false = flexível (só avisa)
 
     // ── Dados ─────────────────────────────────────────────────────────────
     private final FuncionarioRepository repository;
@@ -36,9 +38,11 @@ public class FolhaService {
     public FolhaService(FuncionarioRepository repository) throws Exception {
         this.repository = repository;
         DadosCarregados dados = repository.carregar();
-        this.lista              = dados.funcionarios;
-        this.salarioBase        = dados.salarioBase;
-        this.tetoBonusPercentual = dados.tetoBonusPercentual;
+        this.lista                   = dados.funcionarios;
+        this.salarioBase              = dados.salarioBase;
+        this.tetoBonusPercentual      = dados.tetoBonusPercentual;
+        this.limiteMaximoMatricula    = dados.limiteMaximoMatricula;
+        this.modoSequenciaRigido      = dados.modoSequenciaRigido;
     }
 
     // ── Configurações — getters/setters ───────────────────────────────────
@@ -53,8 +57,51 @@ public class FolhaService {
     }
 
     public void setTetoPercentual(double novoPercentual) {
-        this.tetoBonusPercentual = novoPercentual;
+    this.tetoBonusPercentual = novoPercentual;
+    salvar();
+    }
+
+    public int getLimiteMaximoMatricula()          { return limiteMaximoMatricula; }
+    public boolean isModoSequenciaRigido()         { return modoSequenciaRigido; }
+
+    public void setLimiteMaximoMatricula(int limite) {
+        this.limiteMaximoMatricula = limite;
         salvar();
+    }
+
+    public void setModoSequenciaRigido(boolean rigido) {
+        this.modoSequenciaRigido = rigido;
+        salvar();
+    }
+
+    /** Retorna mensagem de erro se a matrícula ultrapassar o limite, ou null se ok. */
+    public String validarLimiteMatricula(int matricula) {
+        if (limiteMaximoMatricula > 0 && matricula > limiteMaximoMatricula)
+            return "Matricula " + matricula + " ultrapassa o limite maximo de " + limiteMaximoMatricula + ".";
+        return null;
+    }
+
+    /** Retorna mensagem de erro se houver pulos na sequência (modo rígido), ou null se ok. */
+    public String validarSequenciaRigida(int matricula) {
+        int proxima = lista.stream()
+                .mapToInt(Funcionario::getMatricula)
+                .max()
+                .orElse(0) + 1;
+        if (matricula != proxima)
+            return "Modo rigido: a proxima matricula esperada e " + proxima + ".";
+        return null;
+    }
+
+    /** Retorna lista de matrículas livres menores que a informada. */
+    public List<Integer> matriculasLivresAntes(int matricula) {
+        List<Integer> usadas = lista.stream()
+                .map(Funcionario::getMatricula)
+                .collect(Collectors.toList());
+        List<Integer> livres = new ArrayList<>();
+        for (int i = 1; i < matricula; i++) {
+            if (!usadas.contains(i)) livres.add(i);
+        }
+        return livres;
     }
 
     // ── Listagem ──────────────────────────────────────────────────────────
@@ -139,11 +186,11 @@ public class FolhaService {
      * @return true se a escrita foi bem-sucedida
      */
     public boolean salvar() {
-        return repository.salvar(lista, salarioBase, tetoBonusPercentual);
+        return repository.salvar(lista, salarioBase, tetoBonusPercentual, limiteMaximoMatricula, modoSequenciaRigido);
     }
 
     public String[] exportar() {
-        return repository.exportar(lista, salarioBase, tetoBonusPercentual);
+        return repository.exportar(lista, salarioBase, tetoBonusPercentual, limiteMaximoMatricula, modoSequenciaRigido);
     }
 
     /**
@@ -154,7 +201,7 @@ public class FolhaService {
      *         (a lista em memória NÃO é limpa nesse caso — evita inconsistência)
      */
     public String resetar() throws IOException {
-        String backup = repository.resetar(lista, salarioBase, tetoBonusPercentual);
+        String backup = repository.resetar(lista, salarioBase, tetoBonusPercentual, limiteMaximoMatricula, modoSequenciaRigido);
         lista.clear(); // só limpa a memória após o arquivo ter sido limpo com sucesso
         return backup;
     }
@@ -176,7 +223,7 @@ public class FolhaService {
         // 1. Cria backup do estado atual antes de qualquer alteração
         String backupPath = null;
         try {
-            backupPath = repository.criarBackup("antes_import", lista, salarioBase, tetoBonusPercentual);
+            backupPath = repository.criarBackup("antes_import", lista, salarioBase, tetoBonusPercentual, limiteMaximoMatricula, modoSequenciaRigido);
             System.out.println("\n  Backup: " + backupPath);
             System.out.println("  Dica: Restaure manualmente se necessário.");
         } catch (IOException e) {
@@ -207,7 +254,7 @@ public class FolhaService {
     public String iniciarNovoMes(boolean copiarFuncionarios) throws Exception {
         // Salva histórico antes de qualquer limpeza
         String arquivoHistorico =
-                repository.salvarHistorico(lista, salarioBase, tetoBonusPercentual);
+                repository.salvarHistorico(lista, salarioBase, tetoBonusPercentual, limiteMaximoMatricula, modoSequenciaRigido);
 
         if (copiarFuncionarios) {
             List<Funcionario> novaLista = new ArrayList<>();
@@ -216,10 +263,10 @@ public class FolhaService {
             }
             lista.clear();
             lista.addAll(novaLista);
-            repository.limparDados(salarioBase, tetoBonusPercentual);
+            repository.limparDados(salarioBase, tetoBonusPercentual, limiteMaximoMatricula, modoSequenciaRigido);
             salvar();
         } else {
-            repository.limparDados(salarioBase, tetoBonusPercentual);
+            repository.limparDados(salarioBase, tetoBonusPercentual, limiteMaximoMatricula, modoSequenciaRigido);
             lista.clear();
         }
         return arquivoHistorico;
