@@ -1,2 +1,2 @@
 @echo off
-powershell -ExecutionPolicy Bypass -File "%~dp0executar.ps1"
+powershell -ExecutionPolicy Bypass -File "%~dp0scripts\executar.ps1"
