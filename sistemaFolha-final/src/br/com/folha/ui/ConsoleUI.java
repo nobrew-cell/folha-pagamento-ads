@@ -4,6 +4,7 @@ import java.awt.HeadlessException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.Reader;
 import java.util.Scanner;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -24,8 +25,8 @@ public class ConsoleUI {
     private final FolhaService service;
     private final boolean      primeiraVez;
 
-    public ConsoleUI(FolhaService service, boolean primeiraVez) {
-        this.sc          = new Scanner(System.in);
+    public ConsoleUI(FolhaService service, boolean primeiraVez, Reader stdin) {
+        this.sc          = new Scanner(stdin);
         this.service     = service;
         this.primeiraVez = primeiraVez;
     }
@@ -96,6 +97,7 @@ public class ConsoleUI {
             System.out.println("  (6) - Resetar sistema (backup automatico)");
             System.out.println("  (7) - Configuracoes do sistema");
             System.out.println("  (8) - Editar funcionarios em lote (por tipo)");
+            System.out.println("  (9) - Abrir Dashboard Analitico");
             System.out.println("  (0) - Voltar ao menu principal");
             System.out.println(SEP);
             System.out.print("  Opcao: ");
@@ -113,6 +115,7 @@ public class ConsoleUI {
                 case 5 -> removerFuncionario();
                 case 7 -> configuracoes();
                 case 8 -> editarLote();
+                case 9 -> abrirDashboard();
 
                 case 0 -> System.out.println("  Voltando ao menu principal...");
                 default -> System.out.println("  Opcao invalida.");
@@ -352,6 +355,24 @@ public class ConsoleUI {
             System.out.println("\n  [ERRO] " + e.getMessage());
             aguardar("\n  Pressione ENTER para continuar...");
             return false;
+        }
+    }
+
+    // ── Dashboard analítico ───────────────────────────────────────────────
+    private void abrirDashboard() {
+        System.out.println("\n" + SEA);
+        System.out.println("              DASHBOARD ANALITICO v5.1");
+        System.out.println(SEA);
+        System.out.println("  Abrindo janela grafica em segundo plano...");
+        System.out.println("  O terminal continua disponivel normalmente.");
+        System.out.println("  Feche a janela do dashboard para libera-la.");
+        System.out.println(SEA);
+        try {
+            DashboardBI.abrir();
+        } catch (Exception e) {
+            System.out.println("  [ERRO] Nao foi possivel abrir o dashboard.");
+            System.out.println("  Detalhe: " + e.getMessage());
+            System.out.println("  Verifique se o ambiente suporta interface grafica (Swing/AWT).");
         }
     }
 

@@ -1,8 +1,11 @@
 package br.com.folha.util;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -10,8 +13,8 @@ import java.time.format.DateTimeFormatter;
  * Sistema de logs mensais do sistema de folha de pagamento.
  *
  * Cada mês gera um arquivo separado na pasta logs/:
- *   logs/2026-04_log.txt
- *   logs/2026-05_log.txt
+ *   logs/2026-04_log.log
+ *   logs/2026-05_log.log
  *   ...
  *
  * Formato de cada linha:
@@ -19,6 +22,20 @@ import java.time.format.DateTimeFormatter;
  *
  * Falhas de escrita são silenciosas — o log é coadjuvante
  * e nunca deve interromper o fluxo principal do sistema.
+ *
+ * CORREÇÃO (charset explícito):
+ *   FileWriter(arquivo, true) foi substituído por
+ *   OutputStreamWriter(FileOutputStream, UTF-8) com append=true.
+ *   Antes, o log era gravado com o defaultCharset da JVM, que em
+ *   Windows pode ser windows-1252 — corrompendo nomes com acentos
+ *   registrados nas entradas de log (ex: "Nome: João" → "Nome: Jo?o").
+ *
+ * ADIÇÕES nesta versão:
+ *   - logInicializacao(): registra início de sessão com versão do sistema
+ *   - logEncerramento(): registra fim de sessão com total da folha
+ *   - logErro(): registra erros críticos capturados pelo sistema
+ *   - logImportBackup(): registra separadamente o backup criado antes de
+ *     uma importação (complementa logImport com o caminho do backup)
  */
 public class LoggerUtil {
 
@@ -29,6 +46,19 @@ public class LoggerUtil {
             DateTimeFormatter.ofPattern("yyyy-MM");
 
     // ── API pública ───────────────────────────────────────────────────────
+
+    /** Registra o início de uma sessão do sistema. */
+    public static void logInicializacao(String versao, int totalFuncionarios) {
+        log("INICIO_SESSAO",
+            "Versao: " + versao + " | Funcionarios carregados: " + totalFuncionarios);
+    }
+
+    /** Registra o encerramento de uma sessão com o total da folha. */
+    public static void logEncerramento(double totalFolha, boolean salvoComSucesso) {
+        log("FIM_SESSAO",
+            "Total da folha: R$ " + String.format("%.2f", totalFolha) +
+            " | Salvo: " + (salvoComSucesso ? "Sim" : "NAO - VERIFICAR"));
+    }
 
     /** Registra uma ação de cadastro. */
     public static void logCadastro(String tipo, String nome, int matricula) {
@@ -55,6 +85,14 @@ public class LoggerUtil {
         log("IMPORT", "Arquivo: " + caminho + " | Funcionarios: " + qtdFuncionarios);
     }
 
+    /**
+     * Registra o backup automático criado antes de uma importação.
+     * Chamado separadamente de logImport para registrar o caminho do backup.
+     */
+    public static void logImportBackup(String caminhoBackup) {
+        log("IMPORT_BACKUP", "Backup anterior: " + caminhoBackup);
+    }
+
     /** Registra reset. */
     public static void logReset(String caminhoBackup) {
         log("RESET", "Backup: " + caminhoBackup);
@@ -78,15 +116,29 @@ public class LoggerUtil {
             "Tipo: " + tipo + " | Editados: " + qtdEditados + " | Pulados: " + qtdPulados);
     }
 
+    /**
+     * Registra um erro não-fatal capturado pelo sistema.
+     * Útil para operações que falham silenciosamente (ex: falha ao criar backup
+     * durante importação quando o usuário opta por continuar mesmo assim).
+     */
+    public static void logErro(String operacao, String mensagem) {
+        log("ERRO", "Operacao: " + operacao + " | " + mensagem);
+    }
+
     // ── Núcleo ────────────────────────────────────────────────────────────
 
     private static void log(String operacao, String detalhes) {
         try {
             new File(LOG_DIR).mkdirs();
-            String mesAno   = LocalDateTime.now().format(FMT_MES);
-            String arquivo  = LOG_DIR + File.separator + mesAno + "_log.txt";
+            String mesAno  = LocalDateTime.now().format(FMT_MES);
+            String arquivo = LOG_DIR + File.separator + mesAno + "_log.log";
             String timestamp = LocalDateTime.now().format(FMT_TIMESTAMP);
-            try (FileWriter fw = new FileWriter(arquivo, true)) {
+
+            // CORREÇÃO: OutputStreamWriter com UTF-8 explícito + append=true
+            // Antes: new FileWriter(arquivo, true) — usava defaultCharset (Windows: CP1252)
+            // Agora: charset UTF-8 garantido em qualquer ambiente
+            try (Writer fw = new OutputStreamWriter(
+                    new FileOutputStream(arquivo, true), StandardCharsets.UTF_8)) {
                 fw.write(timestamp + " | " + operacao + " | " + detalhes + "\n");
             }
         } catch (IOException e) {
@@ -95,3 +147,4 @@ public class LoggerUtil {
         }
     }
 }
+

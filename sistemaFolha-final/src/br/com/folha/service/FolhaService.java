@@ -114,18 +114,21 @@ public class FolhaService {
 
     public void cadastrarPadrao(String nome, int matricula) {
         lista.add(new FuncionarioPadrao(Funcionario.normalizarNome(nome), matricula));
+        salvar();
     }
 
     public void cadastrarComissionado(String nome, int matricula,
                                       double vendas, double percentual) {
         lista.add(new FuncionarioComissionado(
                 Funcionario.normalizarNome(nome), matricula, vendas, percentual));
+                salvar();
     }
 
     public void cadastrarProducao(String nome, int matricula,
                                   int quantidade, double valorPeca) {
         lista.add(new FuncionarioProducao(
                 Funcionario.normalizarNome(nome), matricula, quantidade, valorPeca));
+                salvar();
     }
 
     // ── Persistência ──────────────────────────────────────────────────────

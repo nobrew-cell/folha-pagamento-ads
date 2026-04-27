@@ -2,6 +2,7 @@
 bin/
 *.class
 sources.txt
+sources.log
 
 # ─── Dados gerados em tempo de execução ───────────────────
 # Esses arquivos são criados pelo próprio sistema ao rodar.

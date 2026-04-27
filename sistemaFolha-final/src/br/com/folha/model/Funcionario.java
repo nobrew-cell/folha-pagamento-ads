@@ -43,7 +43,7 @@ public abstract class Funcionario {
 
     /** Retorna o nome sem acentos — para exibição no terminal. */
     public String getNomeExibicao() {
-        return removerAcentos(nome);
+        return nome;
     }
 
     // ── Contrato das subclasses ───────────────────────────────────────────
@@ -61,6 +61,11 @@ public abstract class Funcionario {
     public abstract String toXLS(double salarioBase);
 
     // ── Utilitários de nome ───────────────────────────────────────────────
+    /** Sanitiza entrada bruta: remove espaços extras nas bordas. */
+    public static String limpar(String input) {
+        if (input == null) return "";
+        return input.trim();
+    }
 
     /** Capitaliza cada palavra e mantém acentos (usado para armazenamento). */
     public static String normalizarNome(String raw) {

@@ -1,8 +1,11 @@
 package br.com.folha.repository;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -28,6 +31,15 @@ import br.com.folha.model.FuncionarioProducao;
  *   toXLS() e toTSV() de FuncionarioProducao agora recebem o salário
  *   pré-calculado com teto, garantindo que o valor exportado seja
  *   idêntico ao exibido na folha da tela.
+ *
+ * CORREÇÃO (sistema de acentos — charset explícito):
+ *   Todo ponto de escrita em arquivo usava FileWriter(caminho) sem charset,
+ *   que herda Charset.defaultCharset() da JVM. Em Windows sem configuração,
+ *   defaultCharset = windows-1252, causando corrupção de nomes com acentos.
+ *
+ *   Solução: substituir FileWriter por OutputStreamWriter(FileOutputStream, UTF-8)
+ *   em todos os métodos de escrita, e Scanner(File) por Scanner(File, UTF-8)
+ *   na leitura. Todo o I/O de arquivo é agora explicitamente UTF-8.
  */
 public class FuncionarioRepository {
 
@@ -82,6 +94,10 @@ public class FuncionarioRepository {
     /**
      * Parser unificado — antes duplicado em carregar() e importarDeArquivo().
      * Lê a linha #CONFIG se presente; caso contrário usa valores padrão.
+     *
+     * CORREÇÃO: Scanner agora usa StandardCharsets.UTF_8 explicitamente.
+     * Antes: new Scanner(new File(caminho)) — usava defaultCharset da JVM.
+     * Depois: new Scanner(new File(caminho), StandardCharsets.UTF_8) — sempre UTF-8.
      */
     private DadosCarregados parseTSV(String caminho) throws Exception {
         List<Funcionario> lista = new ArrayList<>();
@@ -89,7 +105,8 @@ public class FuncionarioRepository {
         double tetoPercentual = DEFAULT_TETO_PERCENTUAL;
 
         int numeroLinha = 0;
-        try (Scanner sc = new Scanner(new File(caminho))) {
+        // CORREÇÃO: charset UTF-8 explícito — antes sem charset (defaultCharset)
+        try (Scanner sc = new Scanner(new File(caminho), StandardCharsets.UTF_8)) {
 
             if (!sc.hasNextLine()) {
                 throw new Exception("Arquivo vazio ou sem cabeçalho.");
@@ -197,9 +214,9 @@ public class FuncionarioRepository {
      * Cria um backup completo do estado atual na pasta backups/.
      * Utilizado antes de importações, resets, etc.
      *
-     * @param prefixo       identificador da operação (ex: "antes_import")
-     * @param lista         lista atual de funcionários
-     * @param salarioBase   salário base atual
+     * @param prefixo        identificador da operação (ex: "antes_import")
+     * @param lista          lista atual de funcionários
+     * @param salarioBase    salário base atual
      * @param tetoPercentual teto percentual atual
      * @return caminho do arquivo de backup
      * @throws IOException se falhar ao escrever o arquivo de backup
@@ -231,7 +248,8 @@ public class FuncionarioRepository {
         escreverTSV(caminhoBackup, lista, salarioBase, tetoPercentual);
 
         // Limpa o database — se falhar, lança exceção (não silencia o erro)
-        try (FileWriter fw = new FileWriter(DATABASE)) {
+        // CORREÇÃO: OutputStreamWriter com UTF-8 explícito
+        try (Writer fw = new OutputStreamWriter(new FileOutputStream(DATABASE), StandardCharsets.UTF_8)) {
             fw.write("#CONFIG\t" + salarioBase + "\t" + tetoPercentual + "\n");
             fw.write(CABECALHO + "\n");
         }
@@ -275,7 +293,8 @@ public class FuncionarioRepository {
     }
 
     public void limparDados(double salarioBase, double tetoPercentual) throws IOException {
-        try (FileWriter fw = new FileWriter(DATABASE)) {
+        // CORREÇÃO: OutputStreamWriter com UTF-8 explícito
+        try (Writer fw = new OutputStreamWriter(new FileOutputStream(DATABASE), StandardCharsets.UTF_8)) {
             fw.write("#CONFIG\t" + salarioBase + "\t" + tetoPercentual + "\n");
             fw.write(CABECALHO + "\n");
         }
@@ -286,10 +305,12 @@ public class FuncionarioRepository {
     /**
      * Escreve TSV com salário correto (com teto) para FuncionarioProducao.
      * Resolve a regressão 3.3 / 3.4 do segundo relatório.
+     *
+     * CORREÇÃO: OutputStreamWriter com UTF-8 explícito em vez de FileWriter sem charset.
      */
     private boolean escreverTSV(String caminho, List<Funcionario> lista,
                                 double salarioBase, double tetoPercentual) {
-        try (FileWriter fw = new FileWriter(caminho)) {
+        try (Writer fw = new OutputStreamWriter(new FileOutputStream(caminho), StandardCharsets.UTF_8)) {
             fw.write("#CONFIG\t" + salarioBase + "\t" + tetoPercentual + "\n");
             fw.write(CABECALHO + "\n");
             for (Funcionario f : lista) {
@@ -311,10 +332,12 @@ public class FuncionarioRepository {
     /**
      * Escreve XLS com salário correto (com teto) para FuncionarioProducao.
      * Resolve a regressão 3.3 do segundo relatório.
+     *
+     * CORREÇÃO: OutputStreamWriter com UTF-8 explícito em vez de FileWriter sem charset.
      */
     private boolean escreverXLS(String caminho, List<Funcionario> lista,
                                 double salarioBase, double tetoPercentual) {
-        try (FileWriter fw = new FileWriter(caminho)) {
+        try (Writer fw = new OutputStreamWriter(new FileOutputStream(caminho), StandardCharsets.UTF_8)) {
             fw.write("<html><meta charset='utf-8'><body>\n");
             fw.write("<table border='1' style='font-family: Arial; border-collapse: collapse;'>\n");
 
@@ -359,3 +382,4 @@ public class FuncionarioRepository {
         return LocalDateTime.now().format(FMT_TIMESTAMP);
     }
 }
+
