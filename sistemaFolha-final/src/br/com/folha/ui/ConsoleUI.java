@@ -11,6 +11,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import br.com.folha.model.Funcionario;
 import br.com.folha.service.FolhaService;
+import br.com.folha.ui.SeletorPerfil.Perfil;
 import br.com.folha.util.LoggerUtil;
 
 public class ConsoleUI {
@@ -21,11 +22,13 @@ public class ConsoleUI {
     private final Scanner      sc;
     private final FolhaService service;
     private final boolean      primeiraVez;
+    private final boolean      modoADM;
 
-    public ConsoleUI(FolhaService service, boolean primeiraVez, Reader stdin) {
+    public ConsoleUI(FolhaService service, boolean primeiraVez, Perfil perfil, Reader stdin) {
         this.sc          = new Scanner(stdin);
         this.service     = service;
         this.primeiraVez = primeiraVez;
+        this.modoADM     = (perfil == Perfil.ADM);
     }
 
     public void iniciar() {
@@ -40,7 +43,7 @@ public class ConsoleUI {
                     case 2 -> cadastrarComissionado();
                     case 3 -> cadastrarProducao();
                     case 4 -> gerarFolha();
-                    case 5 -> menuADM();
+                    case 5 -> { if (modoADM) menuADM(); else System.out.println("  Opcao invalida. Tente novamente."); }
                     case 0 -> encerrar();
                     default -> System.out.println("  Opcao invalida. Tente novamente.");
                 }
@@ -52,14 +55,16 @@ public class ConsoleUI {
 
     // ── Menu principal ────────────────────────────────────────────────────
     private void exibirMenu() {
+        String labelPerfil = modoADM ? "[ ADMINISTRADOR ]" : "[ FUNCIONARIO ]";
         System.out.println("\n" + SEP);
         System.out.println("        FOLHA DE PAGAMENTO  (salarios mensais)");
+        System.out.println("              Perfil: " + labelPerfil);
         System.out.println(SEP);
         System.out.println("  [1] - Cadastrar Funcionario Padrao");
         System.out.println("  [2] - Cadastrar Funcionario Comissionado");
         System.out.println("  [3] - Cadastrar Funcionario de Producao");
         System.out.println("  [4] - Gerar Folha de Pagamento");
-        System.out.println("  [5] - Menu ADM (Manutencao de Dados)");
+        if (modoADM) System.out.println("  [5] - Menu ADM (Manutencao de Dados)");
         System.out.println("  [0] - Sair");
         System.out.println(SEP);
         System.out.print("  Opcao: ");
@@ -68,7 +73,7 @@ public class ConsoleUI {
     private void exibirBoasVindas() {
         System.out.println("\n" + SEP);
         System.out.println("      Bem-vindo ao Sistema de Folha de Pagamento");
-        System.out.println("           Versao 5.1  |  Salarios mensais");
+        System.out.println("           Versao 6.1  |  Salarios mensais");
         System.out.println(SEP);
         System.out.println("  Este e o seu primeiro acesso.");
         System.out.println("  Nenhum funcionario cadastrado ainda.");

@@ -49,7 +49,7 @@ public class DashboardBI extends JFrame {
     private static final String DIR_HIST      = "historico";
     private static final String DIR_EXP       = "exportados/dados";
     private static final String DIR_LOGS      = "logs";
-    private static final String LOGO_PATH     = "config/logo.png";
+    private static final String LOGO_PATH     = "config/logo-GUI.png";
     private static final String CONFIG_PATH   = "config/dashboard.properties";
     private static final String DATABASE_PATH = "database.tsv";
 
@@ -67,6 +67,7 @@ public class DashboardBI extends JFrame {
     // ── Animação "cursor piscante" terminal ───────────────────────────────
     private javax.swing.Timer timerCursor;
     private boolean cursorVisivel = true;
+    private JLabel  lRodapeEsq;   // referência ao label do rodapé para o cursor piscar
 
     private final String[] NOMES_ABAS = {
         "VISÃO GERAL", "FUNCIONÁRIOS", "RELATÓRIOS", "AUDITORIA", "CONFIGURAÇÕES"
@@ -122,10 +123,12 @@ public class DashboardBI extends JFrame {
     // ── Animação cursor terminal ──────────────────────────────────────────
     private void iniciarAnimacaoCursor() {
         timerCursor = new javax.swing.Timer(530, e -> {
-        cursorVisivel = !cursorVisivel;
-        // Repaint apenas o rodapé — leve
-        repaint();
-    });
+            cursorVisivel = !cursorVisivel;
+            if (lRodapeEsq != null) {
+                String base = lRodapeEsq.getClientProperty("base").toString();
+                lRodapeEsq.setText(base + (cursorVisivel ? " _" : "  "));
+            }
+        });
         timerCursor.start();
     }
 
@@ -315,13 +318,10 @@ public class DashboardBI extends JFrame {
         JPanel dir = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 0));
         dir.setBackground(BG_ROOT);
 
-        JButton btnMenos = botao("-");
-        btnMenos.setToolTipText("Diminuir fonte");
-        btnMenos.addActionListener(e -> { if (fontSize > 9)  { fontSize--; construirUI(); }});
-
-        JButton btnMais = botao("+");
-        btnMais.setToolTipText("Aumentar fonte");
-        btnMais.addActionListener(e -> { if (fontSize < 18) { fontSize++; construirUI(); }});
+        JButton btnMenos = botaoFonte("-", "Diminuir fonte",
+            () -> { if (fontSize > 9)  { fontSize--; construirUI(); } });
+        JButton btnMais  = botaoFonte("+", "Aumentar fonte",
+            () -> { if (fontSize < 18) { fontSize++; construirUI(); } });
 
         JButton btnModo = botao(modoEscuro ? "☀ CLARO" : "☾ ESCURO");
         btnModo.addActionListener(e -> { aplicarPaleta(!modoEscuro); construirUI(); });
@@ -337,6 +337,14 @@ public class DashboardBI extends JFrame {
         linha.add(dir, BorderLayout.EAST);
         p.add(linha, BorderLayout.CENTER);
         return p;
+    }
+
+    /** Botão compacto para ajuste de tamanho de fonte. */
+    private JButton botaoFonte(String texto, String tooltip, Runnable acao) {
+        JButton b = botao(texto);
+        b.setToolTipText(tooltip);
+        b.addActionListener(e -> acao.run());
+        return b;
     }
 
     private JPanel construirBarraAbas() {
@@ -389,73 +397,28 @@ public class DashboardBI extends JFrame {
 
     // ── Rodapé com cursor piscante estilo terminal ────────────────────────
     private JPanel construirRodape() {
-        JPanel p = new JPanel(new BorderLayout()) {
-            @Override protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-            }
-        };
+        JPanel p = new JPanel(new BorderLayout());
         p.setBackground(BG_ROOT);
         p.setBorder(new MatteBorder(1, 0, 0, 0, BD_LINE));
 
-        // Esquerda: texto com cursor piscante
-        JLabel lEsq = new JLabel() {
-            @Override public String getText() {
-                String base = "  Dashboard Analítico " + VERSAO_DASH +
-                    "  ·  Lê dados de historico/ e exportados/dados/" +
-                    "  ·  Configure em config/dashboard.properties";
-                return base + (cursorVisivel ? " _" : "  ");
-            }
-        };
-        lEsq.setFont(fonte(Font.PLAIN, -3));
-        lEsq.setForeground(TX_DIS);
-        lEsq.setBorder(new EmptyBorder(4, 0, 4, 0));
+        // Esquerda: texto com cursor piscante — atualizado pelo timerCursor via campo lRodapeEsq
+        String baseEsq = "  Dashboard Analítico " + VERSAO_DASH
+            + "  ·  Lê dados de historico/ e exportados/dados/"
+            + "  ·  Configure em config/dashboard.properties";
+        lRodapeEsq = new JLabel(baseEsq + " _");
+        lRodapeEsq.putClientProperty("base", baseEsq);  // base sem cursor, para o timer usar
+        lRodapeEsq.setFont(fonte(Font.PLAIN, -3));
+        lRodapeEsq.setForeground(TX_DIS);
+        lRodapeEsq.setBorder(new EmptyBorder(4, 0, 4, 0));
 
-        // Direita: usuário — com clip via setMaximumSize não funciona em label,
-        // então usamos um painel com overflow oculto
-        JLabel lDir = new JLabel("USUÁRIO: " + cfgNomeUsuario + "  |  PERFIL: " + cfgNomePerfil + "  ") {
-            @Override public Dimension getPreferredSize() {
-                Dimension d = super.getPreferredSize();
-                return new Dimension(Math.min(d.width, 280), d.height);
-            }
-            @Override public Dimension getMaximumSize() {
-                return new Dimension(280, super.getMaximumSize().height);
-            }
-        };
+        // Direita: usuário / perfil
+        JLabel lDir = new JLabel("USUÁRIO: " + cfgNomeUsuario + "  |  PERFIL: " + cfgNomePerfil + "  ");
         lDir.setFont(fonte(Font.PLAIN, -2));
         lDir.setForeground(TX_DIS);
-        lDir.setBorder(new EmptyBorder(4, 0, 4, 0));
+        lDir.setBorder(new EmptyBorder(4, 4, 4, 4));
 
-        // Wrapper para lDir que respeita largura máxima e corta com "..."
-        JPanel dirPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0)) {
-            @Override public Dimension getPreferredSize() {
-                return new Dimension(Math.min(super.getPreferredSize().width, 300), super.getPreferredSize().height);
-            }
-            @Override public Dimension getMaximumSize() {
-                return new Dimension(300, Integer.MAX_VALUE);
-            }
-        };
-        dirPanel.setBackground(BG_ROOT);
-        dirPanel.setOpaque(false);
-
-        // Clip label: usa clipagem manual
-        String userStr = "USUÁRIO: " + cfgNomeUsuario + "  |  PERFIL: " + cfgNomePerfil + "  ";
-        JLabel lDirClip = new JLabel(userStr) {
-            @Override public void paintComponent(Graphics g) {
-                // Clip ao tamanho disponível
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setClip(0, 0, getWidth(), getHeight());
-                super.paintComponent(g2);
-                g2.dispose();
-            }
-        };
-        lDirClip.setFont(fonte(Font.PLAIN, -2));
-        lDirClip.setForeground(TX_DIS);
-        lDirClip.setBorder(new EmptyBorder(4, 4, 4, 4));
-
-        // Adicionar timer para atualizar o cursor piscante
-
-        p.add(lEsq, BorderLayout.CENTER);
-        p.add(lDirClip, BorderLayout.EAST);
+        p.add(lRodapeEsq, BorderLayout.CENTER);
+        p.add(lDir,       BorderLayout.EAST);
         return p;
     }
 
@@ -1488,7 +1451,7 @@ public class DashboardBI extends JFrame {
         nota.setBorder(new EmptyBorder(8, 10, 8, 10));
 
         String limStr    = cfgLimiteMatricula == 0 ? "sem limite" : String.valueOf(cfgLimiteMatricula);
-        String defLimStr = DEFAULT_LIMITE_MATRICULA == 0 ? "sem limite" : String.valueOf(DEFAULT_LIMITE_MATRICULA);
+        String defLimStr = "sem limite"; // DEFAULT_LIMITE_MATRICULA e sempre 0
 
         String[] cols = {"PARÂMETRO", "PADRÃO DE FÁBRICA", "VALOR ATUAL"};
         Object[][] rows = {
@@ -1886,11 +1849,7 @@ public class DashboardBI extends JFrame {
         lT.setFont(fonte(Font.BOLD, -1)); lT.setForeground(TX_HEAD);
         lT.setAlignmentX(Component.LEFT_ALIGNMENT);
         lT.setMaximumSize(new Dimension(Integer.MAX_VALUE, 18));
-        JPanel sep = new JPanel();
-        sep.setBackground(BD_LINE);
-        sep.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
-        sep.setPreferredSize(new Dimension(0, 1));
-        p.add(lT); p.add(Box.createVerticalStrut(2)); p.add(sep);
+        p.add(lT); p.add(Box.createVerticalStrut(2)); p.add(hSep());
         p.add(Box.createVerticalStrut(6));
         return p;
     }

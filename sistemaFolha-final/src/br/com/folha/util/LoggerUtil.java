@@ -1,13 +1,20 @@
 package br.com.folha.util;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.stream.Stream;
 
 /**
  * Sistema de logs mensais do sistema de folha de pagamento.
@@ -46,6 +53,52 @@ public class LoggerUtil {
             DateTimeFormatter.ofPattern("yyyy-MM");
 
     // ── API pública ───────────────────────────────────────────────────────
+
+    /**
+     * Registra o primeiro acesso ao sistema (antes de qualquer database existir).
+     * Essa entrada serve como prova de que o sistema já foi iniciado ao menos uma vez.
+     * O SistemaFolha.java lê esse registro via contemPrimeiroAcesso() para distinguir
+     * "nunca foi acessado" de "database foi apagado acidentalmente".
+     */
+    public static void logPrimeiroAcesso(String versao) {
+        log("PRIMEIRO_ACESSO", "Versao: " + versao + " | Sistema iniciado pela primeira vez");
+    }
+
+    /**
+     * Verifica se existe algum arquivo de log contendo a operação PRIMEIRO_ACESSO
+     * ou INICIO_SESSAO — ou seja, se o sistema já foi iniciado ao menos uma vez.
+     *
+     * Retorna true se encontrar ao menos uma linha com essas operações em qualquer
+     * arquivo .log dentro da pasta logs/. Retorna false se a pasta não existir,
+     * estiver vazia, ou nenhum arquivo contiver essas marcações.
+     */
+    public static boolean contemPrimeiroAcesso() {
+        Path logDir = Paths.get(LOG_DIR);
+        if (!Files.isDirectory(logDir)) return false;
+        try (Stream<Path> arquivos = Files.list(logDir)) {
+            return arquivos
+                .filter(p -> p.toString().endsWith(".log"))
+                .anyMatch(p -> logContemInicioSessao(p.toFile()));
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /** Lê um arquivo de log e verifica se contém alguma linha de início de sessão. */
+    private static boolean logContemInicioSessao(File arquivo) {
+        try (BufferedReader br = new BufferedReader(
+                new InputStreamReader(new FileInputStream(arquivo), StandardCharsets.UTF_8))) {
+            String linha;
+            while ((linha = br.readLine()) != null) {
+                if (linha.contains("| PRIMEIRO_ACESSO |") || linha.contains("| INICIO_SESSAO |")) {
+                    return true;
+                }
+            }
+        } catch (IOException e) {
+            // Silencioso — log nunca deve quebrar o sistema principal
+        }
+        return false;
+    }
 
     /** Registra o início de uma sessão do sistema. */
     public static void logInicializacao(String versao, int totalFuncionarios) {
@@ -147,4 +200,3 @@ public class LoggerUtil {
         }
     }
 }
-

@@ -23,3 +23,6 @@ exportados/
 # ─── Sistema operacional ──────────────────────────────────
 .DS_Store
 Thumbs.db
+
+# ─── Utils ────────────────────────────────────────────────
+*.svg
