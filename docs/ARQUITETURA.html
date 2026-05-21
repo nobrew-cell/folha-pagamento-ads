@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -28,27 +28,63 @@
     --radius: 4px;
     --mono: 'IBM Plex Mono', monospace;
     --sans: 'IBM Plex Sans', sans-serif;
+    --progress: 0%;
+  }
+
+  [data-theme="dark"] {
+    --bg:          #1e1c1a;
+    --surface:     #292724;
+    --border:      #3e3b36;
+    --border-soft: #33302a;
+    --text:        #e8e4d8;
+    --muted:       #9a9488;
+    --label:       #c4beb0;
+    --main-dark:   #6a9fc0; --main:    #2a3f50;
+    --model-dark:  #5a9a5a; --model:   #2a3a2a;
+    --service-dark:#c07a30; --service: #3a2a1a;
+    --repo-dark:   #9a6ab0; --repo:    #3a2a3a;
+    --ui-dark:     #c05050; --ui:      #3a2020;
+    --util-dark:   #7a9a50; --util:    #2a3a20;
+    --accent:      #6a9fc0;
+    --accent-soft: #1e2a34;
+    --warn-bg:     #3a3210; --warn-border: #b09020;
+    --note-bg:     #1a2834; --note-border: #4a80a0;
+    --progress-bar-bg: #3e3b36;
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
-  body { font-family: var(--sans); font-weight: 300; background: var(--bg); color: var(--text); line-height: 1.7; font-size: 15px; }
+  body { font-family: var(--sans); font-weight: 300; background: var(--bg); color: var(--text); line-height: 1.7; font-size: 15px; transition: background 0.3s, color 0.3s; }
+
+  /* ── Progress bar no topo (estilo Stripe) ── */
+  .progress-bar {
+    position: fixed; top: 0; left: 0; height: 3px;
+    background: var(--accent); width: var(--progress);
+    z-index: 200; transition: width 0.15s ease-out;
+    border-radius: 0 2px 2px 0;
+  }
 
   /* ── Layout ── */
   .shell { display: grid; grid-template-columns: 280px 1fr; grid-template-rows: 56px 1fr; min-height: 100vh; }
 
   /* ── Topbar ── */
-  .topbar { grid-column: 1 / -1; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 28px; gap: 16px; position: sticky; top: 0; z-index: 100; }
+  .topbar { grid-column: 1 / -1; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 28px; gap: 16px; position: sticky; top: 0; z-index: 100; transition: background 0.3s; }
   .topbar-logo { font-family: var(--mono); font-weight: 600; font-size: 13px; color: var(--accent); letter-spacing: .04em; }
   .topbar-sep { color: var(--border); }
   .topbar-title { font-size: 13px; color: var(--muted); font-weight: 300; }
   .topbar-ver { margin-left: auto; font-family: var(--mono); font-size: 11px; color: var(--muted); background: var(--bg); border: 1px solid var(--border); padding: 2px 8px; border-radius: 20px; }
+  .theme-toggle {
+    margin-left: 8px; background: none; border: 1px solid var(--border); border-radius: 20px;
+    padding: 4px 10px; font-family: var(--mono); font-size: 11px; color: var(--muted);
+    cursor: pointer; background: var(--bg); transition: all 0.2s;
+  }
+  .theme-toggle:hover { color: var(--accent); border-color: var(--accent); }
 
   /* ── Sidebar ── */
-  .sidebar { background: var(--surface); border-right: 1px solid var(--border); padding: 24px 0; overflow-y: auto; position: sticky; top: 56px; height: calc(100vh - 56px); }
+  .sidebar { background: var(--surface); border-right: 1px solid var(--border); padding: 24px 0; overflow-y: auto; position: sticky; top: 56px; height: calc(100vh - 56px); transition: background 0.3s; }
   .sidebar-section { padding: 0 20px 4px; font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-top: 20px; margin-bottom: 6px; }
   .sidebar-section:first-child { margin-top: 0; }
-  .sidebar a { display: flex; align-items: center; gap: 10px; padding: 6px 20px; text-decoration: none; font-size: 13px; color: var(--label); transition: background .12s, color .12s; border-left: 2px solid transparent; }
+  .sidebar a { display: flex; align-items: center; gap: 10px; padding: 6px 20px; text-decoration: none; font-size: 13px; color: var(--label); transition: background .2s, color .2s, border-color .2s; border-left: 2px solid transparent; }
   .sidebar a:hover { background: var(--bg); color: var(--text); }
   .sidebar a.active { background: var(--accent-soft); color: var(--accent); border-left-color: var(--accent); font-weight: 600; }
   .dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
@@ -70,15 +106,15 @@
     border-radius: var(--radius); margin: 16px 0;
     font-size: 13px; line-height: 1.6;
   }
-  .note { background: var(--note-bg); border-left: 3px solid var(--note-border); color: #1a3a5c; }
-  .warn { background: var(--warn-bg); border-left: 3px solid var(--warn-border); color: #5a3a00; }
+  .note { background: var(--note-bg); border-left: 3px solid var(--note-border); color: inherit; }
+  .warn { background: var(--warn-bg); border-left: 3px solid var(--warn-border); color: inherit; }
   .note-label, .warn-label { font-family: var(--mono); font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; flex-shrink: 0; padding-top: 2px; }
   .note-label { color: var(--note-border); }
   .warn-label { color: var(--warn-border); }
 
   /* ── Nassi-Shneiderman ── */
   .ns-root { border: 1.5px solid var(--border); border-radius: var(--radius); overflow: hidden; font-family: var(--mono); font-size: 13px; margin: 28px 0; }
-  .ns-header { background: var(--text); color: #fff; padding: 10px 16px; font-weight: 600; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; }
+  .ns-header { background: var(--text); color: var(--bg); padding: 10px 16px; font-weight: 600; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; transition: background 0.3s; }
   .ns-block { border-top: 1.5px solid var(--border); display: grid; grid-template-columns: 180px 1fr; }
   .ns-label { padding: 10px 14px; font-weight: 600; font-size: 12px; display: flex; align-items: center; gap: 8px; border-right: 1.5px solid var(--border); }
   .ns-inner { display: flex; flex-direction: column; }
@@ -128,7 +164,7 @@
   .principle-desc { padding: 10px 14px; font-size: 13px; color: var(--label); }
 
   /* ── Layer cards ── */
-  .layer-card { border: 1.5px solid var(--border); border-radius: var(--radius); margin-bottom: 24px; overflow: hidden; }
+  .layer-card { border: 1.5px solid var(--border); border-radius: var(--radius); margin-bottom: 24px; overflow: hidden; background: var(--surface); transition: background 0.3s; }
   .layer-header { display: flex; align-items: center; gap: 14px; padding: 14px 20px; border-bottom: 1px solid var(--border-soft); }
   .layer-icon { width: 32px; height: 32px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 11px; font-weight: 600; flex-shrink: 0; }
   .layer-name { font-family: var(--mono); font-weight: 600; font-size: 14px; }
@@ -140,23 +176,33 @@
   .class-name { font-family: var(--mono); font-weight: 600; font-size: 12px; color: var(--text); }
   .class-desc { color: var(--muted); font-size: 13px; }
 
-  /* ── Fluxo de inicialização ── */
-  .flow { display: flex; flex-direction: column; margin: 20px 0; border: 1.5px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-  .flow-row { display: grid; grid-template-columns: 140px 1fr; border-bottom: 1px solid var(--border-soft); }
+  /* ── Fluxo de inicialização (timeline aprimorada) ── */
+  .flow { display: flex; flex-direction: column; margin: 20px 0; border: 1.5px solid var(--border); border-radius: var(--radius); overflow: hidden; position: relative; }
+  .flow-row { display: grid; grid-template-columns: 140px 1fr; border-bottom: 1px solid var(--border-soft); position: relative; }
   .flow-row:last-child { border-bottom: none; }
-  .flow-step { padding: 12px 14px; font-family: var(--mono); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; display: flex; align-items: center; border-right: 1.5px solid var(--border); color: white; }
+  .flow-step { padding: 12px 14px; font-family: var(--mono); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; display: flex; align-items: center; border-right: 1.5px solid var(--border); color: white; position: relative; }
   .flow-detail { padding: 12px 16px; font-size: 13px; color: var(--label); }
+  .flow-connector {
+    position: absolute; left: 139px; top: 0; bottom: 0; width: 2px; background: var(--border);
+    z-index: 0;
+  }
+  .flow-step::after {
+    content: '';
+    position: absolute; right: -6px; top: 50%; transform: translateY(-50%);
+    width: 10px; height: 10px; border-radius: 50%; background: inherit;
+    border: 2px solid white; z-index: 2;
+  }
 
   /* ── Persistência ── */
   .persist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0; }
-  .persist-card { border: 1.5px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .persist-card { border: 1.5px solid var(--border); border-radius: var(--radius); overflow: hidden; background: var(--surface); }
   .persist-card-header { padding: 8px 14px; font-family: var(--mono); font-size: 11px; font-weight: 600; background: var(--bg); border-bottom: 1px solid var(--border-soft); color: var(--label); text-transform: uppercase; letter-spacing: .06em; }
   .persist-card-body { padding: 12px 14px; font-size: 13px; color: var(--label); line-height: 1.6; }
 
   /* ── Tables ── */
   .tsv-table, .log-table, .decision-table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 16px 0; border: 1.5px solid var(--border); border-radius: var(--radius); overflow: hidden; }
   .tsv-table { font-family: var(--mono); font-size: 12px; }
-  .tsv-table thead tr { background: var(--text); color: white; }
+  .tsv-table thead tr { background: var(--text); color: var(--bg); }
   .tsv-table th, .tsv-table td { padding: 8px 14px; border-right: 1px solid var(--border); text-align: left; vertical-align: top; }
   .tsv-table th:last-child, .tsv-table td:last-child { border-right: none; }
   .tsv-table tbody tr:nth-child(even) { background: var(--bg); }
@@ -177,7 +223,7 @@
   .decision-table td:last-child { border-right: none; }
 
   code { font-family: var(--mono); font-size: 12px; background: var(--bg); border: 1px solid var(--border); padding: 1px 5px; border-radius: 3px; color: var(--text); }
-  pre { background: #1a1814; color: #c8c4bc; font-family: var(--mono); font-size: 12px; padding: 18px 20px; border-radius: var(--radius); overflow-x: auto; margin: 14px 0; line-height: 1.8; border: 1.5px solid #2a2620; }
+  pre { background: var(--text); color: var(--bg); font-family: var(--mono); font-size: 12px; padding: 18px 20px; border-radius: var(--radius); overflow-x: auto; margin: 14px 0; line-height: 1.8; border: 1.5px solid var(--border); transition: background 0.3s, color 0.3s; }
   pre .kw { color: #88b8e0; } pre .cm { color: #6a6460; font-style: italic; } pre .num { color: #e0b888; }
 
   .c-main    { background: var(--main);    color: var(--main-dark); }
@@ -193,13 +239,60 @@
   .bd-ui      { border-left: 3px solid var(--ui-dark); }
   .bd-util    { border-left: 3px solid var(--util-dark); }
 
+  /* ── Novas seções: Limites, Dívida, Invariantes, Falhas ── */
+  .pill-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+  .pill { background: var(--bg); border: 1px solid var(--border); border-radius: 20px; padding: 6px 14px; font-family: var(--mono); font-size: 12px; color: var(--label); }
+  .rule-block { border: 1.5px solid var(--border); border-radius: var(--radius); padding: 16px 20px; margin: 16px 0; background: var(--surface); }
+  .rule-block ul { list-style: none; padding: 0; }
+  .rule-block li { padding: 6px 0; border-bottom: 1px solid var(--border-soft); font-family: var(--mono); font-size: 13px; color: var(--label); }
+  .rule-block li:last-child { border-bottom: none; }
+  .rule-block li::before { content: '•'; margin-right: 10px; color: var(--accent); font-weight: bold; }
+
   footer { margin-top: 80px; padding-top: 24px; border-top: 1px solid var(--border); font-size: 12px; color: var(--muted); font-family: var(--mono); }
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  /* ── Transição suave entre temas ── */
+body,
+main,
+.topbar,
+.sidebar,
+.layer-card,
+.ns-root,
+.persist-card,
+.rule-block,
+.flow,
+.principles .principle-row,
+.persist-grid .persist-card,
+pre,
+.tsv-table,
+.log-table,
+.decision-table,
+footer {
+  transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease;
+}
+
+/* Para elementos com bordas (callouts, cards) */
+.note,
+.warn,
+.layer-header,
+.ns-header,
+.lf-name,
+.flow-step,
+.principle-label {
+  transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease;
+}
+
+/* Pequenos detalhes com ícones e código */
+code,
+.topbar-ver,
+.theme-toggle {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
 </style>
 </head>
 <body>
+<div class="progress-bar" id="progressBar"></div>
 <div class="shell">
 
 <header class="topbar">
@@ -207,11 +300,12 @@
   <span class="topbar-sep">/</span>
   <span class="topbar-title">Documentação de Arquitetura</span>
   <span class="topbar-ver">v7.1</span>
+  <button class="theme-toggle" id="themeToggle" aria-label="Alternar tema">🌓 Tema</button>
 </header>
 
 <nav class="sidebar">
   <div class="sidebar-section">Visão geral</div>
-  <a href="#visao-geral" class="active"><span class="dot" style="background:#1a1814"></span>Índice do sistema</a>
+  <a href="#visao-geral" class="active"><span class="dot" style="background:var(--text)"></span>Índice do sistema</a>
   <a href="#principios"><span class="dot" style="background:#888"></span>Princípios</a>
   <a href="#fluxo-camadas"><span class="dot" style="background:#888"></span>Fluxo entre camadas</a>
   <a href="#fluxo-inicializacao"><span class="dot" style="background:#888"></span>Fluxo de inicialização</a>
@@ -228,6 +322,11 @@
   <a href="#log-ops"><span class="dot" style="background:#888"></span>Operações de registro</a>
   <div class="sidebar-section">Decisões</div>
   <a href="#decisoes"><span class="dot" style="background:#888"></span>Decisões arquiteturais</a>
+  <div class="sidebar-section">Lapidação</div>
+  <a href="#limites"><span class="dot" style="background:#b0a090"></span>Limites do sistema</a>
+  <a href="#divida"><span class="dot" style="background:#c09060"></span>Dívida técnica</a>
+  <a href="#invariantes"><span class="dot" style="background:#90a0b0"></span>Invariantes</a>
+  <a href="#falhas"><span class="dot" style="background:#a0b090"></span>Tolerância a falhas</a>
 </nav>
 
 <main>
@@ -249,7 +348,7 @@
       <div class="ns-block">
         <div class="ns-label c-model">model</div>
         <div class="ns-inner">
-          <a href="#model-funcionario" class="ns-item">Funcionario <em style="font-size:11px;color:#aaa;margin-left:6px">abstrata</em><span class="ns-file">Funcionario.java</span></a>
+          <a href="#model-funcionario" class="ns-item">Funcionario <em style="font-size:11px;color:var(--muted);margin-left:6px">abstrata</em><span class="ns-file">Funcionario.java</span></a>
           <a href="#model-padrao"       class="ns-item">↳ FuncionarioPadrao <span class="ns-file">FuncionarioPadrao.java</span></a>
           <a href="#model-comissionado" class="ns-item">↳ FuncionarioComissionado <span class="ns-file">FuncionarioComissionado.java</span></a>
           <a href="#model-producao"     class="ns-item">↳ FuncionarioProducao <span class="ns-file">FuncionarioProducao.java</span></a>
@@ -265,7 +364,7 @@
         <div class="ns-label c-repo">repository</div>
         <div class="ns-inner">
           <a href="#repository" class="ns-item">FuncionarioRepository <span class="ns-file">FuncionarioRepository.java</span></a>
-          <a href="#repository" class="ns-item">↳ DadosCarregados <em style="font-size:11px;color:#aaa;margin-left:6px">classe interna</em><span class="ns-file">—</span></a>
+          <a href="#repository" class="ns-item">↳ DadosCarregados <em style="font-size:11px;color:var(--muted);margin-left:6px">classe interna</em><span class="ns-file">—</span></a>
         </div>
       </div>
       <div class="ns-block">
@@ -321,7 +420,8 @@
   <!-- ── FLUXO ENTRE CAMADAS ── -->
   <section id="fluxo-camadas">
     <h2>Fluxo entre camadas</h2>
-    <p>Direção das dependências. Cada camada conhece apenas a camada imediatamente abaixo dela — nunca acima, nunca diagonal.</p>
+    <p>Direção das dependências no fluxo de chamadas em tempo de execução: <code>ui</code> chama <code>service</code>, que chama <code>repository</code>, que acessa o arquivo. Nenhuma dessas camadas chama a camada acima dela em tempo de execução.</p>
+    <p>Isso não é uma regra absoluta de imports — <code>main</code> importa todas as camadas para montar as dependências, e <code>util</code> é transversal, acessado diretamente por <code>main</code> e <code>service</code>. A regra se aplica ao fluxo de dados e operações, não à estrutura de pacotes.</p>
 
     <div class="layer-flow">
       <div class="lf-row">
@@ -349,7 +449,7 @@
         <div class="lf-arrow-spacer"></div>
       </div>
       <div class="lf-row">
-        <div class="lf-name" style="background:#f1efe8;color:#3a3830;font-family:var(--mono);font-size:12px;font-weight:600;padding:10px 14px;border-right:1.5px solid var(--border);">TSV</div>
+        <div class="lf-name" style="background:var(--bg);color:var(--text);font-family:var(--mono);font-size:12px;font-weight:600;padding:10px 14px;border-right:1.5px solid var(--border);">TSV</div>
         <div class="lf-detail">database.tsv — estado persistido em disco</div>
       </div>
     </div>
@@ -421,12 +521,11 @@
     <div class="layer-card bd-model" id="model-funcionario">
       <div class="layer-header">
         <div class="layer-icon c-model">A</div>
-        <div><div class="layer-name">Funcionario <span style="font-size:11px;font-weight:300;color:#888">abstrata</span></div></div>
+        <div><div class="layer-name">Funcionario <span style="font-size:11px;font-weight:300;color:var(--muted)">abstrata</span></div></div>
         <div class="layer-pkg">br.com.folha.model</div>
       </div>
       <div class="layer-body">
         <p>Classe base de todos os funcionários. Campos imutáveis: <code>nome</code> e <code>matricula</code>. Define formatação monetária pt-BR e utilitários de normalização de nomes.</p>
-
         <h3>Contrato abstrato</h3>
         <div class="class-list">
           <div class="class-row"><span class="class-name">getTipo()</span><span class="class-desc">Retorna o identificador do tipo: <code>"Padrao"</code>, <code>"Comissionado"</code> ou <code>"Producao"</code>.</span></div>
@@ -435,13 +534,11 @@
           <div class="class-row"><span class="class-name">toTSV(double)</span><span class="class-desc">Serialização para linha do arquivo TSV.</span></div>
           <div class="class-row"><span class="class-name">toXLS(double)</span><span class="class-desc">Serialização para linha HTML usada no relatório XLS.</span></div>
         </div>
-
         <h3>Utilitários de nome</h3>
         <div class="class-list">
           <div class="class-row"><span class="class-name">normalizarNome(String)</span><span class="class-desc">Capitaliza cada palavra mantendo acentos — usado no armazenamento.</span></div>
           <div class="class-row"><span class="class-name">removerAcentos(String)</span><span class="class-desc">Remove diacríticos via <code>Normalizer.Form.NFD</code> — usado na exibição no terminal para contornar limitações de codificação.</span></div>
         </div>
-
         <div class="note" style="margin-top:16px">
           <span class="note-label">Nota</span>
           <span>Salário-base e teto de bônus não vivem nesta classe. São responsabilidade do <code>FolhaService</code> e persistidos na linha <code>#CONFIG</code> do TSV. Essa separação permite reconfigurar os valores sem precisar recriar os objetos de funcionário.</span>
@@ -479,13 +576,11 @@
       </div>
       <div class="layer-body">
         <p>Campos adicionais: <code>quantidadeProduzida</code> e <code>valorPorPeca</code>. O bônus de produção tem teto configurável.</p>
-
         <h3>Sobrecargas de calcularSalarioFinal</h3>
         <div class="class-list">
           <div class="class-row"><span class="class-name">calcularSalarioFinal(base, teto)</span><span class="class-desc">Versão correta para uso em produção. Recebe o teto absoluto do <code>FolhaService</code> e aplica <code>Math.min(bônus, teto)</code>.</span></div>
           <div class="class-row"><span class="class-name">calcularSalarioFinal(base)</span><span class="class-desc">Sobrecarga de compatibilidade com o contrato abstrato. Calcula sem teto. Não deve ser usada para exibição em folha nem para exportação.</span></div>
         </div>
-
         <div class="warn" style="margin-top:16px">
           <span class="warn-label">Atenção</span>
           <span>Sempre usar <code>FolhaService.calcularSalarioFinalCompleto()</code> para obter o salário de um funcionário de produção com o teto corretamente aplicado. A sobrecarga sem teto existe apenas para satisfazer o contrato da classe abstrata.</span>
@@ -505,14 +600,12 @@
       </div>
       <div class="layer-body">
         <p>Camada de negócio e ponto central do sistema. Instanciado pelo <code>main</code> e injetado no <code>ConsoleUI</code>. Detém as configurações de execução — <code>salarioBase</code>, <code>tetoBonusPercentual</code>, <code>limiteMaximoMatricula</code> e <code>modoSequenciaRigido</code> — carregadas do TSV na inicialização e persistidas imediatamente a cada alteração.</p>
-
         <h3>Cadastros e cálculos</h3>
         <div class="class-list">
           <div class="class-row"><span class="class-name">cadastrar*()</span><span class="class-desc">Três métodos, um por tipo. Normalizam o nome antes de adicionar à lista e chamam <code>salvar()</code>.</span></div>
           <div class="class-row"><span class="class-name">calcularSalarioFinalCompleto()</span><span class="class-desc">Ponto único e correto para calcular salário de produção com teto. Os demais tipos passam por <code>calcularSalarioFinal(base)</code> normalmente.</span></div>
           <div class="class-row"><span class="class-name">calcularTotalFolha()</span><span class="class-desc">Soma dos salários finais de todos os funcionários com teto aplicado.</span></div>
         </div>
-
         <h3>Operações administrativas</h3>
         <div class="class-list">
           <div class="class-row"><span class="class-name">editarFuncionarioCompleto()</span><span class="class-desc">Permite trocar o tipo (Padrão ↔ Comissionado ↔ Produção) com revalidação completa das regras de negócio.</span></div>
@@ -535,14 +628,12 @@
       </div>
       <div class="layer-body">
         <p>Responsável exclusivamente pela leitura e escrita de arquivos. Não toma decisões de negócio — recebe dados prontos do <code>FolhaService</code> e os persiste, ou lê o arquivo e devolve um <code>DadosCarregados</code>.</p>
-
         <h3>Leitura</h3>
         <div class="class-list">
           <div class="class-row"><span class="class-name">carregar()</span><span class="class-desc">Lê <code>database.tsv</code>. Se não existir, retorna valores padrão (R$&nbsp;2.000,00 / teto 200%).</span></div>
           <div class="class-row"><span class="class-name">parseTSV(caminho)</span><span class="class-desc">Método privado de leitura com compatibilidade retroativa: lê <code>#CONFIG</code> com menos campos usando padrões. Valida cada linha com número de colunas e tipos esperados.</span></div>
           <div class="class-row"><span class="class-name">DadosCarregados</span><span class="class-desc">Classe interna imutável — contêiner de retorno do <code>carregar()</code> com a lista de funcionários e as configurações.</span></div>
         </div>
-
         <h3>Escrita</h3>
         <div class="class-list">
           <div class="class-row"><span class="class-name">salvar()</span><span class="class-desc">Escreve <code>database.tsv</code> com UTF-8 explícito via <code>OutputStreamWriter</code>.</span></div>
@@ -589,19 +680,23 @@
       </div>
       <div class="layer-body">
         <p>Janela gráfica JavaFX independente. Acessível pela opção <code>(9)</code> do menu administrativo.</p>
-
         <h3>Comportamento</h3>
         <div class="class-list">
           <div class="class-row"><span class="class-name">Execução paralela</span><span class="class-desc">Roda em linha de execução separada — o console permanece ativo e utilizável enquanto o painel está aberto.</span></div>
           <div class="class-row"><span class="class-name">Modo leitura</span><span class="class-desc">Não altera o <code>database.tsv</code>. Dados carregados no início via leitura do TSV. Elimina risco de corrupção por acesso simultâneo.</span></div>
           <div class="class-row"><span class="class-name">Independência</span><span class="class-desc">Fechar a janela não encerra o processo principal.</span></div>
         </div>
-
         <h3>Abas</h3>
+        <div class="note" style="margin-bottom:14px">
+          <span class="note-label">Papel</span>
+          <span>O DashboardBI não é apenas visualização — é uma ferramenta de gestão. O ADM pode exportar blocos da Visão Geral como PNG para enviar à diretoria ou tesouraria, gerar relatórios mensais em TXT ou PNG, acompanhar todos os eventos do sistema e ajustar configurações de identidade da empresa sem tocar no terminal.</span>
+        </div>
         <div class="class-list">
-          <div class="class-row"><span class="class-name">Visão Geral</span><span class="class-desc">Totais de pessoal e custo da folha.</span></div>
-          <div class="class-row"><span class="class-name">Funcionários</span><span class="class-desc">Listagem com filtros por categoria.</span></div>
-          <div class="class-row"><span class="class-name">Relatórios</span><span class="class-desc">Gráficos de produtividade e distribuição.</span></div>
+          <div class="class-row"><span class="class-name">Visão Geral</span><span class="class-desc">KPIs do mês (total da folha, headcount, maior salário, média). Gráfico de evolução dos últimos 6 meses, pizza de distribuição por tipo, comparação com o mês anterior, Top 5 salários, consistência dos dados e logs recentes. Exportável como PNG — selecionando quais blocos incluir.</span></div>
+          <div class="class-row"><span class="class-name">Funcionários</span><span class="class-desc">Listagem completa com filtros por mês, tipo (Padrão / Comissionado / Produção), ordenação e busca por nome. Exportável como TSV para integração com ferramentas externas.</span></div>
+          <div class="class-row"><span class="class-name">Relatórios</span><span class="class-desc">Resumo textual gerado sob demanda para o mês selecionado: totais, ranking por salário, quebra por tipo. Exportável como TXT, PNG ou TSV anual — arquivos prontos para encaminhar à diretoria ou tesouraria.</span></div>
+          <div class="class-row"><span class="class-name">Auditoria</span><span class="class-desc">Consulta completa ao histórico de logs do sistema (arquivos <code>logs/yyyy-MM_log.log</code>). Filtros por operação, mês e busca livre. Mostra até 500 eventos ordenados por data decrescente. Exportável como TSV. Permite rastrear qualquer alteração — cadastros, edições, resets, importações, configurações.</span></div>
+          <div class="class-row"><span class="class-name">Configurações</span><span class="class-desc">Exibe os parâmetros atuais do sistema lidos do <code>database.tsv</code> (salário-base, teto de bônus, limite de matrícula, modo de sequência) e os compara com os padrões de fábrica. Permite editar nome da empresa, usuário e perfil persistidos em <code>config/dashboard.properties</code>. Lista as pastas monitoradas pelo dashboard.</span></div>
         </div>
       </div>
     </div>
@@ -619,7 +714,6 @@
       <div class="layer-body">
         <p>Sistema de registros mensais. Cada mês gera <code>logs/yyyy-MM_log.log</code>. Falhas de escrita são silenciosas — o registro de operações nunca deve interromper o sistema principal.</p>
         <p>Papel crítico na detecção de estado: <code>contemPrimeiroAcesso()</code> é consultado pelo <code>main</code> para distinguir "sistema nunca foi iniciado" de "banco de dados apagado acidentalmente", acionando o bloqueio de segurança no segundo caso.</p>
-
         <div class="note" style="margin-top:16px">
           <span class="note-label">Correção UTF-8</span>
           <span>O método <code>log()</code> usava <code>FileWriter</code>, que no Windows gravava com CP1252 — corrompendo nomes acentuados. Corrigido para <code>OutputStreamWriter(stream, StandardCharsets.UTF_8)</code> com anexação explícita em todos os pontos de escrita.</span>
@@ -632,7 +726,6 @@
   <section id="persistencia">
     <h2>Persistência</h2>
     <p>O sistema usa dois formatos de arquivo com papéis distintos e bem separados.</p>
-
     <div class="persist-grid">
       <div class="persist-card">
         <div class="persist-card-header">TSV — dados operacionais</div>
@@ -651,7 +744,6 @@
         </div>
       </div>
     </div>
-
     <h3>Arquivos gerados em execução</h3>
     <div class="class-list" style="margin-bottom:16px">
       <div class="class-row"><span class="class-name">database.tsv</span><span class="class-desc">Raiz do projeto — estado atual da folha.</span></div>
@@ -661,7 +753,6 @@
       <div class="class-row"><span class="class-name">historico/</span><span class="class-desc">Capturas de fechamento de mês — nomeadas por ano-mês.</span></div>
       <div class="class-row"><span class="class-name">logs/</span><span class="class-desc">Registros mensais de operações — usados também na detecção de estado.</span></div>
     </div>
-
     <div class="note">
       <span class="note-label">Privacidade</span>
       <span>Todos os arquivos gerados estão no <code>.gitignore</code>. Podem conter dados de funcionários — nomes, matrículas, salários. Mantê-los fora do repositório é uma decisão intencional de privacidade.</span>
@@ -681,7 +772,6 @@ MATRICULA	NOME	TIPO	SALARIO_BASE	VENDAS	PERCENTUAL	QTD_PECA	VALOR_PECA	SALARIO_T
 <span class="num">1</span>	Ana Lima	PADRAO	<span class="num">2000.0</span>	<span class="num">0</span>	<span class="num">0</span>	<span class="num">0</span>	<span class="num">0</span>	<span class="num">2000.0</span>	<span class="num">5</span>	<span class="num">2025</span>
 <span class="num">2</span>	Carlos Silva	COMISSIONADO	<span class="num">2000.0</span>	<span class="num">15000.0</span>	<span class="num">10.0</span>	<span class="num">0</span>	<span class="num">0</span>	<span class="num">3500.0</span>	<span class="num">5</span>	<span class="num">2025</span>
 <span class="num">3</span>	Mariana Souza	PRODUCAO	<span class="num">2000.0</span>	<span class="num">0</span>	<span class="num">0</span>	<span class="num">250</span>	<span class="num">8.0</span>	<span class="num">4000.0</span>	<span class="num">5</span>	<span class="num">2025</span></pre>
-
     <table class="tsv-table">
       <thead><tr><th>Coluna</th><th>Tipo</th><th>Descrição</th></tr></thead>
       <tbody>
@@ -738,6 +828,10 @@ MATRICULA	NOME	TIPO	SALARIO_BASE	VENDAS	PERCENTUAL	QTD_PECA	VALOR_PECA	SALARIO_T
           <td>Salário-base e teto de bônus eram constantes estáticas em <code>Funcionario</code>. Mover para o serviço eliminou dependência de estado estático e permite reconfigurar valores em tempo de execução sem recriar objetos.</td>
         </tr>
         <tr>
+          <td>TSV no lugar de CSV</td>
+          <td>O separador original era ponto-e-vírgula (variante CSV brasileira). O problema é estrutural: valores monetários no Brasil usam vírgula como separador decimal — <code>R$ 1.500,00</code> — o que colide diretamente com o delimitador CSV. Além disso, ferramentas de BI como Power BI importam CSV com lógica regional inconsistente entre instalações. O TSV elimina essa ambiguidade: nenhum valor monetário ou nome de pessoa contém tabulação, então o delimitador nunca conflita com os dados. O arquivo continua legível em qualquer editor de texto e abre corretamente no Excel e LibreOffice sem configuração regional.</td>
+        </tr>
+        <tr>
           <td>TSV como fonte única de verdade</td>
           <td>O XLS é gerado a partir do TSV, nunca o contrário. Evita divergência de dados e mantém importação e exportação simples, verificáveis e independentes de biblioteca externa.</td>
         </tr>
@@ -769,12 +863,128 @@ MATRICULA	NOME	TIPO	SALARIO_BASE	VENDAS	PERCENTUAL	QTD_PECA	VALOR_PECA	SALARIO_T
     </table>
   </section>
 
+  <!-- ── LIMITES DO SISTEMA ── -->
+  <section id="limites">
+    <h2>Limites intencionais do sistema</h2>
+    <p>Esta seção existe para alinhar expectativas. Cada limitação abaixo é uma escolha de arquitetura — não uma falta.</p>
+    <div class="rule-block">
+      <ul>
+        <li>Não há concorrência multiusuário</li>
+        <li>Não há persistência transacional</li>
+        <li>Não há autenticação real</li>
+        <li>Não há banco relacional</li>
+        <li>Não há lock de arquivo</li>
+        <li>Não há atualização em tempo real do DashboardBI</li>
+        <li>Não há criptografia de dados em repouso</li>
+        <li>Não há controle de acesso por perfil granular</li>
+        <li>Não há integração com sistemas externos (ERP, Ponto eletrônico)</li>
+        <li>Não há validação de CPF/PIS</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ── DÍVIDA TÉCNICA ── -->
+  <section id="divida">
+    <h2>Riscos conhecidos / dívida técnica</h2>
+    <p>Registro de concessões e pontos de melhoria que merecem atenção em versões futuras.</p>
+    <div class="rule-block">
+      <ul>
+        <li><code>double</code> para valores monetários — <code>BigDecimal</code> seria o tipo correto</li>
+        <li>Ausência de lock de arquivo — risco de escrita concorrente se dois processos acessarem o TSV</li>
+        <li>Acoplamento parcial UI/service — ConsoleUI conhece regras de validação de entrada</li>
+        <li>Dashboard em snapshot — não reflete alterações feitas no console durante a mesma sessão</li>
+        <li>Ausência de testes automatizados — cobertura zero de unitários e integração</li>
+        <li>Ausência de serialização tipada — parse do TSV depende de índices posicionais</li>
+        <li>Sem migração de schema — alterações no formato do TSV exigem recriação manual</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ── INVARIANTES ── -->
+  <section id="invariantes">
+    <h2>Invariantes do sistema</h2>
+    <p>Regras globais que devem ser verdadeiras em qualquer estado válido do sistema — antes, durante e depois de qualquer operação.</p>
+    <div class="rule-block">
+      <ul>
+        <li><code>matricula > 0</code> — todo funcionário possui matrícula positiva</li>
+        <li><code>database.tsv</code> é autoridade máxima — nenhum dado em memória contradiz o arquivo</li>
+        <li>Registros nunca interrompem a execução — falhas de log são silenciosas</li>
+        <li>XLS nunca é lido — apenas escrito, nunca usado como entrada</li>
+        <li>Todo funcionário possui tipo válido — Padrão, Comissionado ou Produção</li>
+        <li>Exportação nunca altera estado — operações de leitura são imutáveis</li>
+        <li>Salário final de produção nunca excede <code>salarioBase + tetoAbsoluto</code></li>
+        <li>Toda operação que altera estado é imediatamente persistida</li>
+        <li>A lista em memória sempre corresponde ao conteúdo atual do TSV após cada operação</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ── POLÍTICA DE TOLERÂNCIA A FALHAS ── -->
+  <section id="falhas">
+    <h2>Política de tolerância a falhas</h2>
+    <p>Consolidação do comportamento do sistema diante de cenários de erro. Cada categoria define uma resposta previsível.</p>
+
+    <h3>O que bloqueia o sistema</h3>
+    <div class="rule-block">
+      <ul>
+        <li><code>database.tsv</code> ausente com registros de primeiro acesso nos logs — banco apagado acidentalmente</li>
+        <li>Importação de arquivo TSV com formato inválido ou colunas insuficientes</li>
+        <li>Falha ao criar cópia de segurança antes da importação — operação cancelada por segurança</li>
+      </ul>
+    </div>
+
+    <h3>O que falha silenciosamente</h3>
+    <div class="rule-block">
+      <ul>
+        <li>Escrita no arquivo de log — erro capturado, sistema segue normalmente</li>
+        <li>Criação de diretórios de exportação — se falhar, apenas notifica no console</li>
+        <li>Fechamento do DashboardBI — não afeta o processo principal</li>
+      </ul>
+    </div>
+
+    <h3>O que gera rollback parcial</h3>
+    <div class="rule-block">
+      <ul>
+        <li>Reset — backup é criado antes da limpeza; se a limpeza falhar, o backup permanece íntegro</li>
+        <li>Importação — backup é criado antes da substituição; se falhar, o estado anterior está preservado</li>
+      </ul>
+    </div>
+
+    <h3>O que cancela a operação</h3>
+    <div class="rule-block">
+      <ul>
+        <li>Digitação de <code>0</code> em qualquer campo — cancelamento universal</li>
+        <li>Matrícula duplicada durante cadastro — operação rejeitada</li>
+        <li>Tipo inválido durante edição — operação rejeitada com mensagem</li>
+      </ul>
+    </div>
+
+    <h3>O que gera backup automático</h3>
+    <div class="rule-block">
+      <ul>
+        <li>Reset do sistema — <code>backups/backup_reset_[timestamp].tsv</code></li>
+        <li>Importação de arquivo — <code>backups/backup_pre_import_[timestamp].tsv</code></li>
+        <li>Fechamento de mês — <code>historico/yyyy-MM_[mes]_[timestamp].tsv</code></li>
+      </ul>
+    </div>
+  </section>
+
   <footer>br.com.folha — Sistema de Folha de Pagamento · v7.1 · ADS · UC Dual Oracle Academy</footer>
 
 </main>
 </div>
 
 <script>
+  // ── Progress bar ──
+  const progressBar = document.getElementById('progressBar');
+  window.addEventListener('scroll', () => {
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = docHeight > 0 ? Math.min((scrollTop / docHeight) * 100, 100) : 0;
+    progressBar.style.setProperty('--progress', progress + '%');
+  });
+
+  // ── Sidebar active highlight (suave) ──
   const sections = document.querySelectorAll('section[id]');
   const links = document.querySelectorAll('.sidebar a');
   const obs = new IntersectionObserver(entries => {
@@ -787,6 +997,15 @@ MATRICULA	NOME	TIPO	SALARIO_BASE	VENDAS	PERCENTUAL	QTD_PECA	VALOR_PECA	SALARIO_T
     });
   }, { rootMargin: '-20% 0px -70% 0px' });
   sections.forEach(s => obs.observe(s));
+
+  // ── Dark mode toggle ──
+  const html = document.documentElement;
+  const toggle = document.getElementById('themeToggle');
+  toggle.addEventListener('click', () => {
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+  });
 </script>
 </body>
 </html>

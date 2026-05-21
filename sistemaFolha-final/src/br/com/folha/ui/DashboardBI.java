@@ -1,3 +1,4 @@
+
 package br.com.folha.ui;
 
 import javax.swing.*;
@@ -31,15 +32,26 @@ import java.util.stream.Stream;
 import javax.imageio.ImageIO;
 
 /**
- * Dashboard Analítico — Folha de Pagamento v7.1
+ * Dashboard Analítico — Folha de Pagamento v7.2
  *
  * ESTÉTICA: "monocromático" puritano. Modo escuro = preto/branco. Modo claro = branco/preto.
  * Cores funcionais restritas: verde para PADRÃO, laranja para COMISSIONADO,
  * roxo para PRODUÇÃO, azul apenas para totais monetários.
+ *
+ * Correções v7.2:
+ *   - carregarDados() agora também lê os registros do database.tsv (não só o #CONFIG),
+ *     permitindo que o mês atual apareça no gráfico de evolução sem depender de
+ *     exportação ou ciclo mensal prévios.
+ *   - lerConfigDatabase() passou a emitir aviso em console quando o #CONFIG está
+ *     ausente ou corrompido, em vez de falhar silenciosamente.
+ *   - timerCursor agora é parado no fechamento da janela (windowClosed), evitando
+ *     acúmulo de timers ao abrir/fechar o Dashboard múltiplas vezes na mesma JVM.
+ *   - Aba Configurações ganhou botão [📖] DOCUMENTAÇÃO DO PROJETO que abre o HTML
+ *     de estrutura no browser padrão — caminho configurável em DOCS_PATH.
  */
 public class DashboardBI extends JFrame {
 
-    private static final String VERSAO_DASH = "v7.1";
+    private static final String VERSAO_DASH = "v7.2";
 
     private static final double  DEFAULT_SALARIO_BASE     = 2000.00;
     private static final double  DEFAULT_TETO_PERCENTUAL  = 200.0;
@@ -52,6 +64,8 @@ public class DashboardBI extends JFrame {
     private static final String LOGO_PATH     = "config/logo-GUI.png";
     private static final String CONFIG_PATH   = "config/dashboard.properties";
     private static final String DATABASE_PATH = "database.tsv";
+    /** Caminho do HTML de estrutura do projeto aberto pelo botão de documentação. */
+    private static final String DOCS_PATH     = "docs/estrutura_projeto.html";
 
     // ── Paleta ────────────────────────────────────────────────────────────
     private Color BG_ROOT, BG_PANEL, BG_CARD, BG_ROW_A, BG_ROW_B, BG_HEADER, BG_SEL;
@@ -130,6 +144,12 @@ public class DashboardBI extends JFrame {
             }
         });
         timerCursor.start();
+        // Para o timer ao fechar, evitando acúmulo de timers ativos na JVM.
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override public void windowClosed(java.awt.event.WindowEvent e) {
+                timerCursor.stop();
+            }
+        });
     }
 
     // ═════════════════════════════════════════════════════════════════════
@@ -217,6 +237,7 @@ public class DashboardBI extends JFrame {
     private void carregarDados() {
         dados.clear();
         lerConfigDatabase();
+        lerDatabase();      // lê os registros de funcionários do database.tsv
         lerPasta(DIR_HIST);
         lerPasta(DIR_EXP);
         Set<String> vistos = new HashSet<>();
@@ -236,13 +257,64 @@ public class DashboardBI extends JFrame {
         try (Scanner sc = new Scanner(db, "UTF-8")) {
             if (!sc.hasNextLine()) return;
             String linha = sc.nextLine().trim();
-            if (!linha.startsWith("#CONFIG")) return;
+            if (!linha.startsWith("#CONFIG")) {
+                System.out.println("[Dashboard] AVISO: database.tsv sem linha #CONFIG. " +
+                    "Usando valores padrão de configuração.");
+                return;
+            }
             String[] cfg = linha.split("\t");
-            if (cfg.length > 1) cfgSalarioBase     = Double.parseDouble(cfg[1].trim());
-            if (cfg.length > 2) cfgTetoPercentual   = Double.parseDouble(cfg[2].trim());
-            if (cfg.length > 3) cfgLimiteMatricula  = Integer.parseInt(cfg[3].trim());
-            if (cfg.length > 4) cfgModoRigido       = Boolean.parseBoolean(cfg[4].trim());
-        } catch (Exception ignored) {}
+            try {
+                if (cfg.length > 1) cfgSalarioBase     = Double.parseDouble(cfg[1].trim());
+                if (cfg.length > 2) cfgTetoPercentual   = Double.parseDouble(cfg[2].trim());
+                if (cfg.length > 3) cfgLimiteMatricula  = Integer.parseInt(cfg[3].trim());
+                if (cfg.length > 4) cfgModoRigido       = Boolean.parseBoolean(cfg[4].trim());
+            } catch (NumberFormatException e) {
+                System.out.println("[Dashboard] AVISO: #CONFIG corrompido em database.tsv (" +
+                    e.getMessage() + "). Usando valores padrão de configuração.");
+            }
+        } catch (Exception e) {
+            System.out.println("[Dashboard] AVISO: Erro ao ler database.tsv: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Lê os registros de funcionários diretamente do database.tsv,
+     * populando a lista {@code dados} com o mês corrente.
+     * Isso garante que o gráfico de evolução mostre o período ativo
+     * mesmo quando não há exportação ou histórico gerados ainda.
+     * A desduplicação em {@link #carregarDados()} cuida de eventuais
+     * sobreposições com arquivos de historico/ ou exportados/dados/.
+     */
+    private void lerDatabase() {
+        File db = new File(DATABASE_PATH);
+        if (!db.exists()) return;
+        try (Scanner sc = new Scanner(db, "UTF-8")) {
+            // Pula linha #CONFIG (se existir) e linha de cabeçalho
+            while (sc.hasNextLine()) {
+                String linha = sc.nextLine().trim();
+                if (linha.isEmpty() || linha.startsWith("#CONFIG") || linha.startsWith("MATRICULA"))
+                    continue;
+                String[] p = linha.split("\t");
+                if (p.length < 11) continue;
+                try {
+                    RegistroFolha r = new RegistroFolha();
+                    r.matricula   = Integer.parseInt(p[0].trim());
+                    r.nome        = p[1].trim();
+                    r.tipo        = p[2].trim();
+                    r.salarioBase = Double.parseDouble(p[3].trim());
+                    r.vendas      = Double.parseDouble(p[4].trim());
+                    r.percentual  = Double.parseDouble(p[5].trim());
+                    r.qtdPecas    = Integer.parseInt(p[6].trim());
+                    r.valorPeca   = Double.parseDouble(p[7].trim());
+                    r.salTotal    = Double.parseDouble(p[8].trim());
+                    r.mes         = Integer.parseInt(p[9].trim());
+                    r.ano         = Integer.parseInt(p[10].trim());
+                    dados.add(r);
+                } catch (NumberFormatException ignored) {}
+            }
+        } catch (Exception e) {
+            System.out.println("[Dashboard] AVISO: Erro ao ler registros de database.tsv: " + e.getMessage());
+        }
     }
 
     private void lerPasta(String dir) {
@@ -1559,6 +1631,32 @@ public class DashboardBI extends JFrame {
             dir.add(rowP);
             dir.add(Box.createVerticalStrut(4));
         }
+
+        dir.add(Box.createVerticalStrut(20));
+        dir.add(secLabel(">> DOCUMENTAÇÃO"));
+        dir.add(Box.createVerticalStrut(8));
+
+        JButton btnDocs = botaoAcao("[📖] ESTRUTURA DO PROJETO");
+        btnDocs.setMaximumSize(new Dimension(Integer.MAX_VALUE, fontSize + 20));
+        btnDocs.setToolTipText("Abre " + DOCS_PATH + " no browser padrão");
+        btnDocs.addActionListener(e -> {
+            File html = new File(DOCS_PATH);
+            if (!html.exists()) {
+                JOptionPane.showMessageDialog(this,
+                    "Arquivo de documentação não encontrado:\n" + html.getAbsolutePath() +
+                    "\n\nCrie o arquivo ou ajuste DOCS_PATH em DashboardBI.java.",
+                    "Documentação não encontrada", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            try {
+                Desktop.getDesktop().browse(html.toURI());
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this,
+                    "Não foi possível abrir o browser:\n" + ex.getMessage(),
+                    "Erro", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+        dir.add(btnDocs);
 
         painel.add(esq, BorderLayout.CENTER);
         painel.add(dir, BorderLayout.EAST);
