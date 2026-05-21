@@ -20,7 +20,7 @@ import br.com.folha.model.FuncionarioProducao;
 /**
  * Responsável por ler e escrever o database.tsv.
  *
- * Formato da linha #CONFIG (v5.1):
+ * Formato da linha #CONFIG (v7.1):
  *   #CONFIG\t<salarioBase>\t<tetoBonusPercentual>\t<limiteMatricula>\t<modoRigido>
  *
  * Compatibilidade retroativa: arquivos com menos campos na #CONFIG usam defaults.

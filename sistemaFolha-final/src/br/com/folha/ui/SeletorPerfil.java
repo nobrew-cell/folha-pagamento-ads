@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 /**
  * Tela de seleção de perfil exibida no início de cada sessão.
- * Retorna o perfil escolhido pelo usuário: ADM ou FUNCIONARIO.
+ * Retorna o perfil escolhido pelo usuário: ADM ou FUNCIONARIO, só essas opções por enquanto.
  *
  * Regra especial: se for o primeiro acesso (sem database.tsv),
  * entra direto como ADM sem perguntar, pois não há dados ainda.
@@ -28,7 +28,7 @@ public class SeletorPerfil {
         if (primeiraVez) {
             System.out.println("\n" + SEP);
             System.out.println("      Bem-vindo ao Sistema de Folha de Pagamento");
-            System.out.println("           Versao 5.1  |  Salarios mensais");
+            System.out.println("           Versao 7.1  |  Salarios mensais");
             System.out.println(SEP);
             System.out.println("  Primeiro acesso detectado. Nenhum dado cadastrado.");
             System.out.println("  Entrando automaticamente como ADMINISTRADOR.");
@@ -41,7 +41,7 @@ public class SeletorPerfil {
         try (Scanner sc = new Scanner(stdin)) {
             while (true) {
                 System.out.println("\n" + SEP);
-                System.out.println("         Sistema de Folha de Pagamento  v6.1");
+                System.out.println("         Sistema de Folha de Pagamento  v7.1");
                 System.out.println(SEP);
                 System.out.println("  Como deseja acessar?");
                 System.out.println(LIN);
@@ -54,7 +54,7 @@ public class SeletorPerfil {
                 switch (entrada) {
                     case "1" -> { return Perfil.FUNCIONARIO; }
                     case "2" -> { return Perfil.ADM; }
-                    default  -> System.out.println("  Opcao invalida. Digite 1 ou 2.");
+                    default  -> System.out.println("  Opcao invalida. Digite 1 ou 2: ");
                 }
             }
         }

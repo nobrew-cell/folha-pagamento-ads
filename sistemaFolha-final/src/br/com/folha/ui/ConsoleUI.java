@@ -73,7 +73,7 @@ public class ConsoleUI {
     private void exibirBoasVindas() {
         System.out.println("\n" + SEP);
         System.out.println("      Bem-vindo ao Sistema de Folha de Pagamento");
-        System.out.println("           Versao 6.1  |  Salarios mensais");
+        System.out.println("           Versao 7.1  |  Salarios mensais");
         System.out.println(SEP);
         System.out.println("  Este e o seu primeiro acesso.");
         System.out.println("  Nenhum funcionario cadastrado ainda.");
@@ -294,7 +294,7 @@ public class ConsoleUI {
     // ── Dashboard ─────────────────────────────────────────────────────────
     private void abrirDashboard() {
         System.out.println("\n" + SEA);
-        System.out.println("              DASHBOARD ANALITICO v5.1");
+        System.out.println("              DASHBOARD ANALITICO v7.1");
         System.out.println(SEA);
         System.out.println("  Abrindo janela grafica em segundo plano...");
         System.out.println("  O terminal continua disponivel normalmente.");

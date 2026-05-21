@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Fluxograma - Sistema Folha de Pagamento</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.0/mermaid.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-page: #f5f4f0;
+    --bg-card: #ffffff;
+    --border:  #d3d1c7;
+    --text:    #1a1a18;
+    --text-sub:#73726c;
+    --ctrl-bg: #ffffff;
+    --ctrl-border: #c0bcb0;
+    --ctrl-hover: #e8e6df;
+    --ctrl-text: #1a1a18;
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.12);
+    
+    --c-terminal-fill: #E1F5EE;
+    --c-terminal-stroke: #0F6E56;
+    --c-process-fill: #E6F1FB;
+    --c-process-stroke: #185FA5;
+    --c-io-fill: #EEEDFE;
+    --c-io-stroke: #534AB7;
+    --c-decision-fill: #FAEEDA;
+    --c-decision-stroke: #854F0B;
+    --c-storage-fill: #F1EFE8;
+    --c-storage-stroke: #5F5E5A;
+    --c-sub-fill: #FBEAF0;
+    --c-sub-stroke: #993556;
+    --c-erro-fill: #FDE8E8;
+    --c-erro-stroke: #C0392B;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg-page: #1a1a18;
+      --bg-card: #242422;
+      --border:  #444441;
+      --text:    #e2e0d6;
+      --text-sub:#888780;
+      --ctrl-bg: #2a2a28;
+      --ctrl-border: #555552;
+      --ctrl-hover: #3d3d3b;
+      --ctrl-text: #e2e0d6;
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.4);
+      
+      --c-terminal-fill: #085041;
+      --c-terminal-stroke: #5DCAA5;
+      --c-process-fill: #0C447C;
+      --c-process-stroke: #85B7EB;
+      --c-io-fill: #3C3489;
+      --c-io-stroke: #AFA9EC;
+      --c-decision-fill: #633806;
+      --c-decision-stroke: #EF9F27;
+      --c-storage-fill: #3A3935;
+      --c-storage-stroke: #B4B2A9;
+      --c-sub-fill: #72243E;
+      --c-sub-stroke: #ED93B1;
+      --c-erro-fill: #5C2823;
+      --c-erro-stroke: #E68676;
+    }
+  }
+
+  body {
+    background: var(--bg-page);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    padding: 28px 20px 48px;
+  }
+
+  h1 { text-align:center; font-size: 1.35rem; font-weight: 540; margin-bottom: 6px; }
+  .subtitle { text-align:center; font-size: 0.75rem; color: var(--text-sub); margin-bottom: 24px; }
+
+  .diagram-viewport {
+    max-width: 1100px;
+    margin: 0 auto;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    position: relative;
+    overflow: hidden;
+    height: 70vh;
+    min-height: 500px;
+    cursor: grab;
+    user-select: none;
+    box-shadow: var(--shadow-sm);
+  }
+  .diagram-viewport:active { cursor: grabbing; }
+
+  #diagram-canvas {
+    position: absolute;
+    top: 0; left: 0;
+    transform-origin: 0 0;
+    will-change: transform;
+  }
+
+  .mermaid { display: inline-block; }
+  .mermaid svg { 
+    display: block; 
+    background: transparent;
+    max-width: none;
+    height: auto;
+  }
+
+  /* Setas escuras e grossas */
+  .mermaid svg .edgePath .path {
+    stroke: #444 !important;
+    stroke-width: 1.8 !important;
+    stroke-linecap: round !important;
+  }
+  .mermaid svg .edgePath .arrowheadPath {
+    fill: #444 !important;
+    stroke: #444 !important;
+  }
+  
+  @media (prefers-color-scheme: dark) {
+    .mermaid svg .edgePath .path {
+      stroke: #aaa !important;
+    }
+    .mermaid svg .edgePath .arrowheadPath {
+      fill: #aaa !important;
+      stroke: #aaa !important;
+    }
+  }
+
+  /* 
+    CORREÇÃO DEFINITIVA DOS LABELS (MARCA-TEXTO)
+    - Remove o retângulo de fundo do Mermaid
+    - Remove qualquer estilo de borda/sombra da label
+    - Aplica highlight apenas no texto (p, div, span)
+    - Sem border-radius, sem cápsula, sem badge
+  */
+  .mermaid svg .edgeLabel rect {
+    fill: transparent !important;
+    stroke: none !important;
+  }
+
+  .mermaid svg .edgeLabel {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Highlight no texto real (qualquer elemento que contenha o texto) */
+  .mermaid svg .edgeLabel foreignObject p,
+  .mermaid svg .edgeLabel foreignObject div,
+  .mermaid svg .edgeLabel foreignObject span,
+  .mermaid svg .edgeLabel p,
+  .mermaid svg .edgeLabel div,
+  .mermaid svg .edgeLabel span {
+    display: inline !important;
+    padding: 0 4px !important;
+    line-height: 1.4 !important;
+    font-weight: 700 !important;
+    font-size: 11px !important;
+    box-decoration-break: clone !important;
+    -webkit-box-decoration-break: clone !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  /* Modo claro */
+  .mermaid svg .edgeLabel foreignObject p,
+  .mermaid svg .edgeLabel foreignObject div,
+  .mermaid svg .edgeLabel foreignObject span,
+  .mermaid svg .edgeLabel p,
+  .mermaid svg .edgeLabel div,
+  .mermaid svg .edgeLabel span {
+    background: rgba(255, 255, 255, 0.94) !important;
+    color: #111 !important;
+  }
+
+  /* Modo escuro */
+  @media (prefers-color-scheme: dark) {
+    .mermaid svg .edgeLabel foreignObject p,
+    .mermaid svg .edgeLabel foreignObject div,
+    .mermaid svg .edgeLabel foreignObject span,
+    .mermaid svg .edgeLabel p,
+    .mermaid svg .edgeLabel div,
+    .mermaid svg .edgeLabel span {
+      background: rgba(20, 20, 20, 0.94) !important;
+      color: #f5f5f5 !important;
+    }
+  }
+
+  /* Painel de botões */
+  .controls-panel {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    z-index: 100;
+  }
+
+  .zoom-card, .nav-group {
+    background: var(--ctrl-bg);
+    border-radius: 48px;
+    border: 1px solid var(--ctrl-border);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 4px 8px;
+  }
+
+  .zoom-label {
+    min-width: 50px;
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text);
+    background: rgba(0,0,0,0.05);
+    padding: 5px 4px;
+    margin: 0 2px;
+    border-radius: 32px;
+  }
+  @media (prefers-color-scheme: dark) {
+    .zoom-label { background: rgba(255,255,255,0.1); }
+  }
+
+  .ctrl-btn {
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: transparent;
+    color: var(--ctrl-text);
+    font-size: 1.2rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.12s ease;
+    border-radius: 40px;
+    line-height: 1;
+  }
+  .ctrl-btn:hover {
+    background: var(--ctrl-hover);
+    transform: scale(0.95);
+  }
+  .ctrl-btn:active {
+    opacity: 0.7;
+    transform: scale(0.92);
+  }
+
+  .nav-group .ctrl-btn {
+    width: 42px;
+    height: 40px;
+    font-size: 1.1rem;
+  }
+
+  .separator-dot {
+    width: 4px;
+    height: 4px;
+    background: var(--text-sub);
+    border-radius: 50%;
+    opacity: 0.35;
+    margin: 0 2px;
+  }
+
+  .hint {
+    position: absolute;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.7rem;
+    color: var(--text-sub);
+    background: var(--ctrl-bg);
+    border: 1px solid var(--ctrl-border);
+    border-radius: 32px;
+    padding: 5px 18px;
+    pointer-events: none;
+    opacity: 0.9;
+    transition: opacity 0.4s ease;
+    white-space: nowrap;
+    z-index: 90;
+    box-shadow: var(--shadow-sm);
+  }
+  .hint.hidden { opacity: 0; visibility: hidden; }
+
+  /* Legenda */
+  .legend {
+    max-width: 1100px;
+    margin: 28px auto 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px 14px;
+    padding: 8px 12px;
+  }
+  
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--text);
+    background: var(--bg-card);
+    padding: 4px 12px 4px 10px;
+    border-radius: 40px;
+    border: 1px solid var(--border);
+    transition: transform 0.1s ease;
+  }
+  .legend-item:hover { transform: translateY(-1px); }
+  
+  .legend-svg { display: flex; align-items: center; justify-content: center; width: 30px; height: 26px; flex-shrink: 0; }
+  .legend-name { font-weight: 600; }
+  .legend-desc { font-size: 0.6rem; color: var(--text-sub); margin-left: 4px; }
+
+  @media (max-width: 600px) {
+    .controls-panel { gap: 8px; bottom: 12px; }
+    .ctrl-btn { width: 36px; height: 36px; font-size: 1rem; }
+    .nav-group .ctrl-btn { width: 38px; height: 36px; font-size: 0.9rem; }
+    .zoom-label { min-width: 44px; font-size: 0.7rem; padding: 3px 2px; }
+    .legend-item { font-size: 0.65rem; padding: 3px 10px 3px 8px; }
+    .legend-svg { width: 26px; height: 22px; }
+    .hint { font-size: 0.6rem; padding: 3px 12px; top: 12px; }
+  }
+
+  @media (max-width: 480px) {
+    .legend { gap: 8px; }
+    .legend-item { padding: 3px 8px; }
+    .legend-desc { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Sistema Folha de Pagamento · Fluxograma Técnico</h1>
+<p class="subtitle">Perfil ADM · Fluxo principal + sub-rotinas administrativas · v8.1</p>
+
+<div class="diagram-viewport" id="viewport">
+  <div class="hint" id="hint">🖱️ Arraste para mover • 🖱️ Scroll / dois dedos para Zoom</div>
+  <div id="diagram-canvas">
+    <div class="mermaid" id="mermaid-root">
+flowchart TD
+  START([Inicio - main])
+  D_DB{database.tsv\nexiste?}
+  D_LOG{ha logs\nanteriores?}
+  ERR[ERRO CRITICO\nBD apagado - Contate o ADM]
+  FIM_ERR([Encerra])
+  LOAD[[FolhaService\nRepository.carregar]]
+  SEL{Selecionar\nPerfil}
+  P_ADM[Perfil ADM]
+
+  MENU[Menu Principal\nlê opcao 1 a 5 ou 0]
+  D_MENU{qual opcao?}
+
+  CAD_PAD[/Cadastrar Funcionario Padrao/]
+  CAD_COM[/Cadastrar Comissionado/]
+  CAD_PRO_D{bonus\nultrapassa teto?}
+  CAD_PRO_BLOCK[BLOQUEIO - Consulte a diretoria]
+  CAD_PRO[/Cadastrar Producao/]
+  FOLHA[/Gerar Folha - calcularSalarioFinal/]
+
+  MENU_ADM[Menu ADM\nlê opcao 1 a 9 ou 0]
+  D_ADM{qual\nsub-opcao?}
+
+  OP1[/Exportar TSV + XLS/]
+  DB_TSV[(folha_ts.tsv)]
+  DB_XLS[(folha_ts.xls)]
+  OP2[/Importar TSV - substitui base/]
+  OP3[Novo Mes - historico + zera valores]
+  OP4[Editar Funcionario por matricula]
+  OP5[/Remover Funcionario por matricula/]
+  OP6[Resetar Sistema - digite CONFIRMAR]
+  DB_BCK[(backup_timestamp.tsv)]
+  OP7[Configuracoes\nsal. base - teto bonus - limite matricula]
+  OP8[Editar em Lote - filtro por tipo]
+  OP9[Dashboard Analitico - Swing]
+
+  SAVE[[encerrar - service.salvar]]
+  DB_MAIN[(database.tsv - estado persistido)]
+  FIM([Fim - scanner.close])
+
+  START --> D_DB
+  D_DB -- nao --> D_LOG
+  D_LOG -- sim --> ERR --> FIM_ERR
+  D_LOG -- nao\n1o acesso --> LOAD
+  D_DB  -- sim --> LOAD
+  LOAD  --> SEL
+  SEL   -- ADM --> P_ADM --> MENU
+
+  MENU  --> D_MENU
+  D_MENU -- 1 --> CAD_PAD       --> MENU
+  D_MENU -- 2 --> CAD_COM       --> MENU
+  D_MENU -- 3 --> CAD_PRO_D
+  CAD_PRO_D -- sim --> CAD_PRO_BLOCK --> MENU
+  CAD_PRO_D -- nao --> CAD_PRO       --> MENU
+  D_MENU -- 4 --> FOLHA         --> MENU
+  D_MENU -- 5 --> MENU_ADM
+  D_MENU -- 0 --> SAVE
+
+  MENU_ADM --> D_ADM
+  D_ADM -- 1 --> OP1
+  OP1   --> DB_TSV & DB_XLS --> MENU_ADM
+  D_ADM -- 2 --> OP2  --> MENU_ADM
+  D_ADM -- 3 --> OP3  --> MENU_ADM
+  D_ADM -- 4 --> OP4  --> MENU_ADM
+  D_ADM -- 5 --> OP5  --> MENU_ADM
+  D_ADM -- 6 --> OP6  --> DB_BCK --> MENU_ADM
+  D_ADM -- 7 --> OP7  --> MENU_ADM
+  D_ADM -- 8 --> OP8  --> MENU_ADM
+  D_ADM -- 9 --> OP9  --> MENU_ADM
+  D_ADM -- 0 --> MENU
+
+  SAVE  --> DB_MAIN --> FIM
+
+  classDef terminal fill:#E1F5EE,stroke:#0F6E56,color:#085041,font-weight:600
+  classDef processo fill:#E6F1FB,stroke:#185FA5,color:#0C447C
+  classDef io fill:#EEEDFE,stroke:#534AB7,color:#3C3489
+  classDef decisao fill:#FAEEDA,stroke:#854F0B,color:#633806,font-weight:500
+  classDef storage fill:#F1EFE8,stroke:#5F5E5A,color:#2C2C2A
+  classDef sub fill:#FBEAF0,stroke:#993556,color:#4B1528
+  classDef erro fill:#FDE8E8,stroke:#C0392B,color:#7B1A1A,font-weight:600
+
+  class START,FIM,FIM_ERR terminal
+  class MENU,MENU_ADM,P_ADM,OP3,OP4,OP6,OP7,OP8,OP9 processo
+  class CAD_PAD,CAD_COM,CAD_PRO,FOLHA,OP1,OP2,OP5 io
+  class D_DB,D_LOG,SEL,D_MENU,D_ADM,CAD_PRO_D decisao
+  class DB_TSV,DB_XLS,DB_BCK,DB_MAIN storage
+  class LOAD,SAVE sub
+  class ERR,CAD_PRO_BLOCK erro
+    </div>
+  </div>
+
+  <div class="controls-panel">
+    <div class="zoom-card">
+      <button class="ctrl-btn" id="btn-zout" title="Reduzir zoom">−</button>
+      <div class="zoom-label" id="zoom-label">100%</div>
+      <button class="ctrl-btn" id="btn-zin" title="Aumentar zoom">+</button>
+    </div>
+    <div class="nav-group">
+      <button class="ctrl-btn" id="btn-fit" title="Ajustar diagrama à tela">⤢</button>
+      <div class="separator-dot"></div>
+      <button class="ctrl-btn" id="btn-rst" title="Resetar posição e zoom">↺</button>
+      <div class="separator-dot"></div>
+      <button class="ctrl-btn" id="btn-left" title="Mover para ESQUERDA">◀</button>
+      <button class="ctrl-btn" id="btn-right" title="Mover para DIREITA">▶</button>
+      <div class="separator-dot"></div>
+      <button class="ctrl-btn" id="btn-up" title="Mover para CIMA">▲</button>
+      <button class="ctrl-btn" id="btn-dn" title="Mover para BAIXO">▼</button>
+    </div>
+  </div>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-svg"><svg width="28" height="22" viewBox="0 0 28 22"><ellipse cx="14" cy="11" rx="12" ry="8" fill="var(--c-terminal-fill)" stroke="var(--c-terminal-stroke)" stroke-width="1.3"/></svg></div><span class="legend-name">Terminal</span><span class="legend-desc">(oval)</span></div>
+  <div class="legend-item"><div class="legend-svg"><svg width="28" height="22" viewBox="0 0 28 22"><rect x="2" y="3" width="24" height="16" rx="2" fill="var(--c-process-fill)" stroke="var(--c-process-stroke)" stroke-width="1.3"/></svg></div><span class="legend-name">Processo</span><span class="legend-desc">(retângulo)</span></div>
+  <div class="legend-item"><div class="legend-svg"><svg width="28" height="22" viewBox="0 0 28 22"><polygon points="5,3 23,3 20,19 2,19" fill="var(--c-io-fill)" stroke="var(--c-io-stroke)" stroke-width="1.3"/></svg></div><span class="legend-name">Entrada/Saída</span><span class="legend-desc">(paralelogramo)</span></div>
+  <div class="legend-item"><div class="legend-svg"><svg width="28" height="22" viewBox="0 0 28 22"><polygon points="14,2 26,11 14,20 2,11" fill="var(--c-decision-fill)" stroke="var(--c-decision-stroke)" stroke-width="1.3"/></svg></div><span class="legend-name">Decisão</span><span class="legend-desc">(losango)</span></div>
+  <div class="legend-item"><div class="legend-svg"><svg width="28" height="24" viewBox="0 0 28 24"><rect x="2" y="6" width="24" height="12" fill="var(--c-storage-fill)" stroke="var(--c-storage-stroke)" stroke-width="1.3"/><ellipse cx="14" cy="6" rx="12" ry="4" fill="var(--c-storage-fill)" stroke="var(--c-storage-stroke)" stroke-width="1.3"/><ellipse cx="14" cy="18" rx="12" ry="4" fill="var(--c-storage-fill)" stroke="var(--c-storage-stroke)" stroke-width="1.3"/></svg></div><span class="legend-name">Armazenamento</span><span class="legend-desc">(cilindro)</span></div>
+  <div class="legend-item"><div class="legend-svg"><svg width="28" height="22" viewBox="0 0 28 22"><rect x="2" y="3" width="24" height="16" rx="2" fill="var(--c-sub-fill)" stroke="var(--c-sub-stroke)" stroke-width="1.3"/><rect x="6" y="3" width="2.5" height="16" fill="var(--c-sub-stroke)" opacity="0.5"/><rect x="19.5" y="3" width="2.5" height="16" fill="var(--c-sub-stroke)" opacity="0.5"/></svg></div><span class="legend-name">Subprocesso</span><span class="legend-desc">(ret. c/ barras)</span></div>
+  <div class="legend-item"><div class="legend-svg"><svg width="28" height="22" viewBox="0 0 28 22"><rect x="2" y="3" width="24" height="16" rx="2" fill="var(--c-erro-fill)" stroke="var(--c-erro-stroke)" stroke-width="1.3"/></svg></div><span class="legend-name">Erro/Bloqueio</span><span class="legend-desc">(ret. vermelho)</span></div>
+</div>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: {
+      background: 'transparent',
+      fontSize: '13px',
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif',
+      lineColor: '#444444',
+      edgeLabelBackground: 'transparent'
+    },
+    flowchart: { 
+      curve: 'basis', 
+      nodeSpacing: 50, 
+      rankSpacing: 60, 
+      padding: 18, 
+      useMaxWidth: false,
+      htmlLabels: true
+    }
+  });
+
+  const viewport = document.getElementById('viewport');
+  const canvas = document.getElementById('diagram-canvas');
+  const label = document.getElementById('zoom-label');
+  const hint = document.getElementById('hint');
+
+  let scale = 1, tx = 20, ty = 20;
+  let dragging = false, lastX = 0, lastY = 0;
+  let hintDismissed = false;
+  const ZOOM_MIN = 0.18, ZOOM_MAX = 3.2, ZOOM_STEP = 0.12;
+
+  function applyTransform() {
+    canvas.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
+    label.textContent = Math.round(scale * 100) + '%';
+  }
+
+  function zoomAt(clientX, clientY, delta) {
+    const newScale = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, scale + delta));
+    if (newScale === scale) return;
+    const rect = viewport.getBoundingClientRect();
+    const px = clientX - rect.left;
+    const py = clientY - rect.top;
+    tx = px - (px - tx) * (newScale / scale);
+    ty = py - (py - ty) * (newScale / scale);
+    scale = newScale;
+    applyTransform();
+  }
+
+  function dismissHint() {
+    if (!hintDismissed) { hint.classList.add('hidden'); hintDismissed = true; }
+  }
+
+  function fitToScreen() {
+    const svgElem = canvas.querySelector('svg');
+    if (!svgElem) { setTimeout(fitToScreen, 150); return; }
+    const vw = viewport.clientWidth - 32;
+    const vh = viewport.clientHeight - 32;
+    if (vw <= 0 || vh <= 0) return;
+    let svgWidth = svgElem.getBoundingClientRect().width;
+    let svgHeight = svgElem.getBoundingClientRect().height;
+    if (svgWidth === 0 || svgHeight === 0) { setTimeout(fitToScreen, 100); return; }
+    const targetScale = Math.min(vw / svgWidth, vh / svgHeight, 1.0);
+    scale = Math.max(ZOOM_MIN, targetScale);
+    tx = (viewport.clientWidth - svgWidth * scale) / 2;
+    ty = (viewport.clientHeight - svgHeight * scale) / 2;
+    applyTransform();
+  }
+
+  function resetView() {
+    scale = 1;
+    const svgElem = canvas.querySelector('svg');
+    if (svgElem && svgElem.getBoundingClientRect().width > 0) {
+      const w = svgElem.getBoundingClientRect().width;
+      const h = svgElem.getBoundingClientRect().height;
+      tx = (viewport.clientWidth - w) / 2;
+      ty = Math.max(18, (viewport.clientHeight - h) / 2);
+    } else { tx = 28; ty = 28; }
+    applyTransform();
+  }
+
+  // Movimento visual (seta aponta para onde o diagrama vai)
+  function moveLeftVisual() { tx += 60; applyTransform(); }
+  function moveRightVisual() { tx -= 60; applyTransform(); }
+  function moveUpVisual() { ty += 60; applyTransform(); }
+  function moveDownVisual() { ty -= 60; applyTransform(); }
+
+  let fitAttempts = 0;
+  function waitForSvgAndFit() {
+    const svgEl = canvas.querySelector('svg');
+    if (svgEl && svgEl.getBoundingClientRect().width > 20 && svgEl.getBoundingClientRect().height > 20) {
+      fitToScreen();
+    } else {
+      fitAttempts++;
+      if (fitAttempts < 20) setTimeout(waitForSvgAndFit, 120);
+      else setTimeout(() => { if(canvas.querySelector('svg')) fitToScreen(); }, 200);
+    }
+  }
+  window.addEventListener('load', () => setTimeout(waitForSvgAndFit, 250));
+
+  viewport.addEventListener('mousedown', e => {
+    if (e.button !== 0) return;
+    dragging = true; lastX = e.clientX; lastY = e.clientY;
+    dismissHint(); e.preventDefault();
+  });
+  window.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    tx += e.clientX - lastX; ty += e.clientY - lastY;
+    lastX = e.clientX; lastY = e.clientY;
+    applyTransform();
+  });
+  window.addEventListener('mouseup', () => { dragging = false; });
+
+  viewport.addEventListener('wheel', e => {
+    e.preventDefault();
+    dismissHint();
+    zoomAt(e.clientX, e.clientY, e.deltaY < 0 ? ZOOM_STEP : -ZOOM_STEP);
+  }, { passive: false });
+
+  let lastTouches = null;
+  viewport.addEventListener('touchstart', e => {
+    if (e.touches.length === 1) dismissHint();
+    lastTouches = e.touches;
+  }, { passive: false });
+  viewport.addEventListener('touchmove', e => {
+    e.preventDefault();
+    if (!lastTouches) return;
+    if (e.touches.length === 1 && lastTouches.length === 1) {
+      tx += e.touches[0].clientX - lastTouches[0].clientX;
+      ty += e.touches[0].clientY - lastTouches[0].clientY;
+      applyTransform();
+    } else if (e.touches.length === 2 && lastTouches.length === 2) {
+      const distOld = Math.hypot(lastTouches[0].clientX - lastTouches[1].clientX, lastTouches[0].clientY - lastTouches[1].clientY);
+      const distNew = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+      const deltaZoom = (distNew - distOld) * 0.012;
+      if (Math.abs(deltaZoom) > 0.002) {
+        const centerX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+        const centerY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+        const newScaleCandidate = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, scale + deltaZoom));
+        if (newScaleCandidate !== scale) {
+          const rect = viewport.getBoundingClientRect();
+          const px = centerX - rect.left;
+          const py = centerY - rect.top;
+          tx = px - (px - tx) * (newScaleCandidate / scale);
+          ty = py - (py - ty) * (newScaleCandidate / scale);
+          scale = newScaleCandidate;
+          applyTransform();
+        }
+      }
+    }
+    lastTouches = e.touches;
+  }, { passive: false });
+  viewport.addEventListener('touchend', () => { lastTouches = null; });
+  canvas.addEventListener('dragstart', e => e.preventDefault());
+
+  document.getElementById('btn-left').addEventListener('click', () => { dismissHint(); moveLeftVisual(); });
+  document.getElementById('btn-right').addEventListener('click', () => { dismissHint(); moveRightVisual(); });
+  document.getElementById('btn-up').addEventListener('click', () => { dismissHint(); moveUpVisual(); });
+  document.getElementById('btn-dn').addEventListener('click', () => { dismissHint(); moveDownVisual(); });
+  document.getElementById('btn-fit').addEventListener('click', () => { dismissHint(); fitToScreen(); });
+  document.getElementById('btn-rst').addEventListener('click', () => { dismissHint(); resetView(); });
+  document.getElementById('btn-zin').addEventListener('click', () => {
+    dismissHint();
+    const rect = viewport.getBoundingClientRect();
+    zoomAt(rect.left + viewport.clientWidth/2, rect.top + viewport.clientHeight/2, ZOOM_STEP);
+  });
+  document.getElementById('btn-zout').addEventListener('click', () => {
+    dismissHint();
+    const rect = viewport.getBoundingClientRect();
+    zoomAt(rect.left + viewport.clientWidth/2, rect.top + viewport.clientHeight/2, -ZOOM_STEP);
+  });
+
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      if (document.hasFocus()) {
+        const svgElem = canvas.querySelector('svg');
+        if (svgElem && svgElem.getBoundingClientRect().width > 0) {
+          const maxFit = Math.min(viewport.clientWidth / svgElem.getBoundingClientRect().width, viewport.clientHeight / svgElem.getBoundingClientRect().height, 1.0);
+          if (scale > maxFit + 0.1) fitToScreen();
+        }
+      }
+    }, 200);
+  });
+
+  setTimeout(() => { if (!hintDismissed) hint.classList.add('hidden'); hintDismissed = true; }, 4800);
+</script>
+</body>
+</html>

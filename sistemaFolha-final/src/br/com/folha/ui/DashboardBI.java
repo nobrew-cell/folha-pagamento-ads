@@ -31,15 +31,15 @@ import java.util.stream.Stream;
 import javax.imageio.ImageIO;
 
 /**
- * Dashboard Analítico — Folha de Pagamento v5.1
+ * Dashboard Analítico — Folha de Pagamento v7.1
  *
- * ESTÉTICA: monocromático puritano. Modo escuro = preto/branco. Modo claro = branco/preto.
+ * ESTÉTICA: "monocromático" puritano. Modo escuro = preto/branco. Modo claro = branco/preto.
  * Cores funcionais restritas: verde para PADRÃO, laranja para COMISSIONADO,
  * roxo para PRODUÇÃO, azul apenas para totais monetários.
  */
 public class DashboardBI extends JFrame {
 
-    private static final String VERSAO_DASH = "v5.1";
+    private static final String VERSAO_DASH = "v7.1";
 
     private static final double  DEFAULT_SALARIO_BASE     = 2000.00;
     private static final double  DEFAULT_TETO_PERCENTUAL  = 200.0;
