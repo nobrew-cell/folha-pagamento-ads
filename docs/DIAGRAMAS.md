@@ -11,58 +11,99 @@ Todos os diagramas de casos de uso foram elaborados manualmente e exibem versõe
 
 ```mermaid
 flowchart TD
-    A([\"Início — main\"])
-    A --> B{\"database.tsv\\nexiste?\"}
-    B -- não --> C[/\"exibe boas-vindas\\nprimeiro acesso\"/]
+    A([Início — main])
+
+    A --> B{database.tsv existe?}
+
+    B -- não --> C[/exibe boas-vindas<br>primeiro acesso/]
     C --> D
+
     B -- sim --> D
-    D[[\"Repository.carregar\"]]
-    D --> SP[\"SeletorPerfil\\nADM ou Funcionário\"]
-    SP --> E[\"Menu principal\\nlê opção do usuário\"]
-    E --> F{\"qual\\nopção?\"}
-    F -- 4 --> G[[\"service.listar\\nordena por matrícula\"]]
-    G --> H[\"para cada Funcionario\\ncalcularSalarioFinal\"]
-    H --> I[/\"exibe: nome, tipo\\nsalário base + extra\"/]
+
+    D[[Repository.carregar]]
+
+    D --> SP[SeletorPerfil<br>ADM ou Funcionário]
+
+    SP --> E[Menu principal<br>lê opção do usuário]
+
+    E --> F{qual opção?}
+
+    F -- 4 --> G[[service.listar<br>ordena por matrícula]]
+
+    G --> H[para cada Funcionario<br>calcularSalarioFinal]
+
+    H --> I[/exibe: nome, tipo<br>salário base + extra/]
+
     I --> Z970
-    F -- 1 --> J[/\"lê nome\"/]
-    J --> K[/\"lê matrícula\"/]
-    K --> L{\"campo\\n= 0?\"}
+
+    F -- 1 --> J[/lê nome/]
+
+    J --> K[/lê matrícula/]
+
+    K --> L{campo = 0?}
+
     L -- sim --> Z970
-    L -- não --> M{\"matrícula\\núnica?\"}
+
+    L -- não --> M{matrícula única?}
+
     M -- não --> K
-    M -- sim --> N[\"service.cadastrarPadrao\"]
+
+    M -- sim --> N[service.cadastrarPadrao]
+
     N --> Z970
-    F -- 2 --> O[/\"lê nome + matrícula\\nvendas + % comissão\"/]
-    O --> P[\"service.cadastrarComissionado\"]
+
+    F -- 2 --> O[/lê nome + matrícula<br>vendas + % comissão/]
+
+    O --> P[service.cadastrarComissionado]
+
     P --> Z970
-    F -- 3 --> Q[/\"lê nome + matrícula\\npeças + valor por peça\"/]
-    Q --> R[\"service.cadastrarProducao\"]
+
+    F -- 3 --> Q[/lê nome + matrícula<br>peças + valor por peça/]
+
+    Q --> R[service.cadastrarProducao]
+
     R --> Z970
-    Z970[ ]
-    Z970 --> S{\"é op.\\n5 ADM / 0?\"}
-    S -- \"1/2/3/4\" --> T[\"↻ retorna ao menu\"]
-    T -.-> E
-    S -- \"5 ADM\" --> MADM[\"Menu Administrativo\\n9 opções\"]
-    MADM --> U[\"(1) service.exportar\\ngerar TSV e XLS automaticamente\"]
-    U --> V[(\"exportados/dados/\\nfolha_timestamp.tsv\")]
-    U --> V2[(\"exportados/relatorios/\\nfolha_timestamp.xls\")]
+
+    Z970([retorna])
+
+    Z970 --> S{é op. 5 ADM ou 0?}
+
+    S -- 1/2/3/4 --> T[retorna ao menu]
+
+    T --> E
+
+    S -- 5 ADM --> MADM[Menu Administrativo<br>9 opções]
+
+    MADM --> U[[service.exportar<br>gerar TSV e XLS]]
+
+    U --> V[(exportados/dados<br>folha_timestamp.tsv)]
+
+    U --> V2[(exportados/relatorios<br>folha_timestamp.xls)]
+
     V --> ZFim
+
     V2 --> ZFim
+
     S -- 0 --> ZFim
-    ZFim[ ]
-    ZFim --> AC[[\"service.salvar\\nrepository.salvar lista\"]]
-    AC --> AD[\"escreverTSV\\ncabeçalho + toTSV por registro\"]
-    AD --> AE[(\"database.tsv\\nestado persistido\")]
-    AE --> AF[/\"exibe: Dados salvos. Volte sempre!\"/]
-    AF --> AG([\"Fim — scanner.close\"])
+
+    ZFim([encerrar])
+
+    ZFim --> AC[[service.salvar<br>repository.salvar lista]]
+
+    AC --> AD[escreverTSV<br>cabeçalho + toTSV]
+
+    AD --> AE[(database.tsv<br>estado persistido)]
+
+    AE --> AF[/Dados salvos. Volte sempre!/]
+
+    AF --> AG([Fim — scanner.close])
 
     classDef terminal fill:#E1F5EE,stroke:#0F6E56,color:#085041
-    classDef process  fill:#E6F1FB,stroke:#185FA5,color:#0C447C
-    classDef io       fill:#EEEDFE,stroke:#534AB7,color:#3C3489
+    classDef process fill:#E6F1FB,stroke:#185FA5,color:#0C447C
+    classDef io fill:#EEEDFE,stroke:#534AB7,color:#3C3489
     classDef decision fill:#FAEEDA,stroke:#854F0B,color:#633806
-    classDef storage  fill:#F1EFE8,stroke:#5F5E5A,color:#2C2C2A
-    classDef sub      fill:#FBEAF0,stroke:#993556,color:#4B1528
-    classDef ghost    fill:none,stroke:none,color:transparent
+    classDef storage fill:#F1EFE8,stroke:#5F5E5A,color:#2C2C2A
+    classDef sub fill:#FBEAF0,stroke:#993556,color:#4B1528
 
     class A,AG terminal
     class E,H,N,P,R,AD,SP,MADM process
@@ -70,7 +111,6 @@ flowchart TD
     class B,F,L,M,S decision
     class V,V2,AE storage
     class D,G,AC,U sub
-    class Z970,ZFim ghost
 ```
 
 ---
