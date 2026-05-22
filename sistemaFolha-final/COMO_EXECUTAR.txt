@@ -1,180 +1,415 @@
-============================================================
-  SISTEMA DE FOLHA DE PAGAMENTO  |  Guia de Uso
-============================================================
+================================================================================
+                     SISTEMA DE FOLHA DE PAGAMENTO – v7.1
+                             -- Guia de Uso --
+================================================================================
 
-  Antes de qualquer coisa, um aviso tranquilizador:
-  voce nao precisa saber programar para usar este sistema.
-  So precisa saber digitar e pressionar ENTER.
+Antes de qualquer coisa, um aviso tranquilizador:
+    Voce nao precisa saber programar para usar este sistema.
+    So precisa saber digitar e pressionar ENTER.
 
-------------------------------------------------------------
-  COMO ABRIR O SISTEMA
-------------------------------------------------------------
+Este guia mostra o que aparece na tela e como o sistema se comporta.
 
-  OPÇÃO RECOMENDADA — Arquivo .bat (mais fácil)
+================================================================================
+                           --- INDICE RAPIDO ---
+================================================================================
 
-  1. Certifique-se de que o arquivo executar.bat está
-     dentro da pasta do projeto (ao lado das pastas
-     src e bin).
+1. Como abrir o sistema
+2. Primeiro acesso (ADM automatico)
+3. Escolha do perfil (Funcionario / Administrador)
+4. Menu principal (perfil comum)
+5. Operacoes disponiveis
+   * Cadastros (padrao, comissionado, producao)
+   * Gerar folha de pagamento
+   * Menu administrativo (ADM)
+6. Menu ADM - manutencao e configuracoes
+7. Exportar, importar, novo mes, editar, remover, reset
+8. Configuracoes do sistema (salario base, teto, matricula)
+9. Edicao em lote e dashboard analitico
+10. Mensagens de erro mais comuns
+11. Sair do sistema
 
-  2. Dê dois cliques no executar.bat.
+================================================================================
+ 1. COMO ABRIR O SISTEMA
+================================================================================
 
-  Pronto. O sistema vai compilar e abrir automaticamente.
-  O menu vai aparecer na tela.
+Recomendado: clique duas vezes no arquivo `executar.bat`
+(Windows pode pedir confirmacao - clique em "Executar assim mesmo").
 
-  Obs.: na primeira vez que rodar, pode aparecer um aviso
-  do Windows SmartScreen — clique em "Mais informações"
-  e depois em "Executar assim mesmo".
-  
-------------------------------------------------------------
-  PRIMEIRA TELA
-------------------------------------------------------------
+O sistema compila e abre sozinho. O menu aparece no terminal.
 
-  No primeiro acesso, antes do menu, voce vera isto:
+================================================================================
+ 2. PRIMEIRO ACESSO (nenhum dado cadastrado)
+================================================================================
 
-  ===========================================
-       Bem-vindo ao Sistema de Folha de Pagamento
-       Versao 2.0  |  Salarios mensais
-  ===========================================
-    Este e o seu primeiro acesso.
-    Nenhum funcionario cadastrado ainda.
-  -------------------------------------------
-    Pressione ENTER para continuar...
+--------------------------------------------------------------------------------
+Bem-vindo ao Sistema de Folha de Pagamento
+--------------------------------------------------------------------------------
 
-  Pressione ENTER. O menu principal vai aparecer.
+- Primeiro acesso detectado.
+- Entrada automatica como ADMINISTRADOR.
+- Pressione ENTER para continuar.
 
-------------------------------------------------------------
-  O MENU PRINCIPAL
-------------------------------------------------------------
+Nenhum funcionario cadastrado ainda.
 
-  Ao abrir, voce vera isto:
+Apos ENTER, o menu principal do ADM e exibido.
 
-  ===========================================
-          FOLHA DE PAGAMENTO  (salarios mensais)
-  ===========================================
-    1 - Cadastrar Funcionario Padrao
-    2 - Cadastrar Funcionario Comissionado
-    3 - Cadastrar Funcionario de Producao
-    4 - Gerar Folha de Pagamento
-    5 - Exportar TSV e XLS  (copia com data e hora)
-    6 - Resetar sistema  [ADM]
-    0 - Sair
-  ===========================================
+================================================================================
+ 3. ESCOLHA DO PERFIL (acessos seguintes)
+================================================================================
 
-  Digite o numero da opcao desejada e pressione ENTER.
+--------------------------------------------------------------------------------
+Como deseja acessar?
+--------------------------------------------------------------------------------
+[1] - Funcionario
+[2] - Administrador
 
-------------------------------------------------------------
-  OPCAO 1 - Funcionario Padrao
-------------------------------------------------------------
+Opcao: >> 1   (ou 2)
 
-  Para quem recebe apenas o salario fixo mensal,
-  sem comissao ou bonus de producao.
+Se digitar outro numero, o sistema repete a pergunta ate receber 1 ou 2.
 
-  O sistema pede:
-    - Nome  (pode digitar em qualquer caixa: jose, JOSE ou Jose)
-    - Matricula  (numero unico de identificacao)
+================================================================================
+ 4. MENU PRINCIPAL (perfil FUNCIONARIO)
+================================================================================
 
-  DICA: se errou ou arrependeu no meio do cadastro,
-  digite 0 em qualquer campo para voltar ao menu.
+--------------------------------------------------------------------------------
+FOLHA DE PAGAMENTO - Perfil: FUNCIONARIO
+--------------------------------------------------------------------------------
+[1] - Cadastrar Funcionario Padrao
+[2] - Cadastrar Funcionario Comissionado
+[3] - Cadastrar Funcionario de Producao
+[4] - Gerar Folha de Pagamento
+[0] - Sair
+--------------------------------------------------------------------------------
 
-------------------------------------------------------------
-  OPCAO 2 - Funcionario Comissionado
-------------------------------------------------------------
+No perfil ADMINISTRADOR, aparece uma opcao extra [5] - Menu ADM.
 
-  Para quem recebe salario fixo + comissao sobre vendas.
+================================================================================
+ 5. OPERACOES DO MENU PRINCIPAL
+================================================================================
 
-  O sistema pede:
-    - Nome
-    - Matricula
-    - Total de vendas do mes  (ex: 15000)
-    - Percentual de comissao  (ex: 5 para 5%)
+--------------------------------------------------------------------------------
+[1] - CADASTRAR FUNCIONARIO PADRAO
+--------------------------------------------------------------------------------
 
-  O calculo e feito automaticamente:
-  salario final = salario base + (vendas x percentual / 100)
+Digite 0 a qualquer momento para cancelar.
 
-------------------------------------------------------------
-  OPCAO 3 - Funcionario de Producao
-------------------------------------------------------------
+Nome: >> Carlos Souza
+Matricula: >> 1
 
-  Para quem recebe salario fixo + bonus por pecas produzidas.
+-> [OK] Funcionario cadastrado com sucesso.
 
-  O sistema pede:
-    - Nome
-    - Matricula
-    - Quantidade de pecas produzidas no mes
-    - Valor pago por cada peca  (ex: 3.50)
+>> Validacoes comuns:
 
-  O calculo e feito automaticamente:
-  salario final = salario base + (quantidade x valor por peca)
+- Nome vazio: sistema pede novamente.
+- Matricula ja existe: pede outra.
+- Matricula nao numerica: pede numero valido.
+- Matricula negativa ou zero: pede valor positivo (ou 0 para cancelar).
+- Nome muito parecido com outro ja cadastrado: avisa e pergunta se deseja continuar.
 
-------------------------------------------------------------
-  OPCAO 4 - Gerar Folha de Pagamento
-------------------------------------------------------------
+Exemplo de aviso de nome semelhante:
 
-  Exibe no terminal todos os funcionarios cadastrados,
-  ordenados por matricula (do menor para o maior numero).
+   Atencao: nome semelhante ja cadastrado:
+     Carlos Souza (matricula 1)
+   Continuar mesmo assim? (S/N): >> S ou N
 
-  Para cada funcionario, voce ve:
-    - Nome e matricula
-    - Tipo  (Padrao, Comissionado ou Producao)
-    - Salario base mensal
-    - Extras  (comissao ou bonus, dependendo do tipo)
-    - Total mensal a receber
+>> Controle de sequencia de matricula:
 
-------------------------------------------------------------
-  OPCAO 5 - Exportar TSV e XLS
-------------------------------------------------------------
+O sistema pode operar em dois modos (configuravel pelo ADM):
 
-  Gera uma copia do cadastro atual em formato TSV e XLS,
-  que abrem direto no Excel.
+- FLEXIVEL (padrao): aceita qualquer matricula, mas avisa se houver numeros livres menores.
+- RIGIDO: exige a proxima matricula na sequencia. Caso contrario, bloqueia e pede a correta.
 
-  O arquivo e salvo em:
-    exportados/dados/folha_AAAA-MM-DD_HH-MM-SS.tsv
-    exportados/relatorios/folha_AAAA-MM-DD_HH-MM-SS.xls
+Exemplo (modo FLEXIVEL):
 
-  A data e hora no nome do arquivo garantem que voce
-  nunca sobrescreve uma exportacao anterior.
-  Cada vez que exportar, um novo arquivo e criado.
+   Matricula: >> 10
+   [AVISO] Existem 2 matricula(s) livre(s) antes deste numero: [8, 9]
+   Deseja continuar com a matricula 10? (S/N): >> S
 
-------------------------------------------------------------
-  OPCAO 6 - Resetar sistema  [ADM]
-------------------------------------------------------------
+Exemplo (modo RIGIDO):
 
-  Apaga todos os funcionarios e zera o sistema.
+   Matricula: >> 8
+   [SEQUENCIA] Modo rigido: a proxima matricula esperada e 7.
+   Digite outra matricula (ou 0 para cancelar): >> 7 -> OK.
 
-  ANTES de apagar qualquer coisa, um backup automatico
-  e salvo em:
-    backups/backup_AAAA-MM-DD_HH-MM-SS.tsv
+>> Limite maximo de matricula (configuravel pelo ADM):
 
-  Para confirmar o reset, voce precisa digitar
-  exatamente a palavra:  CONFIRMAR
+Se o limite for 10 e o usuario digitar 15:
 
-  Qualquer outra coisa cancela a operacao.
+   [LIMITE] Matricula 15 ultrapassa o limite maximo de 10.
+   Digite outra matricula (ou 0 para cancelar):
 
-------------------------------------------------------------
-  OPCAO 0 - Sair
-------------------------------------------------------------
+--------------------------------------------------------------------------------
+ [2] - CADASTRAR FUNCIONARIO COMISSIONADO
+--------------------------------------------------------------------------------
 
-  Salva tudo automaticamente no arquivo database.tsv
-  e encerra o programa.
+Nome: >> Beatriz Alves
+Matricula: >> 11
+Total de vendas mensais (R$): >> 18000
+Percentual de comissao (%): >> 5
 
-  Na proxima vez que abrir, todos os dados estarao la,
-  exatamente como voce deixou.
+-> [OK] Funcionario cadastrado.
 
-------------------------------------------------------------
-  INFORMACOES TECNICAS  (para quem quiser saber)
-------------------------------------------------------------
+>> Validacoes:
 
-  database.tsv    → banco de dados principal do sistema
-| exportados/dados/   → Exportações em TSV (leitura por máquina e integração com Power BI)
-| exportados/relatorios/   → Exportações em XLS (visualização direta no Excel)
-  backups/        → backups automaticos gerados pelo reset
+- Valores negativos: nao sao aceitos.
+- Decimais podem usar virgula (ex: 26.130,41 ou 3,5).
+- Digitar 0 no nome cancela o cadastro.
 
-  O sistema usa o relogio do proprio computador para
-  marcar data e hora nos arquivos. Nao precisa de
-  conexao com a internet.
+--------------------------------------------------------------------------------
+ [3] - CADASTRAR FUNCIONARIO DE PRODUCAO
+--------------------------------------------------------------------------------
 
-  Salario base mensal atual: R$ 2000,00
-  Para alterar, edite a constante SALARIO_BASE
-  no arquivo: src/br/com/folha/model/Funcionario.java
+Nome: >> Thiago Nunes
+Matricula: >> 14
+Pecas produzidas no mes: >> 300
+Bonus por peca (R$ liquido): >> 5
 
-============================================================
+-> [OK] Funcionario cadastrado.
+
+>> Controle de teto de bonus:
+
+- Salario base padrao: R$ 2.000,00
+- Teto padrao: 200% do salario base (R$ 4.000,00)
+- Se bonus total (pecas x valor) ultrapassar o teto, o cadastro e bloqueado.
+
+Exemplo de bloqueio:
+
+   Pecas: 300
+   Bonus por peca: R$ 15,00
+   -> Bonus total R$ 4.500,00 ultrapassa teto de R$ 4.000,00.
+   Cadastro bloqueado. Consulte a diretoria.
+
+--------------------------------------------------------------------------------
+ [4] - GERAR FOLHA DE PAGAMENTO
+--------------------------------------------------------------------------------
+
+Exibe todos os funcionarios com seus respectivos salarios e componentes.
+
+--------------------------------------------------------------------------------
+FOLHA DE PAGAMENTO MENSAL - Total de funcionarios: 3
+--------------------------------------------------------------------------------
+Nome: Carlos Souza      | Matr. 1 | Padrao       | Total: R$ 2.000,00
+Nome: Beatriz Alves     | Matr. 11| Comissionado | Total: R$ 2.900,00
+                         (Comissao R$ 900,00 - 5% sobre R$ 18.000,00)
+Nome: Thiago Nunes      | Matr. 14| Producao     | Total: R$ 3.500,00
+                         (Bonus R$ 1.500,00 - 300 pecas x R$ 5,00)
+--------------------------------------------------------------------------------
+TOTAL DA FOLHA: R$ 8.400,00
+
+Se nao houver funcionarios: "Nenhum funcionario cadastrado ainda."
+
+================================================================================
+ 6. MENU ADMINISTRATIVO (acessado pela opcao [5] no perfil ADM)
+================================================================================
+
+--------------------------------------------------------------------------------
+MENU ADMINISTRATIVO
+--------------------------------------------------------------------------------
+(1) - Exportar TSV e XLS
+(2) - Importar arquivo TSV (substitui todos os dados)
+(3) - Novo mes (arquiva atual e limpa a base)
+(4) - Editar funcionario
+(5) - Remover funcionario
+(6) - Resetar sistema (com backup automatico)
+(7) - Configuracoes do sistema
+(8) - Editar funcionarios em lote (por tipo)
+(9) - Abrir Dashboard Analitico
+(0) - Voltar ao menu principal
+--------------------------------------------------------------------------------
+
+Abaixo, o comportamento esperado de cada opcao.
+
+--------------------------------------------------------------------------------
+ (1) - EXPORTAR TSV E XLS
+--------------------------------------------------------------------------------
+
+- Gera dois arquivos na pasta `exportados/` com data/hora no nome.
+- Se houver erro de permissao, a mensagem e clara: "Falha ao gerar TSV/XLS".
+
+--------------------------------------------------------------------------------
+ (2) - IMPORTAR ARQUIVO TSV
+--------------------------------------------------------------------------------
+
+- Abre um seletor grafico de arquivos (se disponivel).
+- Em terminal sem interface, pede o caminho manualmente.
+- Substitui TODOS os dados atuais.
+- Antes de importar, pergunta confirmacao (S/N).
+- Cria backup automatico do estado anterior.
+
+Validacoes possiveis:
+
+   ERRO: Linha 3: tipo desconhecido 'GERENTE'
+   ERRO: Linha 2: esperadas 11 colunas, encontradas 4
+
+Importacao e cancelada automaticamente nesses casos.
+
+--------------------------------------------------------------------------------
+ (3) - NOVO MES
+--------------------------------------------------------------------------------
+
+- Arquiva a base atual na pasta `historico/`.
+- Pergunta se deseja copiar os funcionarios (zerando vendas/pecas) ou limpar tudo.
+- Exemplo:
+
+   Deseja copiar os funcionarios do mes anterior (zerando vendas/pecas)? (S/N): >> S
+   Deseja continuar? (S/N): >> S
+
+   -> [OK] Historico salvo e base preparada para novo mes.
+
+--------------------------------------------------------------------------------
+ (4) - EDITAR FUNCIONARIO
+--------------------------------------------------------------------------------
+
+- Digite a matricula (0 cancela).
+- Exibe dados atuais.
+- Pergunta se deseja alterar o tipo do funcionario (Padrao/Comissionado/Producao).
+- Depois, pede novo nome (ENTER mantem), e campos especificos do tipo.
+- Validacoes de bonus (teto) e nomes semelhantes sao aplicadas novamente.
+
+Exemplo de edicao simples (mesmo tipo):
+
+   Novo nome: >> Carlos Pereira Souza
+   Novo total de vendas (ENTER para manter): >> 22000
+   -> [OK] Funcionario editado.
+
+Exemplo de mudanca de tipo (Padrao -> Comissionado):
+
+   Deseja alterar o tipo? >> 2 (Comissionado)
+   Total de vendas: >> 12000
+   Percentual: >> 6
+   -> Tipo alterado e dados preenchidos.
+
+--------------------------------------------------------------------------------
+ (5) - REMOVER FUNCIONARIO
+--------------------------------------------------------------------------------
+
+- Digite a matricula (0 cancela).
+- Mostra nome e tipo e pede confirmacao (S/N).
+- Exemplo:
+
+   Funcionario encontrado: Carlos Souza (Padrao)
+   Confirmar remocao? (S/N): >> S -> [OK] Funcionario removido.
+
+--------------------------------------------------------------------------------
+ (6) - RESETAR SISTEMA
+--------------------------------------------------------------------------------
+
+- Apenas com confirmacao textual: digitar exatamente `CONFIRMAR`.
+- Cria backup automatico antes de apagar todos os dados.
+- Exemplo:
+
+   Digite CONFIRMAR para prosseguir: >> CONFIRMAR
+   -> [OK] Sistema resetado. Backup salvo em: backups/backup_....tsv
+
+Qualquer outra entrada cancela a operacao.
+
+--------------------------------------------------------------------------------
+ (7) - CONFIGURACOES DO SISTEMA
+--------------------------------------------------------------------------------
+
+Exibe e permite alterar:
+
+   * Salario base (ex: R$ 2.000,00)
+   * Teto de bonus (% do salario base)
+   * Limite maximo de matricula (0 = sem limite)
+   * Modo de sequencia de matricula (RIGIDO ou FLEXIVEL)
+
+--------------------------------------------------------------------------------
+Exemplo de tela de configuracoes
+--------------------------------------------------------------------------------
+Salario base         : R$ 2.000,00
+Teto de bonus        : 200,0% do salario base (R$ 4.000,00)
+Limite max. matricula: Sem limite
+Sequencia de matricula: FLEXIVEL (com aviso)
+
+1 - Alterar salario base
+2 - Alterar teto de bonus (%)
+3 - Alterar limite maximo de matricula
+4 - Alterar modo de sequencia
+0 - Voltar
+--------------------------------------------------------------------------------
+
+Cada subopcao pede o novo valor e aplica validacoes simples (nao negativo, numerico etc.).
+
+--------------------------------------------------------------------------------
+ (8) - EDICAO EM LOTE POR TIPO
+--------------------------------------------------------------------------------
+
+- Escolha o tipo (Padrao, Comissionado, Producao).
+- O sistema lista todos os funcionarios daquele tipo.
+- Para cada um, pergunta: [E]ditar, [N]pular, [Q]sair.
+- Se escolher E, entra no mesmo fluxo de edicao individual (opcao 4).
+- Ao final, mostra quantos foram editados e pulados.
+
+--------------------------------------------------------------------------------
+ (9) - ABRIR DASHBOARD ANALITICO
+--------------------------------------------------------------------------------
+
+- Tenta abrir uma janela grafica (Java Swing) com graficos e estatisticas.
+- O terminal continua disponivel enquanto a janela estiver aberta.
+- Se o ambiente nao tiver suporte a interface grafica, exibe erro:
+
+   [ERRO] Nao foi possivel abrir o dashboard.
+   Detalhe: Can't connect to X11 window server
+
+================================================================================
+ 7. MENSAGENS DE ERRO MAIS COMUNS (leitura numerica)
+================================================================================
+
+Situacao                                | Mensagem exibida
+----------------------------------------|----------------------------------------
+Menu: letra no lugar de numero          | "Inteiro invalido"
+Configuracoes: valor nao numerico       | "Numero invalido"
+Cadastro vendas/% : nao numerico        | "Numero invalido. Use virgula para decimais"
+Cadastro vendas/% : valor negativo      | "Nao pode ser negativo. Digite novamente"
+Cadastro pecas: nao numerico            | "Numero invalido. Digite novamente"
+Cadastro pecas: negativo                | "Nao pode ser negativo. Digite novamente"
+
+================================================================================
+ 8. PROBLEMAS NA INICIALIZACAO (database.tsv)
+================================================================================
+
+--------------------------------------------------------------------------------
+DATABASE INEXISTENTE
+--------------------------------------------------------------------------------
+O arquivo database.tsv nao foi encontrado.
+Contate o administrador do sistema.
+-> Sistema encerra.
+
+--------------------------------------------------------------------------------
+ERRO CRITICO NA INICIALIZACAO
+--------------------------------------------------------------------------------
+ERRO AO LER database.tsv
+Linha 4: esperadas 11 colunas, encontradas 3
+Corrija o arquivo ou remova-o para recomecar.
+-> Sistema encerra.
+
+Se a linha #CONFIG estiver corrompida, um aviso e exibido, mas o sistema usa valores padrao.
+
+================================================================================
+ 9. SAIR DO SISTEMA
+================================================================================
+
+No menu principal, digite 0.
+
+   -> "Dados salvos. Volte sempre!"
+
+Se houver falha ao salvar (ex: permissao de escrita):
+
+   [AVISO] Falha ao salvar os dados!
+   Os dados desta sessao podem ter sido perdidos.
+   Verifique permissoes de escrita na pasta do sistema.
+
+================================================================================
+ 10. DICAS FINAIS
+================================================================================
+
+- Perfil FUNCIONARIO nao enxerga o menu ADM (opcao 5 e invalida).
+- Em qualquer campo de texto, digitar 0 (zero) cancela a operacao.
+- Backups sao automaticos em importacoes, reset e novo mes.
+- O sistema grava um log de operacoes (sem interromper o uso).
+- O dashboard analitico abre em janela separada - feche-a para voltar ao terminal normalmente.
+
+================================================================================
+                           ----- Fim do guia. -----
+================================================================================

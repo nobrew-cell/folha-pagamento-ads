@@ -392,7 +392,7 @@ code,
     <div class="principles">
       <div class="principle-row">
         <div class="principle-label">Separação de responsabilidades</div>
-        <div class="principle-desc">Cada camada faz exatamente o que o nome dela diz, e nada além disso. A interface não calcula. O serviço não persiste. O repositório não valida regras de negócio.</div>
+        <div class="principle-desc">Cada camada faz exatamente o que o nome dela diz, e nada além disso. A interface não calcula. O serviço não persiste. O repositório não valida regras de negócio — valida apenas integridade estrutural dos dados no parse (colunas e tipos esperados).</div>
       </div>
       <div class="principle-row">
         <div class="principle-label">TSV como fonte única</div>
@@ -454,7 +454,7 @@ code,
       </div>
     </div>
 
-    <p style="margin-top:16px">O <code>main</code> é o ponto de montagem: instancia o repositório, injeta no serviço e injeta o serviço na UI. Depois disso, sai do caminho. O <code>util</code> é transversal — acessado diretamente pelo <code>main</code> e pelo <code>service</code>, sem passar por outras camadas.</p>
+    <p style="margin-top:16px">O <code>main</code> é o ponto de montagem: instancia o repositório, injeta no serviço e injeta o serviço na UI. Depois disso, sai do caminho. O <code>util</code> é transversal — acessado diretamente pelo <code>main</code>, pelo <code>service</code> e pelo <code>ConsoleUI</code>, sem restrição de camada.</p>
   </section>
 
   <!-- ── FLUXO DE INICIALIZAÇÃO ── -->
@@ -477,7 +477,7 @@ code,
       </div>
       <div class="flow-row">
         <div class="flow-step" style="background:#7a5080">carregar</div>
-        <div class="flow-detail"><code>FolhaService</code> instancia <code>FuncionarioRepository</code> e chama <code>carregar()</code> — lê TSV, parseia <code>#CONFIG</code> e desserializa funcionários</div>
+        <div class="flow-detail"><code>main</code> instancia <code>FuncionarioRepository</code> e injeta no <code>FolhaService</code>, que chama <code>carregar()</code> — lê TSV, parseia <code>#CONFIG</code> e desserializa funcionários</div>
       </div>
       <div class="flow-row">
         <div class="flow-step" style="background:#903030">perfil</div>
@@ -489,7 +489,7 @@ code,
       </div>
       <div class="flow-row">
         <div class="flow-step" style="background:#505048">encerrar</div>
-        <div class="flow-detail"><code>service.salvar()</code> → <code>LoggerUtil.logEncerramento()</code> → fecha o leitor de entrada</div>
+        <div class="flow-detail"><code>service.salvar()</code> → fecha o leitor de entrada</div>
       </div>
     </div>
   </section>
@@ -537,7 +537,7 @@ code,
         <h3>Utilitários de nome</h3>
         <div class="class-list">
           <div class="class-row"><span class="class-name">normalizarNome(String)</span><span class="class-desc">Capitaliza cada palavra mantendo acentos — usado no armazenamento.</span></div>
-          <div class="class-row"><span class="class-name">removerAcentos(String)</span><span class="class-desc">Remove diacríticos via <code>Normalizer.Form.NFD</code> — usado na exibição no terminal para contornar limitações de codificação.</span></div>
+          <div class="class-row"><span class="class-name">removerAcentos(String)</span><span class="class-desc">Remove diacríticos via <code>Normalizer.Form.NFD</code>. Disponível como utilitário; <code>getNomeExibicao()</code> retorna o nome com acentos e capitalização normalizados, sem usar este método.</span></div>
         </div>
         <div class="note" style="margin-top:16px">
           <span class="note-label">Nota</span>
@@ -632,7 +632,7 @@ code,
         <div class="class-list">
           <div class="class-row"><span class="class-name">carregar()</span><span class="class-desc">Lê <code>database.tsv</code>. Se não existir, retorna valores padrão (R$&nbsp;2.000,00 / teto 200%).</span></div>
           <div class="class-row"><span class="class-name">parseTSV(caminho)</span><span class="class-desc">Método privado de leitura com compatibilidade retroativa: lê <code>#CONFIG</code> com menos campos usando padrões. Valida cada linha com número de colunas e tipos esperados.</span></div>
-          <div class="class-row"><span class="class-name">DadosCarregados</span><span class="class-desc">Classe interna imutável — contêiner de retorno do <code>carregar()</code> com a lista de funcionários e as configurações.</span></div>
+          <div class="class-row"><span class="class-name">DadosCarregados</span><span class="class-desc">Classe interna contêiner de retorno do <code>carregar()</code> com a lista de funcionários e as configurações. Os campos são <code>final</code>, mas a lista é exposta por referência — mutável externamente.</span></div>
         </div>
         <h3>Escrita</h3>
         <div class="class-list">
@@ -668,7 +668,7 @@ code,
       </div>
       <div class="layer-body">
         <p>A camada de maior esforço de desenvolvimento. Gerencia todo o fluxo de interação: menus, validações de entrada, exibição da folha e menu administrativo com 9 opções.</p>
-        <p>O terminal não é responsivo como uma interface gráfica — centralização de títulos, controle de comprimento de linhas e consistência visual foram todos desenvolvidos manualmente. O zero (<code>0</code>) funciona como cancelamento universal em qualquer campo de cadastro ou edição.</p>
+        <p>O terminal não é responsivo como uma interface gráfica — centralização de títulos, controle de comprimento de linhas e consistência visual foram todos desenvolvidos manualmente. Em fluxos de cadastro, o zero (<code>0</code>) no campo matrícula cancela e retorna ao menu; em edição, o cancelamento é feito por ENTER em branco; em configurações, <code>0</code> significa ausência de limite. O mecanismo de cancelamento varia conforme o contexto.</p>
       </div>
     </div>
 
@@ -679,11 +679,11 @@ code,
         <div class="layer-pkg">br.com.folha.ui</div>
       </div>
       <div class="layer-body">
-        <p>Janela gráfica JavaFX independente. Acessível pela opção <code>(9)</code> do menu administrativo.</p>
+        <p>Janela gráfica Swing independente (<code>JFrame</code>). Acessível pela opção <code>(9)</code> do menu administrativo.</p>
         <h3>Comportamento</h3>
         <div class="class-list">
           <div class="class-row"><span class="class-name">Execução paralela</span><span class="class-desc">Roda em linha de execução separada — o console permanece ativo e utilizável enquanto o painel está aberto.</span></div>
-          <div class="class-row"><span class="class-name">Modo leitura</span><span class="class-desc">Não altera o <code>database.tsv</code>. Dados carregados no início via leitura do TSV. Elimina risco de corrupção por acesso simultâneo.</span></div>
+          <div class="class-row"><span class="class-name">Escrita limitada</span><span class="class-desc">Não altera o <code>database.tsv</code>. Dados carregados no início via leitura do TSV. Persiste preferências de identidade da empresa em <code>config/dashboard.properties</code> e permite exportar PNG, TXT e TSV diretamente pelo painel.</span></div>
           <div class="class-row"><span class="class-name">Independência</span><span class="class-desc">Fechar a janela não encerra o processo principal.</span></div>
         </div>
         <h3>Abas</h3>
@@ -712,7 +712,7 @@ code,
         <div class="layer-pkg">br.com.folha.util</div>
       </div>
       <div class="layer-body">
-        <p>Sistema de registros mensais. Cada mês gera <code>logs/yyyy-MM_log.log</code>. Falhas de escrita são silenciosas — o registro de operações nunca deve interromper o sistema principal.</p>
+        <p>Sistema de registros mensais. Cada mês gera <code>logs/yyyy-MM_log.log</code>. Falhas de escrita são capturadas e não interrompem o sistema — um aviso é emitido em <code>System.err</code>, mas o fluxo principal segue normalmente.</p>
         <p>Papel crítico na detecção de estado: <code>contemPrimeiroAcesso()</code> é consultado pelo <code>main</code> para distinguir "sistema nunca foi iniciado" de "banco de dados apagado acidentalmente", acionando o bloqueio de segurança no segundo caso.</p>
         <div class="note" style="margin-top:16px">
           <span class="note-label">Correção UTF-8</span>
@@ -800,18 +800,18 @@ MATRICULA	NOME	TIPO	SALARIO_BASE	VENDAS	PERCENTUAL	QTD_PECA	VALOR_PECA	SALARIO_T
       <tbody>
         <tr><td>PRIMEIRO_ACESSO</td><td>Na primeira execução, sem banco de dados. Marca que o sistema já rodou ao menos uma vez — consultado na detecção de estado.</td></tr>
         <tr><td>INICIO_SESSAO</td><td>A cada inicialização normal (com banco presente).</td></tr>
-        <tr><td>FIM_SESSAO</td><td>Ao encerrar, com total da folha e resultado do salvamento.</td></tr>
+        <tr><td>FIM_SESSAO</td><td>Ao encerrar, com total da folha e resultado do salvamento. <em style="color:var(--muted)">(Método definido em LoggerUtil; não é chamado no fluxo atual de encerramento.)</em></td></tr>
         <tr><td>CADASTRO</td><td>Ao cadastrar qualquer funcionário, com tipo, nome e matrícula.</td></tr>
         <tr><td>EDICAO</td><td>Ao editar um funcionário individualmente.</td></tr>
         <tr><td>REMOCAO</td><td>Ao remover um funcionário, com nome e matrícula.</td></tr>
         <tr><td>EXPORT</td><td>Ao exportar, com os caminhos do TSV e do XLS gerados.</td></tr>
         <tr><td>IMPORT</td><td>Ao concluir uma importação, com caminho e quantidade de registros.</td></tr>
-        <tr><td>IMPORT_BACKUP</td><td>Complementar ao IMPORT — registra o caminho da cópia de segurança criada antes.</td></tr>
+        <tr><td>IMPORT_BACKUP</td><td>Complementar ao IMPORT — registra o caminho da cópia de segurança criada antes. <em style="color:var(--muted)">(Método definido em LoggerUtil; não é emitido no fluxo atual de importação.)</em></td></tr>
         <tr><td>RESET</td><td>Ao resetar, com o caminho da cópia de segurança automática.</td></tr>
         <tr><td>NOVO_MES</td><td>Ao fechar o mês — se copiou funcionários e caminho do histórico gerado.</td></tr>
         <tr><td>CONFIG</td><td>A cada alteração de parâmetro de configuração, com valor anterior e novo.</td></tr>
         <tr><td>EDICAO_LOTE</td><td>Ao concluir edição em lote: tipo, quantidade editada e quantidade ignorada.</td></tr>
-        <tr><td>ERRO</td><td>Erros não-fatais capturados pelo sistema (ex: falha de cópia de segurança).</td></tr>
+        <tr><td>ERRO</td><td>Erros não-fatais capturados pelo sistema (ex: falha de cópia de segurança). <em style="color:var(--muted)">(Método definido em LoggerUtil; não é emitido em nenhum ponto do fluxo atual.)</em></td></tr>
       </tbody>
     </table>
   </section>
@@ -840,8 +840,8 @@ MATRICULA	NOME	TIPO	SALARIO_BASE	VENDAS	PERCENTUAL	QTD_PECA	VALOR_PECA	SALARIO_T
           <td><code>BigDecimal</code> seria o tipo correto em produção — elimina imprecisão de ponto flutuante em operações financeiras. Mantido nesta versão por simplificar a serialização TSV e o escopo do projeto. Anotado como dívida técnica para versões futuras.</td>
         </tr>
         <tr>
-          <td>Zero como cancelamento universal</td>
-          <td>Qualquer campo aceita <code>0</code> para cancelar e retornar ao menu. Consistente em toda a interface — sem tecla especial, sem comando memorizado.</td>
+          <td>Zero como cancelamento em cadastro</td>
+          <td>Em fluxos de cadastro, o campo matrícula aceita <code>0</code> para cancelar e retornar ao menu. Em edição, vários campos usam ENTER em branco como cancelamento. Em configurações, <code>0</code> significa "sem limite". O cancelamento varia por contexto — não existe uma sentinela universal em toda a interface.</td>
         </tr>
         <tr>
           <td>Segurança por sessão, não por senha</td>
@@ -908,10 +908,10 @@ MATRICULA	NOME	TIPO	SALARIO_BASE	VENDAS	PERCENTUAL	QTD_PECA	VALOR_PECA	SALARIO_T
       <ul>
         <li><code>matricula > 0</code> — todo funcionário possui matrícula positiva</li>
         <li><code>database.tsv</code> é autoridade máxima — nenhum dado em memória contradiz o arquivo</li>
-        <li>Registros nunca interrompem a execução — falhas de log são silenciosas</li>
+        <li>Registros nunca interrompem a execução — falhas de log são capturadas; um aviso pode aparecer em <code>System.err</code>, mas o fluxo principal não é afetado</li>
         <li>XLS nunca é lido — apenas escrito, nunca usado como entrada</li>
         <li>Todo funcionário possui tipo válido — Padrão, Comissionado ou Produção</li>
-        <li>Exportação nunca altera estado — operações de leitura são imutáveis</li>
+        <li>Exportação do console nunca altera estado — operações de leitura e exportação via <code>ConsoleUI</code> são imutáveis; o <code>DashboardBI</code> permite exportar arquivos adicionais (PNG, TXT, TSV) pelo painel gráfico</li>
         <li>Salário final de produção nunca excede <code>salarioBase + tetoAbsoluto</code></li>
         <li>Toda operação que altera estado é imediatamente persistida</li>
         <li>A lista em memória sempre corresponde ao conteúdo atual do TSV após cada operação</li>
@@ -936,7 +936,7 @@ MATRICULA	NOME	TIPO	SALARIO_BASE	VENDAS	PERCENTUAL	QTD_PECA	VALOR_PECA	SALARIO_T
     <h3>O que falha silenciosamente</h3>
     <div class="rule-block">
       <ul>
-        <li>Escrita no arquivo de log — erro capturado, sistema segue normalmente</li>
+        <li>Escrita no arquivo de log — erro capturado, sistema segue normalmente; aviso pode aparecer em <code>System.err</code></li>
         <li>Criação de diretórios de exportação — se falhar, apenas notifica no console</li>
         <li>Fechamento do DashboardBI — não afeta o processo principal</li>
       </ul>
@@ -953,7 +953,7 @@ MATRICULA	NOME	TIPO	SALARIO_BASE	VENDAS	PERCENTUAL	QTD_PECA	VALOR_PECA	SALARIO_T
     <h3>O que cancela a operação</h3>
     <div class="rule-block">
       <ul>
-        <li>Digitação de <code>0</code> em qualquer campo — cancelamento universal</li>
+        <li>Matrícula <code>0</code> em cadastro — cancela o fluxo e retorna ao menu</li>
         <li>Matrícula duplicada durante cadastro — operação rejeitada</li>
         <li>Tipo inválido durante edição — operação rejeitada com mensagem</li>
       </ul>
@@ -962,7 +962,7 @@ MATRICULA	NOME	TIPO	SALARIO_BASE	VENDAS	PERCENTUAL	QTD_PECA	VALOR_PECA	SALARIO_T
     <h3>O que gera backup automático</h3>
     <div class="rule-block">
       <ul>
-        <li>Reset do sistema — <code>backups/backup_reset_[timestamp].tsv</code></li>
+        <li>Reset do sistema — <code>backups/backup_[timestamp].tsv</code></li>
         <li>Importação de arquivo — <code>backups/backup_pre_import_[timestamp].tsv</code></li>
         <li>Fechamento de mês — <code>historico/yyyy-MM_[mes]_[timestamp].tsv</code></li>
       </ul>

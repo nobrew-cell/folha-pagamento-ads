@@ -5,6 +5,15 @@
 
 ---
 
+## 👥 Equipe e contribuições
+
+O projeto foi desenvolvido por **Gabriel Conceição da Silva**, **Eduardo Santos Cruz** e **Pedro Alonso Martins Fernandes**.
+*Gabriel* foi responsável pela maior parte da implementação e arquitetura do sistema, enquanto *Pedro* e *Eduardo* contribuíram principalmente com testes, sugestões e validações durante o desenvolvimento.
+
+Reflexões individuais de cada membro sobre o desenvolvimento estão em [`docs/COMENTARIOS.md`](./docs/COMENTARIOS.md).
+
+---
+
 ## 📌 Sobre o projeto
 
 Sistemas de folha de pagamento no mercado tendem a ser caros, dependentes de internet ou complexos demais para o que entregam. Na outra ponta, o Excel é flexível e amplamente usado — mas não tem regras de negócio, depende do usuário não errar e não escala bem.
@@ -144,16 +153,7 @@ java -cp bin br.com.folha.main.SistemaFolha
 | `historico/` | Snapshots mensais gerados pelo "Novo mês", com nomenclatura `yyyy-MM-dd_database.tsv` |
 | `logs/` | Registro de sessões mensais — usado para detectar database ausente |
 
-Esses arquivos estão no `.gitignore`. Podem conter dados de funcionários — nomes, matrículas, salários. Mantê-los fora do repositório é uma decisão de privacidade.
-
----
-
-## 👥 Equipe e contribuições
-
-O projeto foi desenvolvido por **Gabriel Conceição da Silva**, **Eduardo Santos Cruz** e **Pedro Alonso Martins Fernandes**.
-*Gabriel* foi responsável pela maior parte da implementação e arquitetura do sistema, enquanto *Pedro* e *Eduardo* contribuíram principalmente com testes, sugestões e validações durante o desenvolvimento.
-
-Reflexões individuais de cada membro sobre o desenvolvimento estão em [`docs/COMENTARIOS.md`](./docs/COMENTARIOS.md).
+Esses arquivos não aparecem agora pois estão no `.gitignore`. Podem conter dados de funcionários — nomes, matrículas, salários. Mantê-los fora do repositório é uma decisão de privacidade.
 
 ---
 
