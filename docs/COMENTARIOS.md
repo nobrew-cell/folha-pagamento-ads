@@ -26,19 +26,7 @@ Reflexões pessoais de cada membro sobre o desenvolvimento do projeto — decis�
 
 **Sobre os releases e versionamento do projeto**
 
-> Essa foi uma partes mais complicadas de se manter e mais chatinha de seguir. Como as mudanças estavam no meu controle e não do git, não tem uma real consistência entre os releases, por exemplo, e o versionamento. Se bem perceber, verá que por exemplo o projeto não começa com v1.0, pois essa versão é a minha local. Isso se repete nas outras versões posteriores. É um padrão pessoal, que só existe pois os meus testes pessoais locais, eu não desejaria de forma alguma que aparecesse no github ou fosse invadido pelo git. Se tivesse uma v0.0, ela seria o primeiro .java do projeto. Ele nem aparece no github, pois faz parte de testes pessoais iniciais. A maioria dos commits, ou são novas funções que eu coloquei, ou são coisas que deixei passar entre uma IDE e outra. Se ficar curioso, esse foi o esquema atual dos releases do projeto:
-
----
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/nobrew-cell/folha-pagamento-ads/refs/heads/evolution/sistemaFolha-final/assets/rg_releases_black.svg">
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/nobrew-cell/folha-pagamento-ads/evolution/sistemaFolha-final/assets/rg_releases_white.svg">
-  <img src="https://raw.githubusercontent.com/nobrew-cell/folha-pagamento-ads/evolution/sistemaFolha-final/assets/rg_releases_black.svg" alt="Diagrama de Releases do Projeto" style="max-width: 100%;">
-</picture>
-
-<p align="center">
-  <sub><i>Diagrama de planejamento das releases do projeto, divididas entre o escopo <b>Local</b> (desenvolvimentos e testes que podem ser retidos ou unificados) e o escopo <b>GitHub</b> (entregas oficiais e versionadas via Git).</i></sub>
-</p>
+> Essa foi uma partes mais complicadas de se manter e mais chatinha de seguir. Como as mudanças estavam no meu controle e não do git, não tem uma real consistência entre os releases, por exemplo, e o versionamento. Se bem perceber, verá que por exemplo o projeto não começa com v1.0, pois essa versão é a minha local. Isso se repete nas outras versões posteriores. É um padrão pessoal, que só existe pois os meus testes pessoais locais, eu não desejaria de forma alguma que aparecesse no github ou fosse invadido pelo git. Se tivesse uma v0.0, ela seria o primeiro .java do projeto. Ele nem aparece no github, pois faz parte de testes pessoais iniciais. A maioria dos commits, ou são novas funções que eu coloquei, ou são coisas que deixei passar entre uma IDE e outra. Se ficar curioso, dê uma olhada no diagrama de releases: [`docs/DIAGRAMAS.md`](./docs/DIAGRAMAS.md)
 
 ---
 
