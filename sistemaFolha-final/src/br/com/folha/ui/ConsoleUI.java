@@ -468,7 +468,7 @@ public class ConsoleUI {
             System.out.println("  Total mensal: " + Funcionario.moeda(sal));
         }
         System.out.println(LIN);
-        System.out.println("  TOTAL DA FOLHA: " + Funcionario.moeda(service.calcularTotalFolha()));
+        System.out.println("           TOTAL DA FOLHA: " + Funcionario.moeda(service.calcularTotalFolha()));
         System.out.println(SEP);
     }
 

@@ -309,6 +309,7 @@ code,
   <a href="#principios"><span class="dot" style="background:#888"></span>Princípios</a>
   <a href="#fluxo-camadas"><span class="dot" style="background:#888"></span>Fluxo entre camadas</a>
   <a href="#fluxo-inicializacao"><span class="dot" style="background:#888"></span>Fluxo de inicialização</a>
+  <a href="#cli-menus"><span class="dot" style="background:#888"></span>Menus e travas do CLI</a>
   <div class="sidebar-section">Camadas</div>
   <a href="#main"><span class="dot c-main"></span>main</a>
   <a href="#model"><span class="dot c-model"></span>model</a>
@@ -492,6 +493,173 @@ code,
         <div class="flow-detail"><code>service.salvar()</code> → fecha o leitor de entrada</div>
       </div>
     </div>
+  </section>
+
+  <!-- ── MENUS E TRAVAS DO CLI (movido para o topo) ── -->
+  <section id="cli-menus">
+    <h2>Menus, submenus, barramentos e travas do CLI</h2>
+
+    <p>O <code>ConsoleUI</code> é organizado em três níveis de navegação. Cada nível tem seu próprio conjunto de opções, mecanismos de cancelamento e barramentos que impedem o prosseguimento quando uma condição de negócio não é satisfeita.</p>
+
+    <!-- Diagrama Nassi-Shneiderman via HTML/CSS -->
+    <div style="margin: 28px 0; overflow-x: auto;">
+      <div style="font-family: var(--mono); font-size: 12px; min-width: 660px; border: 2px solid var(--border); border-radius: 6px; overflow: hidden; line-height: 1.5;">
+
+        <!-- Nível 0: Seleção de perfil -->
+        <div style="background:var(--accent-soft);border-bottom:1px solid var(--border);padding:7px 14px;font-weight:700;color:var(--accent)">
+          🔑 SELEÇÃO DE PERFIL &nbsp;<span style="font-weight:400;color:var(--muted);font-size:11px">(SeletorPerfil)</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:2px solid var(--border)">
+          <div style="padding:6px 14px;border-right:1px solid var(--border)">
+            <span style="color:var(--muted);font-size:11px">sem database.tsv</span><br>
+            <b>Perfil ADM</b> — direto, sem tela
+          </div>
+          <div style="padding:6px 14px">
+            <span style="color:var(--muted);font-size:11px">com database.tsv</span><br>
+            <b>Funcionário</b> ou <b>ADM</b> (escolha)
+          </div>
+        </div>
+
+        <!-- Nível 1: Menu Principal -->
+        <div style="background:var(--surface);border-bottom:1px solid var(--border);padding:7px 14px;font-weight:700;color:var(--text)">
+          📋 MENU PRINCIPAL &nbsp;<span style="font-weight:400;color:var(--muted);font-size:11px">opções [1]–[4] · [5] ADM · [0] Sair</span>
+        </div>
+
+        <div style="border-bottom:1px solid var(--border)">
+          <div style="display:grid;grid-template-columns:160px 1fr;border-bottom:1px dashed var(--border)">
+            <div style="padding:5px 14px;border-right:1px solid var(--border);font-weight:600">[1] Cadastrar Padrão</div>
+            <div style="padding:5px 14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px">
+              <div>Lê nome <span style="color:var(--muted);font-size:11px">(0 cancela)</span></div>
+              <div>Lê matrícula <span style="color:var(--muted);font-size:11px">(0 cancela · duplicada rejeita)</span></div>
+              <div>Alerta nome similar <span style="color:var(--muted);font-size:11px">(S/N)</span></div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:160px 1fr;border-bottom:1px dashed var(--border)">
+            <div style="padding:5px 14px;border-right:1px solid var(--border);font-weight:600">[2] Cadastrar Comissionado</div>
+            <div style="padding:5px 14px;display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:4px">
+              <div>nome <span style="color:var(--muted);font-size:11px">(0 cancela)</span></div>
+              <div>matrícula <span style="color:var(--muted);font-size:11px">(0 cancela)</span></div>
+              <div>vendas R$</div>
+              <div>% comissão</div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:160px 1fr;border-bottom:1px dashed var(--border)">
+            <div style="padding:5px 14px;border-right:1px solid var(--border);font-weight:600">[3] Cadastrar Produção</div>
+            <div style="padding:5px 14px">
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:4px;margin-bottom:6px">
+                <div>nome <span style="color:var(--muted);font-size:11px">(0 cancela)</span></div>
+                <div>matrícula</div>
+                <div>qtd peças</div>
+                <div>R$/peça</div>
+              </div>
+              <div style="background:#fde8e8;border:1px solid #c0392b;border-radius:4px;padding:4px 10px;font-size:11px;color:#7b1a1a">
+                <b>🔒 BARRAMENTO · trava de bônus</b> — se <code>qtd × R$/peça &gt; tetoBonus</code>, o cadastro é bloqueado imediatamente. Não há como contornar pelo menu; requer ajuste em (7) Configurações.
+              </div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:160px 1fr;border-bottom:1px dashed var(--border)">
+            <div style="padding:5px 14px;border-right:1px solid var(--border);font-weight:600">[4] Gerar Folha</div>
+            <div style="padding:5px 14px;color:var(--muted);font-size:12px">Lista todos os funcionários ordenados por matrícula · calcula <code>calcularSalarioFinal</code> · exibe base + extra + total mensal · imprime total geral da folha</div>
+          </div>
+          <div style="display:grid;grid-template-columns:160px 1fr">
+            <div style="padding:5px 14px;border-right:1px solid var(--border);font-weight:600">[5] Menu ADM</div>
+            <div style="padding:5px 14px">
+              <span style="background:var(--accent-soft);color:var(--accent);border-radius:4px;padding:2px 8px;font-size:11px;font-weight:600">Visível apenas para Perfil ADM</span>
+              &nbsp;<span style="color:var(--muted);font-size:12px">Perfil Funcionário recebe "Opção inválida"</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nível 2: Menu ADM -->
+        <div style="background:var(--surface);border-bottom:1px solid var(--border);padding:7px 14px 7px 28px;font-weight:700;color:var(--text)">
+          &nbsp;&nbsp;🔧 MENU ADMINISTRATIVO &nbsp;<span style="font-weight:400;color:var(--muted);font-size:11px">sub-opções (1)–(9) · (0) Voltar ao principal</span>
+        </div>
+
+        <div>
+          <div style="display:grid;grid-template-columns:180px 1fr;border-bottom:1px dashed var(--border)">
+            <div style="padding:5px 14px 5px 28px;border-right:1px solid var(--border);font-weight:600">(1) Exportar TSV + XLS</div>
+            <div style="padding:5px 14px;font-size:12px;color:var(--muted)">Gera <code>exportados/folha_[ts].tsv</code> e <code>exportados/relatorios/folha_[ts].xls</code> · retorna ao menu principal após</div>
+          </div>
+          <div style="display:grid;grid-template-columns:180px 1fr;border-bottom:1px dashed var(--border)">
+            <div style="padding:5px 14px 5px 28px;border-right:1px solid var(--border);font-weight:600">(2) Importar TSV</div>
+            <div style="padding:5px 14px;font-size:12px">
+              Abre seletor de arquivo Swing (ou lê caminho pelo terminal) · valida formato · exige confirmação S/N
+              <div style="background:#fff8e1;border:1px solid #e6a817;border-radius:4px;padding:3px 8px;margin-top:4px;font-size:11px;color:#7a5500">
+                <b>⚠️ BARRAMENTO</b> — arquivo inválido ou confirmação negada cancela sem alterar a base · backup automático criado antes da substituição
+              </div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:180px 1fr;border-bottom:1px dashed var(--border)">
+            <div style="padding:5px 14px 5px 28px;border-right:1px solid var(--border);font-weight:600">(3) Novo Mês</div>
+            <div style="padding:5px 14px;font-size:12px">Pergunta se copia funcionários (zerando variáveis) ou limpa a base · exige confirmação S/N · arquiva em <code>historico/</code></div>
+          </div>
+          <div style="display:grid;grid-template-columns:180px 1fr;border-bottom:1px dashed var(--border)">
+            <div style="padding:5px 14px 5px 28px;border-right:1px solid var(--border);font-weight:600">(4) Editar Funcionário</div>
+            <div style="padding:5px 14px;font-size:12px">Busca por matrícula · oferece troca de tipo (Padrão / Comissionado / Produção) · edição de nome e campos tipo-específicos · <b>trava de bônus</b> aplicada se novo tipo for Produção</div>
+          </div>
+          <div style="display:grid;grid-template-columns:180px 1fr;border-bottom:1px dashed var(--border)">
+            <div style="padding:5px 14px 5px 28px;border-right:1px solid var(--border);font-weight:600">(5) Remover Funcionário</div>
+            <div style="padding:5px 14px;font-size:12px">Busca por matrícula · exibe nome + tipo · exige confirmação S/N antes de remover</div>
+          </div>
+          <div style="display:grid;grid-template-columns:180px 1fr;border-bottom:1px dashed var(--border)">
+            <div style="padding:5px 14px 5px 28px;border-right:1px solid var(--border);font-weight:600">(6) Resetar Sistema</div>
+            <div style="padding:5px 14px;font-size:12px">
+              Exige que o usuário digite literalmente <code>CONFIRMAR</code> (qualquer outra entrada cancela)
+              <div style="background:#fde8e8;border:1px solid #c0392b;border-radius:4px;padding:3px 8px;margin-top:4px;font-size:11px;color:#7b1a1a">
+                <b>🔒 BARRAMENTO · trava destrutiva</b> — string exata obrigatória · backup em <code>backups/backup_[ts].tsv</code> antes da exclusão · retorna ao menu principal após
+              </div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:180px 1fr;border-bottom:1px dashed var(--border)">
+            <div style="padding:5px 14px 5px 28px;border-right:1px solid var(--border);font-weight:600">(7) Configurações</div>
+            <div style="padding:0">
+              <div style="padding:4px 14px;font-size:12px;color:var(--muted);border-bottom:1px dotted var(--border)">Loop interno com [0] Voltar ao menu ADM</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;font-size:12px">
+                <div style="padding:4px 14px;border-right:1px dotted var(--border)"><b>1</b> Salário-base (R$) · valida &gt; 0</div>
+                <div style="padding:4px 14px"><b>2</b> Teto de bônus (% do sal. base) · valida &gt; 0</div>
+                <div style="padding:4px 14px;border-right:1px dotted var(--border)"><b>3</b> Limite máximo de matrícula · 0 = sem limite</div>
+                <div style="padding:4px 14px"><b>4</b> Modo de sequência: RÍGIDO (proíbe pulos) ou FLEXÍVEL (avisa)</div>
+              </div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:180px 1fr;border-bottom:1px dashed var(--border)">
+            <div style="padding:5px 14px 5px 28px;border-right:1px solid var(--border);font-weight:600">(8) Editar em Lote</div>
+            <div style="padding:5px 14px;font-size:12px">Filtra por tipo · percorre cada registro: <code>[E]ditar</code> / <code>[N]pular</code> / <code>[Q]sair do lote</code> · aplica <code>editarFuncionarioComDados</code> com as mesmas travas da edição individual</div>
+          </div>
+          <div style="display:grid;grid-template-columns:180px 1fr">
+            <div style="padding:5px 14px 5px 28px;border-right:1px solid var(--border);font-weight:600">(9) Dashboard Analítico</div>
+            <div style="padding:5px 14px;font-size:12px;color:var(--muted)">Abre <code>DashboardBI</code> em thread separada · terminal permanece ativo · fechar a janela não encerra o sistema</div>
+          </div>
+        </div>
+
+      </div><!-- fim diagrama NS -->
+    </div>
+
+    <h3>Resumo das travas e barramentos</h3>
+    <div class="rule-block">
+      <ul>
+        <li><b>Trava de bônus</b> — em [3] e em Editar quando tipo muda para Produção: se <code>qtd × R$/peça &gt; tetoBonus</code>, a operação é bloqueada com mensagem de erro. O teto é configurável em (7).</li>
+        <li><b>Trava de matrícula duplicada</b> — toda matrícula é verificada contra a lista em memória antes do cadastro; se já existir, o campo é solicitado novamente.</li>
+        <li><b>Trava de sequência de matrícula</b> — no modo RÍGIDO, matrículas fora de sequência são rejeitadas; no modo FLEXÍVEL, um aviso é exibido e o usuário pode continuar.</li>
+        <li><b>Trava de limite máximo de matrícula</b> — quando configurado (&gt; 0), valores acima do limite são rejeitados na entrada.</li>
+        <li><b>Trava destrutiva (CONFIRMAR)</b> — o reset exige a digitação literal de <code>CONFIRMAR</code>; qualquer outra entrada cancela.</li>
+        <li><b>Alerta de nome similar</b> — em cadastro e edição, nomes parecidos (busca normalizada) geram aviso com lista dos registros similares e exigem confirmação S/N.</li>
+        <li><b>Barramento de importação</b> — o arquivo TSV é validado antes de qualquer substituição; arquivo inválido ou confirmação negada não altera a base.</li>
+      </ul>
+    </div>
+
+    <h3>Mecanismos de cancelamento por contexto</h3>
+    <div class="rule-block">
+      <ul>
+        <li><b>Cadastros [1][2][3]</b> — campo <em>nome</em> ou <em>matrícula</em> igual a <code>0</code> cancela e retorna ao menu.</li>
+        <li><b>Edição (4) e Remoção (5)</b> — matrícula <code>0</code> cancela; confirmação <code>N</code> cancela.</li>
+        <li><b>Reset (6)</b> — qualquer string diferente de <code>CONFIRMAR</code> cancela.</li>
+        <li><b>Configurações (7)</b> — opção <code>0</code> volta ao menu ADM; no campo de limite de matrícula, <code>0</code> significa "sem limite".</li>
+        <li><b>Edição em lote (8)</b> — tecla <code>Q</code> interrompe o lote; <code>N</code> pula o registro atual.</li>
+        <li><b>Importação (2) e Novo Mês (3)</b> — confirmação <code>N</code> cancela sem alterar dados.</li>
+      </ul>
+    </div>
+
   </section>
 
   <!-- ── MAIN ── -->
@@ -777,7 +945,7 @@ MATRICULA	NOME	TIPO	SALARIO_BASE	VENDAS	PERCENTUAL	QTD_PECA	VALOR_PECA	SALARIO_T
       <tbody>
         <tr><td>#CONFIG</td><td>linha especial</td><td>salárioBase · tetoPercentual · limiteMatrícula · modoRígido</td></tr>
         <tr><td>MATRICULA</td><td>int</td><td>Identificador único, maior que zero</td></tr>
-        <tr><td>NOME</td><td>String</td><td>Armazenado com acentos e capitalização normalizada</td></tr>
+        <tr><td>NOME</td><td>String</td><td>Armazenado com acentos e capitalização normalizados</td></tr>
         <tr><td>TIPO</td><td>enum textual</td><td>PADRAO · COMISSIONADO · PRODUCAO</td></tr>
         <tr><td>SALARIO_BASE</td><td>double</td><td>Valor do salário-base no momento do registro</td></tr>
         <tr><td>VENDAS</td><td>double</td><td>Total de vendas (Comissionado); 0 nos outros tipos</td></tr>
@@ -823,42 +991,15 @@ MATRICULA	NOME	TIPO	SALARIO_BASE	VENDAS	PERCENTUAL	QTD_PECA	VALOR_PECA	SALARIO_T
     <table class="decision-table">
       <thead><tr><th>Decisão</th><th>Justificativa e implicações</th></tr></thead>
       <tbody>
-        <tr>
-          <td>Configurações no FolhaService</td>
-          <td>Salário-base e teto de bônus eram constantes estáticas em <code>Funcionario</code>. Mover para o serviço eliminou dependência de estado estático e permite reconfigurar valores em tempo de execução sem recriar objetos.</td>
-        </tr>
-        <tr>
-          <td>TSV no lugar de CSV</td>
-          <td>O separador original era ponto-e-vírgula (variante CSV brasileira). O problema é estrutural: valores monetários no Brasil usam vírgula como separador decimal — <code>R$ 1.500,00</code> — o que colide diretamente com o delimitador CSV. Além disso, ferramentas de BI como Power BI importam CSV com lógica regional inconsistente entre instalações. O TSV elimina essa ambiguidade: nenhum valor monetário ou nome de pessoa contém tabulação, então o delimitador nunca conflita com os dados. O arquivo continua legível em qualquer editor de texto e abre corretamente no Excel e LibreOffice sem configuração regional.</td>
-        </tr>
-        <tr>
-          <td>TSV como fonte única de verdade</td>
-          <td>O XLS é gerado a partir do TSV, nunca o contrário. Evita divergência de dados e mantém importação e exportação simples, verificáveis e independentes de biblioteca externa.</td>
-        </tr>
-        <tr>
-          <td>double para valores monetários</td>
-          <td><code>BigDecimal</code> seria o tipo correto em produção — elimina imprecisão de ponto flutuante em operações financeiras. Mantido nesta versão por simplificar a serialização TSV e o escopo do projeto. Anotado como dívida técnica para versões futuras.</td>
-        </tr>
-        <tr>
-          <td>Zero como cancelamento em cadastro</td>
-          <td>Em fluxos de cadastro, o campo matrícula aceita <code>0</code> para cancelar e retornar ao menu. Em edição, vários campos usam ENTER em branco como cancelamento. Em configurações, <code>0</code> significa "sem limite". O cancelamento varia por contexto — não existe uma sentinela universal em toda a interface.</td>
-        </tr>
-        <tr>
-          <td>Segurança por sessão, não por senha</td>
-          <td>Armazenar senha localmente em texto seria inseguro. A separação Administrador / Funcionário protege por sessão. A segurança do ambiente (controle de acesso à máquina) é responsabilidade da empresa. Em produção real, o menu administrativo exigiria autenticação própria.</td>
-        </tr>
-        <tr>
-          <td>UTF-8 explícito em toda entrada e saída</td>
-          <td><code>FileWriter</code> e leitores sem charset explícito usam o padrão da JVM — no Windows, CP1252, corrompendo nomes acentuados. Corrigido para <code>OutputStreamWriter(stream, StandardCharsets.UTF_8)</code> e <code>Scanner(arquivo, StandardCharsets.UTF_8)</code> em todos os pontos de leitura e escrita.</td>
-        </tr>
-        <tr>
-          <td>Nenhuma dependência externa</td>
-          <td>Apenas a biblioteca padrão do Java. Facilita distribuição, elimina problemas de versão e mantém o projeto portável sem gerenciador de dependências.</td>
-        </tr>
-        <tr>
-          <td>Painel analítico em linha de execução separada</td>
-          <td>O <code>DashboardBI</code> roda em paralelo para não bloquear o laço principal do console. Opera em modo leitura para eliminar risco de corrupção por acesso simultâneo ao TSV.</td>
-        </tr>
+        <tr><td>Configurações no FolhaService</td><td>Salário-base e teto de bônus eram constantes estáticas em <code>Funcionario</code>. Mover para o serviço eliminou dependência de estado estático e permite reconfigurar valores em tempo de execução sem recriar objetos.</td></tr>
+        <tr><td>TSV no lugar de CSV</td><td>O separador original era ponto-e-vírgula (variante CSV brasileira). O problema é estrutural: valores monetários no Brasil usam vírgula como separador decimal — <code>R$ 1.500,00</code> — o que colide diretamente com o delimitador CSV. Além disso, ferramentas de BI como Power BI importam CSV com lógica regional inconsistente entre instalações. O TSV elimina essa ambiguidade: nenhum valor monetário ou nome de pessoa contém tabulação, então o delimitador nunca conflita com os dados. O arquivo continua legível em qualquer editor de texto e abre corretamente no Excel e LibreOffice sem configuração regional.</td></tr>
+        <tr><td>TSV como fonte única de verdade</td><td>O XLS é gerado a partir do TSV, nunca o contrário. Evita divergência de dados e mantém importação e exportação simples, verificáveis e independentes de biblioteca externa.</td></tr>
+        <tr><td>double para valores monetários</td><td><code>BigDecimal</code> seria o tipo correto em produção — elimina imprecisão de ponto flutuante em operações financeiras. Mantido nesta versão por simplificar a serialização TSV e o escopo do projeto. Anotado como dívida técnica para versões futuras.</td></tr>
+        <tr><td>Zero como cancelamento em cadastro</td><td>Em fluxos de cadastro, o campo matrícula aceita <code>0</code> para cancelar e retornar ao menu. Em edição, vários campos usam ENTER em branco como cancelamento. Em configurações, <code>0</code> significa "sem limite". O cancelamento varia por contexto — não existe uma sentinela universal em toda a interface.</td></tr>
+        <tr><td>Segurança por sessão, não por senha</td><td>Armazenar senha localmente em texto seria inseguro. A separação Administrador / Funcionário protege por sessão. A segurança do ambiente (controle de acesso à máquina) é responsabilidade da empresa. Em produção real, o menu administrativo exigiria autenticação própria.</td></tr>
+        <tr><td>UTF-8 explícito em toda entrada e saída</td><td><code>FileWriter</code> e leitores sem charset explícito usam o padrão da JVM — no Windows, CP1252, corrompendo nomes acentuados. Corrigido para <code>OutputStreamWriter(stream, StandardCharsets.UTF_8)</code> e <code>Scanner(arquivo, StandardCharsets.UTF_8)</code> em todos os pontos de leitura e escrita.</td></tr>
+        <tr><td>Nenhuma dependência externa</td><td>Apenas a biblioteca padrão do Java. Facilita distribuição, elimina problemas de versão e mantém o projeto portável sem gerenciador de dependências.</td></tr>
+        <tr><td>Painel analítico em linha de execução separada</td><td>O <code>DashboardBI</code> roda em paralelo para não bloquear o laço principal do console. Opera em modo leitura para eliminar risco de corrupção por acesso simultâneo ao TSV.</td></tr>
       </tbody>
     </table>
   </section>
