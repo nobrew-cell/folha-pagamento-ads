@@ -126,8 +126,8 @@ Os diagramas abaixo cobrem cada área funcional do sistema. Cada um identifica o
 Tela exibida no início de cada sessão. No primeiro acesso (sem `database.tsv`), o sistema entra direto como Administrador. Nas sessões seguintes, o usuário escolhe entre **Funcionário** e **Administrador**.
 
 <picture>
-  <source media="(prefers-color-scheme: dark)"  srcset="../assets/uc_perfis_black.svg">
-  <source media="(prefers-color-scheme: light)" srcset="../assets/uc_perfis_white.svg">
+  <source media="(prefers-color-scheme: dark)"  srcset="https://raw.githubusercontent.com/nobrew-cell/folha-pagamento-ads/refs/heads/evolution/sistemaFolha-final/assets/uc_perfis_black.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/nobrew-cell/folha-pagamento-ads/refs/heads/evolution/sistemaFolha-final/assets/uc_perfis_white.svg">
   <img alt="UC-Perfis — Seleção de perfil de acesso" src="../assets/uc_perfis_white.svg">
 </picture>
 
@@ -138,8 +138,8 @@ Tela exibida no início de cada sessão. No primeiro acesso (sem `database.tsv`)
 Mapa completo da navegação: menu de seleção de perfil, menu principal e menu administrativo com todas as suas opções.
 
 <picture>
-  <source media="(prefers-color-scheme: dark)"  srcset="../assets/uc00_menus_principais_black.svg">
-  <source media="(prefers-color-scheme: light)" srcset="../assets/uc00_menus_principais_white.svg">
+  <source media="(prefers-color-scheme: dark)"  srcset="https://raw.githubusercontent.com/nobrew-cell/folha-pagamento-ads/refs/heads/evolution/sistemaFolha-final/assets/uc00_menus_principais_black.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/nobrew-cell/folha-pagamento-ads/refs/heads/evolution/sistemaFolha-final/assets/uc00_menus_principais_white.svg">
   <img alt="UC-00 — Visão geral dos menus principais" src="../assets/uc00_menus_principais_white.svg">
 </picture>
 
@@ -238,3 +238,15 @@ Janela gráfica independente (JavaFX/Swing) que roda em paralelo ao console. Car
   <source media="(prefers-color-scheme: light)" srcset="../assets/uc08_dashboard_white.svg">
   <img alt="UC-08 — Dashboard analítico" src="../assets/uc08_dashboard_white.svg">
 </picture>
+
+## Diagramas dos Releases
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/nobrew-cell/folha-pagamento-ads/refs/heads/evolution/sistemaFolha-final/assets/rg_releases_black.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/nobrew-cell/folha-pagamento-ads/evolution/sistemaFolha-final/assets/rg_releases_white.svg">
+  <img src="https://raw.githubusercontent.com/nobrew-cell/folha-pagamento-ads/evolution/sistemaFolha-final/assets/rg_releases_black.svg" alt="Diagrama de Releases do Projeto" style="max-width: 100%;">
+</picture>
+
+<p align="center">
+  <sub><i>Diagrama de planejamento das releases do projeto, divididas entre o escopo <b>Local</b> (desenvolvimentos e testes que podem ser retidos ou unificados) e o escopo <b>GitHub</b> (entregas oficiais e versionadas via Git).</i></sub>
+</p>
