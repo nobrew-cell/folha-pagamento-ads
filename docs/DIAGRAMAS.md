@@ -11,107 +11,105 @@ Todos os diagramas de casos de uso foram elaborados manualmente e exibem versõe
 
 ```mermaid
 flowchart TD
-    A([Início — main])
+    START([Início · main])
+    DB{database.tsv\nexiste?}
+    BOAS[/Boas-vindas\nprimeiro acesso/]
+    ERR[ERRO CRÍTICO\nBD apagado sem logs]
+    FIM_ERR([Encerra])
+    LOAD[[Repository.carregar\nFolhaService.init]]
+    SEL{Selecionar\nPerfil}
 
-    A --> B{database.tsv existe?}
+    MENU[Menu Principal\n1–4 · 5 ADM · 0 Sair]
+    D_MENU{opção?}
 
-    B -- não --> C[/exibe boas-vindas<br>primeiro acesso/]
-    C --> D
+    CAD_PAD[/Cadastrar Padrão\nnome + matrícula/]
+    CAD_COM[/Cadastrar Comissionado\nnome · matrícula · vendas · %/]
+    CAD_PRO_CHK{bônus ultrapassa\nteto configurado?}
+    BLOQUEIO[BLOQUEIO\nConsulte a diretoria]
+    CAD_PRO[/Cadastrar Produção\nnome · matrícula · peças · R$/peça/]
+    FOLHA[/Gerar Folha\ncalcularSalarioFinal p/ cada funcionário/]
 
-    B -- sim --> D
+    MENU_ADM[Menu Administrativo\n1–9 · 0 Voltar]
+    D_ADM{sub-opção?}
 
-    D[[Repository.carregar]]
+    OP1[/Exportar\nTSV + XLS com timestamp/]
+    OP2[/Importar TSV\nvalida → substitui base/]
+    OP3[Novo Mês\narquiva em historico/ · zera variáveis]
+    OP4[Editar Funcionário\nmatrícula · tipo · campos/]
+    OP5[/Remover Funcionário\nconfirmação S/N/]
+    OP6[Resetar Sistema\ndigite CONFIRMAR]
+    OP7[Configurações\nsal. base · teto bônus · matrícula · sequência]
+    OP8[Editar em Lote\nfiltro por tipo · E/N/Q por registro]
+    OP9[Dashboard Analítico\nSwing · thread paralela]
+    BCK[(backup_timestamp.tsv)]
 
-    D --> SP[SeletorPerfil<br>ADM ou Funcionário]
+    SAVE[[service.salvar\nRepository.escreverTSV]]
+    DB_MAIN[(database.tsv\nestado persistido)]
+    FIM([Fim · scanner.close])
 
-    SP --> E[Menu principal<br>lê opção do usuário]
+    START --> DB
+    DB -- não --> BOAS --> LOAD
+    DB -- não + logs --> ERR --> FIM_ERR
+    DB -- sim --> LOAD
+    LOAD --> SEL
 
-    E --> F{qual opção?}
+    SEL -- Funcionário --> MENU
+    SEL -- ADM --> MENU
 
-    F -- 4 --> G[[service.listar<br>ordena por matrícula]]
+    MENU --> D_MENU
+    D_MENU -- 1 --> CAD_PAD --> MENU
+    D_MENU -- 2 --> CAD_COM --> MENU
+    D_MENU -- 3 --> CAD_PRO_CHK
+    CAD_PRO_CHK -- sim --> BLOQUEIO --> MENU
+    CAD_PRO_CHK -- não --> CAD_PRO --> MENU
+    D_MENU -- 4 --> FOLHA --> MENU
+    D_MENU -- 5 ADM --> MENU_ADM
+    D_MENU -- 0 --> SAVE
 
-    G --> H[para cada Funcionario<br>calcularSalarioFinal]
+    MENU_ADM --> D_ADM
+    D_ADM -- 1 --> OP1 --> MENU_ADM
+    D_ADM -- 2 --> OP2 --> MENU_ADM
+    D_ADM -- 3 --> OP3 --> MENU_ADM
+    D_ADM -- 4 --> OP4 --> MENU_ADM
+    D_ADM -- 5 --> OP5 --> MENU_ADM
+    D_ADM -- 6 --> OP6 --> BCK --> MENU_ADM
+    D_ADM -- 7 --> OP7 --> MENU_ADM
+    D_ADM -- 8 --> OP8 --> MENU_ADM
+    D_ADM -- 9 --> OP9 --> MENU_ADM
+    D_ADM -- 0 --> MENU
 
-    H --> I[/exibe: nome, tipo<br>salário base + extra/]
+    SAVE --> DB_MAIN --> FIM
 
-    I --> Z970
+    classDef terminal  fill:#E1F5EE,stroke:#0F6E56,color:#085041,font-weight:600
+    classDef processo  fill:#E6F1FB,stroke:#185FA5,color:#0C447C
+    classDef io        fill:#EEEDFE,stroke:#534AB7,color:#3C3489
+    classDef decisao   fill:#FAEEDA,stroke:#854F0B,color:#633806,font-weight:500
+    classDef storage   fill:#F1EFE8,stroke:#5F5E5A,color:#2C2C2A
+    classDef sub       fill:#FBEAF0,stroke:#993556,color:#4B1528
+    classDef erro      fill:#FDE8E8,stroke:#C0392B,color:#7B1A1A,font-weight:600
 
-    F -- 1 --> J[/lê nome/]
-
-    J --> K[/lê matrícula/]
-
-    K --> L{campo = 0?}
-
-    L -- sim --> Z970
-
-    L -- não --> M{matrícula única?}
-
-    M -- não --> K
-
-    M -- sim --> N[service.cadastrarPadrao]
-
-    N --> Z970
-
-    F -- 2 --> O[/lê nome + matrícula<br>vendas + % comissão/]
-
-    O --> P[service.cadastrarComissionado]
-
-    P --> Z970
-
-    F -- 3 --> Q[/lê nome + matrícula<br>peças + valor por peça/]
-
-    Q --> R[service.cadastrarProducao]
-
-    R --> Z970
-
-    Z970([retorna])
-
-    Z970 --> S{é op. 5 ADM ou 0?}
-
-    S -- 1/2/3/4 --> T[retorna ao menu]
-
-    T --> E
-
-    S -- 5 ADM --> MADM[Menu Administrativo<br>9 opções]
-
-    MADM --> U[[service.exportar<br>gerar TSV e XLS]]
-
-    U --> V[(exportados/dados<br>folha_timestamp.tsv)]
-
-    U --> V2[(exportados/relatorios<br>folha_timestamp.xls)]
-
-    V --> ZFim
-
-    V2 --> ZFim
-
-    S -- 0 --> ZFim
-
-    ZFim([encerrar])
-
-    ZFim --> AC[[service.salvar<br>repository.salvar lista]]
-
-    AC --> AD[escreverTSV<br>cabeçalho + toTSV]
-
-    AD --> AE[(database.tsv<br>estado persistido)]
-
-    AE --> AF[/Dados salvos. Volte sempre!/]
-
-    AF --> AG([Fim — scanner.close])
-
-    classDef terminal fill:#E1F5EE,stroke:#0F6E56,color:#085041
-    classDef process fill:#E6F1FB,stroke:#185FA5,color:#0C447C
-    classDef io fill:#EEEDFE,stroke:#534AB7,color:#3C3489
-    classDef decision fill:#FAEEDA,stroke:#854F0B,color:#633806
-    classDef storage fill:#F1EFE8,stroke:#5F5E5A,color:#2C2C2A
-    classDef sub fill:#FBEAF0,stroke:#993556,color:#4B1528
-
-    class A,AG terminal
-    class E,H,N,P,R,AD,SP,MADM process
-    class C,J,K,O,Q,I,AF io
-    class B,F,L,M,S decision
-    class V,V2,AE storage
-    class D,G,AC,U sub
+    class START,FIM,FIM_ERR terminal
+    class MENU,MENU_ADM,OP3,OP4,OP6,OP7,OP8,OP9 processo
+    class CAD_PAD,CAD_COM,CAD_PRO,FOLHA,OP1,OP2,OP5 io
+    class DB,SEL,D_MENU,D_ADM,CAD_PRO_CHK decisao
+    class BCK,DB_MAIN storage
+    class LOAD,SAVE sub
+    class ERR,BLOQUEIO erro
 ```
+
+---
+
+## Diagramas dos releases
+
+Diagrama de planejamento das releases do projeto, divididas entre o escopo <b>Local</b> (desenvolvimentos e testes que podem ser retidos ou unificados) e o escopo <b>GitHub</b> (entregas oficiais e versionadas via Git)
+
+---
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/nobrew-cell/folha-pagamento-ads/refs/heads/evolution/sistemaFolha-final/assets/rg_releases_black.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/nobrew-cell/folha-pagamento-ads/evolution/sistemaFolha-final/assets/rg_releases_white.svg">
+  <img src="https://raw.githubusercontent.com/nobrew-cell/folha-pagamento-ads/evolution/sistemaFolha-final/assets/rg_releases_black.svg" alt="Diagrama de Releases do Projeto" style="max-width: 100%;">
+</picture>
 
 ---
 
@@ -150,8 +148,8 @@ Mapa completo da navegação: menu de seleção de perfil, menu principal e menu
 Cobre as três opções de cadastro do menu principal. Detalha os tipos disponíveis, as validações aplicadas e as regras de negócio — incluindo verificação de matrícula duplicada, alerta de nome similar e bloqueio de bônus acima do teto configurado.
 
 <picture>
-  <source media="(prefers-color-scheme: dark)"  srcset="../assets/uc01_cadastros_black.svg">
-  <source media="(prefers-color-scheme: light)" srcset="../assets/uc01_cadastros_white.svg">
+  <source media="(prefers-color-scheme: dark)"  srcset="https://raw.githubusercontent.com/nobrew-cell/folha-pagamento-ads/refs/heads/evolution/sistemaFolha-final/assets/uc01_cadastros_black.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/nobrew-cell/folha-pagamento-ads/refs/heads/evolution/sistemaFolha-final/assets/uc01_cadastros_white.svg">
   <img alt="UC-01 — Cadastros de funcionários" src="../assets/uc01_cadastros_white.svg">
 </picture>
 
@@ -162,8 +160,8 @@ Cobre as três opções de cadastro do menu principal. Detalha os tipos disponí
 Exibe todos os funcionários ordenados por matrícula com seus respectivos cálculos. Detalha as fórmulas por tipo e a aplicação do teto de bônus para funcionários de produção.
 
 <picture>
-  <source media="(prefers-color-scheme: dark)"  srcset="../assets/uc02_folha_black.svg">
-  <source media="(prefers-color-scheme: light)" srcset="../assets/uc02_folha_white.svg">
+  <source media="(prefers-color-scheme: dark)"  srcset="https://raw.githubusercontent.com/nobrew-cell/folha-pagamento-ads/refs/heads/evolution/sistemaFolha-final/assets/uc02_folha_black.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/nobrew-cell/folha-pagamento-ads/refs/heads/evolution/sistemaFolha-final/assets/uc02_folha_white.svg">
   <img alt="UC-02 — Gerar folha de pagamento" src="../assets/uc02_folha_white.svg">
 </picture>
 
@@ -174,8 +172,8 @@ Exibe todos os funcionários ordenados por matrícula com seus respectivos cálc
 Operações do menu administrativo para movimentação de dados. A exportação gera TSV (dados brutos) e XLS (relatório formatado), ambos com timestamp. A importação valida o formato antes de substituir a base, com backup automático obrigatório.
 
 <picture>
-  <source media="(prefers-color-scheme: dark)"  srcset="../assets/uc03_export_import_black.svg">
-  <source media="(prefers-color-scheme: light)" srcset="../assets/uc03_export_import_white.svg">
+  <source media="(prefers-color-scheme: dark)"  srcset="https://raw.githubusercontent.com/nobrew-cell/folha-pagamento-ads/refs/heads/evolution/sistemaFolha-final/assets/uc03_export_import_black.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/nobrew-cell/folha-pagamento-ads/refs/heads/evolution/sistemaFolha-final/assets/uc03_export_import_white.svg">
   <img alt="UC-03 — Exportar e importar dados" src="../assets/uc03_export_import_white.svg">
 </picture>
 
@@ -186,8 +184,8 @@ Operações do menu administrativo para movimentação de dados. A exportação 
 Operações individuais restritas ao Administrador. A edição permite trocar o tipo do funcionário (Padrão ↔ Comissionado ↔ Produção), com revalidação das regras de negócio. A remoção exige confirmação explícita.
 
 <picture>
-  <source media="(prefers-color-scheme: dark)"  srcset="../assets/uc04_edicao_remocao_black.svg">
-  <source media="(prefers-color-scheme: light)" srcset="../assets/uc04_edicao_remocao_white.svg">
+  <source media="(prefers-color-scheme: dark)"  srcset="https://raw.githubusercontent.com/nobrew-cell/folha-pagamento-ads/refs/heads/evolution/sistemaFolha-final/assets/uc04_edicao_remocao_black.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/nobrew-cell/folha-pagamento-ads/refs/heads/evolution/sistemaFolha-final/assets/uc04_edicao_remocao_white.svg">
   <img alt="UC-04 — Editar e remover funcionário" src="../assets/uc04_edicao_remocao_white.svg">
 </picture>
 
@@ -198,8 +196,8 @@ Operações individuais restritas ao Administrador. A edição permite trocar o 
 Duas operações de ciclo de vida dos dados. O fechamento de mês arquiva o `database.tsv` em `/historico` com nomenclatura por data e zera variáveis mensais, mantendo o cadastro base. O reset apaga tudo com backup automático e requer a digitação de `CONFIRMAR`.
 
 <picture>
-  <source media="(prefers-color-scheme: dark)"  srcset="../assets/uc05_novo_mes_resetar_black.svg">
-  <source media="(prefers-color-scheme: light)" srcset="../assets/uc05_novo_mes_resetar_white.svg">
+  <source media="(prefers-color-scheme: dark)"  srcset="https://raw.githubusercontent.com/nobrew-cell/folha-pagamento-ads/refs/heads/evolution/sistemaFolha-final/assets/uc05_novo_mes_resetar_black.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/nobrew-cell/folha-pagamento-ads/refs/heads/evolution/sistemaFolha-final/assets/uc05_novo_mes_resetar_white.svg">
   <img alt="UC-05 — Novo mês e reset do sistema" src="../assets/uc05_novo_mes_resetar_white.svg">
 </picture>
 
@@ -210,8 +208,8 @@ Duas operações de ciclo de vida dos dados. O fechamento de mês arquiva o `dat
 Parâmetros configuráveis pelo Administrador: salário-base, teto de bônus (produção), limite de matrícula e modo de sequência (Rígido/Flexível). Todos são persistidos no `database.tsv` via linha `#CONFIG` e recarregados a cada inicialização.
 
 <picture>
-  <source media="(prefers-color-scheme: dark)"  srcset="../assets/uc06_configuracoes_black.svg">
-  <source media="(prefers-color-scheme: light)" srcset="../assets/uc06_configuracoes_white.svg">
+  <source media="(prefers-color-scheme: dark)"  srcset="https://raw.githubusercontent.com/nobrew-cell/folha-pagamento-ads/refs/heads/evolution/sistemaFolha-final/assets/uc06_configuracoes_black.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/nobrew-cell/folha-pagamento-ads/refs/heads/evolution/sistemaFolha-final/assets/uc06_configuracoes_white.svg">
   <img alt="UC-06 — Configurações do sistema" src="../assets/uc06_configuracoes_white.svg">
 </picture>
 
@@ -222,8 +220,8 @@ Parâmetros configuráveis pelo Administrador: salário-base, teto de bônus (pr
 Permite atualizar parâmetros (como percentual de comissão ou valor por peça) para todos os funcionários de um mesmo tipo de uma só vez. O processamento acontece em memória e o TSV é reescrito apenas após validação individual de cada registro.
 
 <picture>
-  <source media="(prefers-color-scheme: dark)"  srcset="../assets/uc07_edicao_lote_black.svg">
-  <source media="(prefers-color-scheme: light)" srcset="../assets/uc07_edicao_lote_white.svg">
+  <source media="(prefers-color-scheme: dark)"  srcset="https://raw.githubusercontent.com/nobrew-cell/folha-pagamento-ads/refs/heads/evolution/sistemaFolha-final/assets/uc07_edicao_lote_black.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/nobrew-cell/folha-pagamento-ads/refs/heads/evolution/sistemaFolha-final/assets/uc07_edicao_lote_white.svg">
   <img alt="UC-07 — Edição em lote por tipo" src="../assets/uc07_edicao_lote_white.svg">
 </picture>
 
@@ -234,19 +232,9 @@ Permite atualizar parâmetros (como percentual de comissão ou valor por peça) 
 Janela gráfica independente (JavaFX/Swing) que roda em paralelo ao console. Carrega os dados do `database.tsv` no startup, opera em modo leitura (não altera dados) e pode ser fechada sem encerrar o sistema principal. Contém abas de visão geral, listagem de funcionários com filtros e gráficos de relatório.
 
 <picture>
-  <source media="(prefers-color-scheme: dark)"  srcset="../assets/uc08_dashboard_black.svg">
-  <source media="(prefers-color-scheme: light)" srcset="../assets/uc08_dashboard_white.svg">
+  <source media="(prefers-color-scheme: dark)"  srcset="https://raw.githubusercontent.com/nobrew-cell/folha-pagamento-ads/refs/heads/evolution/sistemaFolha-final/assets/uc08_dashboard_black.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/nobrew-cell/folha-pagamento-ads/refs/heads/evolution/sistemaFolha-final/assets/uc08_dashboard_white.svg">
   <img alt="UC-08 — Dashboard analítico" src="../assets/uc08_dashboard_white.svg">
 </picture>
 
-## Diagramas dos Releases
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/nobrew-cell/folha-pagamento-ads/refs/heads/evolution/sistemaFolha-final/assets/rg_releases_black.svg">
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/nobrew-cell/folha-pagamento-ads/evolution/sistemaFolha-final/assets/rg_releases_white.svg">
-  <img src="https://raw.githubusercontent.com/nobrew-cell/folha-pagamento-ads/evolution/sistemaFolha-final/assets/rg_releases_black.svg" alt="Diagrama de Releases do Projeto" style="max-width: 100%;">
-</picture>
-
-<p align="center">
-  <sub><i>Diagrama de planejamento das releases do projeto, divididas entre o escopo <b>Local</b> (desenvolvimentos e testes que podem ser retidos ou unificados) e o escopo <b>GitHub</b> (entregas oficiais e versionadas via Git).</i></sub>
-</p>
+---
