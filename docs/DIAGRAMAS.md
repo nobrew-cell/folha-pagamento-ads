@@ -103,6 +103,9 @@ flowchart TD
 
 Diagrama de planejamento das releases do projeto, divididas entre o escopo <b>Local</b> (desenvolvimentos e testes que podem ser retidos ou unificados) e o escopo <b>GitHub</b> (entregas oficiais e versionadas via Git)
 
+> [!IMPORTANT] 
+> Teoricamente, o projeto atende ao escopo da UC Dual desde o primeiro `release`. As etapas subsequentes consistem em refinamentos e contribuições pessoais que buscam extrapolar os requisitos mínimos e aprofundar o aprendizado.
+
 ---
 
 <picture>
