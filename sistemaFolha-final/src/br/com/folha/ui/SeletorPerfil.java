@@ -28,7 +28,7 @@ public class SeletorPerfil {
         if (primeiraVez) {
             System.out.println("\n" + SEP);
             System.out.println("      Bem-vindo ao Sistema de Folha de Pagamento");
-            System.out.println("           Versao 7.1  |  Salarios mensais");
+            System.out.println("           Versao 8.1  |  Salarios mensais");
             System.out.println(SEP);
             System.out.println("  Primeiro acesso detectado. Nenhum dado cadastrado.");
             System.out.println("  Entrando automaticamente como ADMINISTRADOR.");
@@ -41,7 +41,7 @@ public class SeletorPerfil {
         try (Scanner sc = new Scanner(stdin)) {
             while (true) {
                 System.out.println("\n" + SEP);
-                System.out.println("         Sistema de Folha de Pagamento  v7.1");
+                System.out.println("         Sistema de Folha de Pagamento  v8.1");
                 System.out.println(SEP);
                 System.out.println("  Como deseja acessar?");
                 System.out.println(LIN);

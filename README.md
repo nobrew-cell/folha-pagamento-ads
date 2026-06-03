@@ -1,7 +1,7 @@
 # 💼 Sistema de Folha de Pagamento
 
 > <img src="https://github.com/nobrew-cell/folha-pagamento-ads/blob/239319e28b0db7eb913b3c2e20806c62ffd37501/sistemaFolha-final/config/logo-CLI.png" alt="Logo do Projeto" width="75px" align="left" style="margin-right: 15px;"> **Projeto desenvolvido como requisito de avaliação para a disciplina de Algoritmos e Programação — UC Dual em parceria com a Oracle Academy.**
-> <br><span style="display: block; clear: left;">Curso: Análise e Desenvolvimento de Sistemas (ADS) · Versão atual: **7.1**</span>
+> <br><span style="display: block; clear: left;">Curso: Análise e Desenvolvimento de Sistemas (ADS) · Versão atual: **8.1**</span>
 
 ---
 

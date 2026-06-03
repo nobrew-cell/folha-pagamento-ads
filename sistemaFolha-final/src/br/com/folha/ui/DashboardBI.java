@@ -32,13 +32,13 @@ import java.util.stream.Stream;
 import javax.imageio.ImageIO;
 
 /**
- * Dashboard Analítico — Folha de Pagamento v7.2
+ * Dashboard Analítico — Folha de Pagamento v8.1
  *
  * ESTÉTICA: "monocromático" puritano. Modo escuro = preto/branco. Modo claro = branco/preto.
  * Cores funcionais restritas: verde para PADRÃO, laranja para COMISSIONADO,
  * roxo para PRODUÇÃO, azul apenas para totais monetários.
  *
- * Correções v7.2:
+ * Correções v8.1:
  *   - carregarDados() agora também lê os registros do database.tsv (não só o #CONFIG),
  *     permitindo que o mês atual apareça no gráfico de evolução sem depender de
  *     exportação ou ciclo mensal prévios.
@@ -51,7 +51,7 @@ import javax.imageio.ImageIO;
  */
 public class DashboardBI extends JFrame {
 
-    private static final String VERSAO_DASH = "v7.2";
+    private static final String VERSAO_DASH = "v8.1";
 
     private static final double  DEFAULT_SALARIO_BASE     = 2000.00;
     private static final double  DEFAULT_TETO_PERCENTUAL  = 200.0;
