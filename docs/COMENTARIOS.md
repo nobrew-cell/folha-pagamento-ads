@@ -108,7 +108,7 @@ Reflexões pessoais de cada membro sobre o desenvolvimento do projeto — decis�
 
 ---
 
-## 🟨 Pedro Alonso Martins Fernandes
+## 🟧 Pedro Alonso Martins Fernandes
 
 **Sobre a experiência de `Funcionário ADM`**
 > Sobre minha experiência no manuseio e interações de cada edição do sistema, a da folha de pagamento do Gabriel, minha experiência com o cadastro de funcionários ADM foi bem interessante, uma vez que, ao passar dos testes e sugestões, sempre haviam inúmeras opções de escolhas e edições no menu de cadastros.
