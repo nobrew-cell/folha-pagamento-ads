@@ -1,0 +1,162 @@
+name: Compilar e Empacotar Multiplataforma
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+
+  # ============================================================
+  # JOB PARA MACOS (.app)
+  # ============================================================
+  build-mac:
+    runs-on: macos-latest
+
+    steps:
+    - name: Baixar o código do repositório
+      uses: actions/checkout@v4
+
+    - name: Configurar o Java JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+
+    - name: Criar pastas temporárias para compilação
+      run: |
+        mkdir bin
+        mkdir artefatos
+
+    - name: Compilar o código fonte Java
+      run: |
+        javac -encoding UTF-8 -d bin -sourcepath sistemaFolha-final/src -cp sistemaFolha-final/src sistemaFolha-final/src/br/com/folha/main/SistemaFolha.java
+
+    - name: Gerar o arquivo JAR Executável
+      run: |
+        jar cfe artefatos/SistemaFolha.jar br.com.folha.main.SistemaFolha -C bin .
+
+    - name: Construir o .app nativo com jpackage
+      run: |
+        jpackage \
+          --type app-image \
+          --name "SistemaFolha" \
+          --input artefatos \
+          --main-jar SistemaFolha.jar \
+          --main-class br.com.folha.main.SistemaFolha \
+          --icon sistemaFolha-final/config/logo-CLI.icns \
+          --dest output_mac
+
+    - name: Compactar o .app para Download
+      run: |
+        ditto -c -k --sequesterRsrc output_mac/SistemaFolha.app SistemaFolha-Mac.zip
+
+    - name: Disponibilizar arquivo do Mac
+      uses: actions/upload-artifact@v4
+      with:
+        name: SistemaFolha-macOS
+        path: SistemaFolha-Mac.zip
+
+
+  # ============================================================
+  # JOB PARA WINDOWS (.exe portátil)
+  # ============================================================
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+    - name: Baixar o código do repositório
+      uses: actions/checkout@v4
+
+    - name: Configurar o Java JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+
+    - name: Criar pastas temporárias
+      run: |
+        mkdir bin
+        mkdir artefatos
+
+    - name: Compilar o código fonte Java
+      shell: pwsh
+      run: |
+        javac -encoding UTF-8 -d bin -sourcepath sistemaFolha-final\src -cp sistemaFolha-final\src sistemaFolha-final\src\br\com\folha\main\SistemaFolha.java
+
+    - name: Gerar o arquivo JAR Executável
+      shell: pwsh
+      run: |
+        jar cfe artefatos/SistemaFolha.jar br.com.folha.main.SistemaFolha -C bin .
+
+    - name: Construir a pasta com o .exe portátil usando jpackage
+      shell: pwsh
+      run: |
+        jpackage --type app-image --name "SistemaFolha" --input artefatos --main-jar SistemaFolha.jar --main-class br.com.folha.main.SistemaFolha --icon sistemaFolha-final\config\logo-CLI.ico --win-console --dest output_win
+
+    - name: Compactar a pasta do Windows em ZIP
+      shell: pwsh
+      run: |
+        Compress-Archive -Path output_win\SistemaFolha -DestinationPath SistemaFolha-Windows.zip
+
+    - name: Disponibilizar arquivo do Windows
+      uses: actions/upload-artifact@v4
+      with:
+        name: SistemaFolha-Windows
+        path: SistemaFolha-Windows.zip
+
+
+  # ============================================================
+  # JOB PARA LINUX (pasta executável + tar.gz)
+  # ============================================================
+  build-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Baixar o código do repositório
+      uses: actions/checkout@v4
+
+    - name: Configurar o Java JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+
+    - name: Instalar dependências do sistema para o jpackage
+      run: |
+        sudo apt-get update -qq
+        sudo apt-get install -y fakeroot
+
+    - name: Criar pastas temporárias
+      run: |
+        mkdir bin
+        mkdir artefatos
+
+    - name: Compilar o código fonte Java
+      run: |
+        javac -encoding UTF-8 -d bin -sourcepath sistemaFolha-final/src -cp sistemaFolha-final/src sistemaFolha-final/src/br/com/folha/main/SistemaFolha.java
+
+    - name: Gerar o arquivo JAR Executável
+      run: |
+        jar cfe artefatos/SistemaFolha.jar br.com.folha.main.SistemaFolha -C bin .
+
+    - name: Construir imagem do aplicativo para Linux usando jpackage
+      run: |
+        jpackage \
+          --type app-image \
+          --name "SistemaFolha" \
+          --input artefatos \
+          --main-jar SistemaFolha.jar \
+          --main-class br.com.folha.main.SistemaFolha \
+          --icon sistemaFolha-final/config/logo-CLI.png \
+          --dest output_linux
+
+    - name: Compactar a pasta do Linux em TAR.GZ
+      run: |
+        tar -czvf SistemaFolha-Linux.tar.gz -C output_linux SistemaFolha
+
+    - name: Disponibilizar arquivo do Linux
+      uses: actions/upload-artifact@v4
+      with:
+        name: SistemaFolha-Linux
+        path: SistemaFolha-Linux.tar.gz
