@@ -7,13 +7,13 @@ Reflexões pessoais de cada membro sobre o desenvolvimento do projeto — decis�
 >Para facilitar a navegação, cada membro possui uma cor distinta:
 
 > [!NOTE]
-> - 🟦 Azul: Eduardo Santos (Perspectiva de Experiência do Usuário)
+> - 🟦 Azul: [Eduardo Santos](https://github.com/nobrew-cell/folha-pagamento-ads/edit/evolution/docs/COMENTARIOS.md#-eduardo-santos-cruz) (Perspectiva de Experiência do Usuário)
 
 >[!TIP]
-> - 🟩 Verde: Gabriel Silva (Perspectiva de Desenvolvimento e Arquitetura)
+> - 🟩 Verde: [Gabriel Silva](https://github.com/nobrew-cell/folha-pagamento-ads/edit/evolution/docs/COMENTARIOS.md#-gabriel-concei%C3%A7%C3%A3o-da-silva) (Perspectiva de Desenvolvimento e Arquitetura)
 
 > [!WARNING]
-> - 🟨 Amarelo: Pedro Fernandes (Perspectiva de [Área do Pedro])
+> - 🟨 Amarelo: [Pedro Fernandes](https://github.com/nobrew-cell/folha-pagamento-ads/edit/evolution/docs/COMENTARIOS.md#-pedro-alonso-martins-fernandes) (Perspectiva de Experiência do ADM)
 
 > &nbsp;
 
@@ -23,7 +23,7 @@ Reflexões pessoais de cada membro sobre o desenvolvimento do projeto — decis�
 
 **Sobre a utilidade do Perfil Funcionário**
 > [!NOTE]
-> A área do funcionário é muito útil dentro do sistema, pois permite que o colaborador consulte suas próprias informações de pagamento de forma mais prática. Por meio dela, o funcionário pode acessar dados como salário, descontos, benefícios e valores relacionados à folha. Isso evita que ele precise procurar o RH ou a administração sempre que tiver uma dúvida simples.
+> A área do funcionário é muito útil dentro do sistema, pois permite que o colaborador consulte suas próprias informações de pagamento e dos outros, de forma mais prática por meio da opção `[4]`. Por meio dela, o funcionário pode acessar e cadastrar dados como salário, descontos, benefícios e valores relacionados à folha. Isso evita que ele precise procurar o RH ou a administração sempre que tiver uma dúvida simples.
 
 **Sobre a eficiência e organização**
 > [!NOTE]
@@ -37,9 +37,9 @@ Reflexões pessoais de cada membro sobre o desenvolvimento do projeto — decis�
 > [!NOTE]
 > Outro ponto importante é a transparência, já que o usuário consegue acompanhar melhor os valores da folha de pagamento. Com essas informações disponíveis, fica mais fácil entender o valor recebido no final do mês. O sistema também transmite mais segurança, pois permite que o funcionário acompanhe seus próprios dados financeiros. Dessa forma, a experiência se torna mais clara, acessível e confiável.
 
-**Sobre o acompanhamento detalhado da folha - Opção `[4]` Gerar Folha de Pagamento**
+**Sobre o acompanhamento detalhado da folha - Opção `[4] Gerar Folha de Pagamento`**
 > [!NOTE]
-> Durante o uso da área do funcionário, uma experiência interessante é poder conferir os detalhes da folha com calma. O sistema permite que o colaborador observe melhor os valores lançados e compare as informações apresentadas. Isso ajuda a evitar dúvidas no momento de receber o pagamento, pois os dados ficam disponíveis para consulta.
+> Durante o uso da opção `[4] Gerar Folha de Pagamento`, uma experiência interessante é poder conferir os detalhes da folha com calma. O sistema permite que o colaborador observe melhor os valores lançados e compare as informações apresentadas. Isso ajuda a evitar dúvidas no momento de receber o pagamento, pois os dados ficam disponíveis para consulta.
 
 **Sobre o controle e conforto do colaborador**
 > [!NOTE]
@@ -51,8 +51,9 @@ Reflexões pessoais de cada membro sobre o desenvolvimento do projeto — decis�
 
 **Sobre o `Escopo Atual` vs `Escopo da UC Dual`**
 >[!TIP]
-> Se esse projeto quisesse sobreviver e ficar no meu github, eu teria que inevitavelmente adicionar algumas leves alterações ao escopo geral pedido pela UC Dual. Parte disso foi por causa da minha empolgação, mas prometo que o resto foi em meus momentos mais lúcidos. Um exemplo é o salário base que é fixo, porém nesse sistema é editável via menu adm. O que não é o *perfeitamente fixo* citado no projeto.
-> 
+> Se esse projeto quisesse sobreviver e ficar no meu github, eu teria que inevitavelmente adicionar algumas leves alterações ao escopo geral pedido pela UC Dual. Parte disso foi por causa da minha empolgação, mas prometo que o resto foi em meus momentos mais lúcidos. Um exemplo é o salário base que é fixo, porém nesse sistema é editável via menu adm. O que não é o `*perfeitamente fixo*` citado no projeto.
+
+>[!TIP]
 > Mas isso foi colocado principalmente por facilidade pessoal ao administrador, para ele não ter que ir trocar manualmente no código do projeto. E sendo sincero, tem muita pouca diferença, pois mesmo um salário fixo, pode ser alterado no código. Então mesmo se eu colocasse um:
 
 ```java
@@ -60,9 +61,11 @@ public static final double SALARIO_BASE = 2000.00;
 ```
 >[!TIP]
 > Ainda assim, não seria perfeitamente fixo. Poderia até ser fixo no sistema, mas tenho minhas dúvidas se seria realmente fixo em geral. Com certeza não seria imutável, apenas menos configurável dentro do sistema. Então como boa prática, e querendo ser "amigo" do administrador, eu coloquei ele como editável no menu adm, até porque salários mudam.
->
+
+>[!TIP]
 > Além disso, ele casa muito bem com as outras opções do menu adm, como o novo mês, onde por exemplo, o mês anterior poderia ser `2000`, mas o mês atual poderia ser `2500` após reajustes. Acredito que o escopo pedido inicialmente no projeto é muito bom, mas pessoalmente quis que esse projeto durasse mais de um mês na empresa e no meu repositório.
->
+
+>[!TIP]
 > E sendo mais sincero ainda, esse sistema serve mais que perfeitamente para a nossa empresa hipotética e também para outras, se assim desejássemos.
 
 **Sobre os testes**
@@ -84,9 +87,11 @@ public static final double SALARIO_BASE = 2000.00;
 **Sobre os releases, versionamento e commits do projeto**
 >[!TIP]
 > Essa foi uma das partes mais complicadas de se manter e para os releases, a mais chatinha de seguir no projeto. Como as mudanças estavam no meu controle e não totalmente centralizadas no Git, não teve uma real *consistência* entre os releases, por exemplo, e o versionamento e commits.
->
+
+>[!TIP]
 > Se bem perceber, verá que por exemplo o projeto não começa com `v1.0`, pois essa versão é a minha local. Isso se repete nas outras versões posteriores. É um padrão pessoal, que só existe pois os meus testes pessoais locais, eu não desejaria de forma alguma que aparecesse no github ou fossem invadidos pelo Git/Github. Se tivesse uma `v0.0`, ela seria o primeiro `.java` do projeto. Ele nem aparece no Github, pois faz parte de testes pessoais iniciais.
->
+
+>[!TIP]
 > A maioria dos commits, ou são novas funções que eu coloquei, ou são coisas que deixei passar entre uma IDE e outra. Se ficar curioso, dê uma olhada no diagrama de releases: [`docs/DIAGRAMAS.md`](./docs/DIAGRAMAS.md)
 
 **Sobre as IDEs**
@@ -100,13 +105,17 @@ public static final double SALARIO_BASE = 2000.00;
 **Sobre persistência de dados**
 >[!TIP]
 > No início, os cadastros eram persistidos diretamente nas variáveis vulgo memória RAM usando o próprio `ArrayList`. Funcionava? Sim, mas para a função de exportar fazer sentido que havia sido colocada, pensei que armazená-lo em algum arquivo que o Excel e outros visualizadores de planilhas aceitam seria o mais sábio.
->
+
+>[!TIP]
 > Minha primeira ideia foi o próprio `.xlsx` do Excel, porém para exportar nele eu teria que usar uma API ou biblioteca externa, então eu acabei abandonando a ideia.
->
+
+>[!TIP]
 > A segunda ideia então foi na verdade usar o CSV, que na minha cabeça, funcionaria melhor. Ele era lido facilmente pelo Excel, e por ser um arquivo de "texto", dava para eu lê-lo direto na IDE, o que só havia preenchido minha satisfação, porém ao fazer o hard test, percebi que para valores monetários brasileiros, que usa a `,` para separar os centavos, ele acaba não sendo útil e pode até corromper os dados, pois o csv usa como separador a `,` nos EUA e `;` no Brasil. Eu até tentei usar e fazer o sistema gerar o CSV com separações `;`, e fazer o Excel lê-lo, mas ele ainda tinha o perigo da pessoa digitar errado e corromper uma coluna inteira de cadastros.
->
+
+>[!TIP]
 > Então, uma alternativa que apareceu foi TSV, em vez de `,` ou `;` que o usuário pode digitar por acidente, o TSV usa tabulação para as separações. Além dele, também tem o XLS, só que esse só vem da exportação, que é apenas um agrado para o usuário, seja funcionário ou administrador, que possui coloração para ficar mais fácil de ler.
->
+
+>[!TIP]
 > Existem outras extensões de arquivo no projeto que guardam dados, só que acredito que elas são melhor explicadas no .html da arquitetura do projeto. Só acessar aqui e baixá-lo: [`docs/ARQUITETURA.html`](./docs/ARQUITETURA.html)
 
 **Sobre os perfis de acesso**
