@@ -137,5 +137,23 @@ public static final double SALARIO_BASE = 2000.00;
 ---
 
 ## 🟨 Pedro Alonso Martins Fernandes
+
+**Sobre a experiência de `Funcionário ADM`**
 > [!WARNING]
-> *(em breve)*
+> Sobre minha experiência no manuseio e interações de cada edição do sistema, a da folha de pagamento do Gabriel, minha experiência com o cadastro de funcionários ADM foi bem interessante, uma vez que, ao passar dos testes e sugestões, sempre haviam inúmeras opções de escolhas e edições no menu de cadastros.
+
+**Minha opinião sobre o `Menu ADM` e cadastro de funcionários**
+> [!WARNING]
+> As opções de interação e manuseio de conteúdo e dados do sistema me surpreendeu positivamente, não só pela imensa dedicação de Gabriel no projeto, como também na imensidade de opções do qual foi se inserindo a partir de sugestões minhas e do Eduardo.
+
+**Manuseando o `Menu ADM`**
+> [!WARNING]
+> Existem 9 opções de uso no menu administrativo na versão 7.1 atualizada do projeto: Exportar o cadastro de funcionários para o excel (planilha em um arquivo de formato TSV e XLS); importar o arquivo TSV (do qual substitui todos os dados); cadastrar um novo mês de levas, em que limpa a base e arquiva a atual; editar o campo de funcionários, remover funcionário; resetar o sistema e feito um backup automático; acessar as configurações do sistema; editar os funcionários em lotes (cada um por tipo de registro) e abrir o dashboard analítico
+
+**Sobre o Dashboard Analítico**
+> [!WARNING]
+> Gostaria de reiterar a respeito da quantidade de opções e funcionalidades a respeito do dashboard analítico. De forma breve, é basicamente um quadro onde apresenta todos os registros de funcionários, local onde também é possível adicionar o nome da empresa, visualizar relatórios e salvar o último histórico de alteração de auditoria e recibos.
+
+**Últimas impressões**
+> [!WARNING]
+> Gostaria de parabenizar de coração à dedicação e atualizações do projeto de Gabriel, não só por sempre estar inovando e ouvir nossas sugestões, como também criar algo complexo de forma prática para que não seja tão confuso pra quem não tem costume de mexer em coisas do tipo. Gostaria também de agradecê-lo por sempre estar interagindo comigo e escutando nossas opiniões e as pondo em prática, como quando sugeri adicionar um arquivo em lotes pra acessar o sistema com dois cliques sem precisar acessá-lo manualmente pelo prompt de comando do windows e adicionar a opção de exportar os relatórios e edições para excel
