@@ -1,1 +1,12 @@
-docs/fluxograma-sistema-folha.html linguist-generated
+# Scripts auxiliares
+scripts/** linguist-documentation=true
+*.bat linguist-documentation=true
+*.sh linguist-documentation=true
+*.command linguist-documentation=true
+*.ps1 linguist-documentation=true
+
+# Fluxograma exportado
+docs/fluxograma-sistema-folha.html linguist-generated=true
+
+# Arquitetura principal
+docs/ARQUITETURA.html linguist-documentation=false linguist-detectable=true
