@@ -18,10 +18,102 @@ Reflexões individuais de cada membro sobre o desenvolvimento estão em [`docs/C
 
 Sistemas de folha de pagamento no mercado tendem a ser caros, dependentes de internet ou complexos demais para o que entregam. Na outra ponta, o Excel é flexível e amplamente usado — mas não tem regras de negócio, depende do usuário não errar e não escala bem.
 
+<p align="center">
+  <img src="../sistemaFolha-final/assets/telaExemplo.gif" width="850" alt="Demonstração do Sistema">
+</p>
+
 Este sistema é uma alternativa simples no meio do caminho: roda localmente no terminal, sem banco de dados externo, sem internet, sem instalação de dependências além do JDK. Calcula salários automaticamente, aplica regras de negócio e exporta os dados em formatos compatíveis com Excel e ferramentas de BI. O foco não é ser completo — é ser útil naquilo que se propõe.
 
 Critério de qualidade central: **um funcionário mal-intencionado não deve ter facilidade; um bem-intencionado não deve ter dificuldade alguma.** A segurança do ambiente — acesso à máquina, controle de quem opera o sistema — fica a cargo da empresa.
 
+---
+## 🚀 Como testar e executar
+
+O projeto cresceu significativamente desde os seus primeiros rascunhos. Para facilitar a distribuição e avaliação, a **v8.1** conta com **executáveis multiplataforma** (`.exe` para Windows, `.app` para macOS e `.tar.gz` para Linux) que rodam o sistema de forma nativa e sem dependências.
+
+Para baixar os executáveis e visualizar o histórico completo de releases (com seus respectivos ícones e destaques), acesse nossa central de documentação:
+
+<p align="center">
+  <a href="./INSTALL.md">
+    <img src="https://img.shields.io/badge/Acessar-Central%20de%20Instalação-gold?style=for-the-badge&logo=readme&logoColor=white" height="45" alt="Central de Instalação">
+  </a>
+  <a href="https://github.com/nobrew-cell/folha-pagamento-ads/releases/latest">
+    <img src="https://img.shields.io/badge/Download-Último%20Release-blue?style=for-the-badge&logo=github" height="45" alt="Download Release">
+  </a>
+</p>
+
+> **Nota:** As instruções completas para rodar os binários e liberar permissões de sistema (como o SmartScreen no Windows ou a quarentena no macOS) estão detalhadas no [`INSTALL.md`](./INSTALL.md).
+
+---
+
+**Galeria de Releases:**
+
+<table align="center" border="0">
+  <tr>
+    <td align="center" valign="bottom">
+      <a href="https://github.com/nobrew-cell/folha-pagamento-ads/releases/tag/v8.1">
+        <img src="https://github.com/nobrew-cell/folha-pagamento-ads/blob/5bac7c3bf03d5eb5166cca2b22710ba9b794cf55/sistemaFolha-final/assets/CLI.png" width="110" alt="v8.1" title="Versão 8.1"><br>
+        <code>v8.1</code>
+      </a>
+    </td>
+    <td align="center" valign="bottom">
+      <a href="https://github.com/nobrew-cell/folha-pagamento-ads/releases/tag/v7.1">
+        <img src="https://github.com/nobrew-cell/folha-pagamento-ads/blob/5bac7c3bf03d5eb5166cca2b22710ba9b794cf55/sistemaFolha-final/assets/DOC.png" width="110" alt="v7.1" title="Versão 7.1"><br>
+        <code>v7.1</code>
+      </a>
+    </td>
+    <td align="center" valign="bottom">
+      <a href="https://github.com/nobrew-cell/folha-pagamento-ads/releases/tag/v5.1">
+        <img src="https://raw.githubusercontent.com/nobrew-cell/folha-pagamento-ads/9fe73e9e781d76d743566a86eace93b1c6dfaabd/sistemaFolha-final/assets/BI.png" width="110" alt="v5.1" title="Versão 5.1"><br>
+        <code>v5.1</code>
+      </a>
+    </td>
+    <td align="center" valign="bottom">
+      <a href="https://github.com/nobrew-cell/folha-pagamento-ads/releases/tag/v3.1">
+        <img src="https://github.com/nobrew-cell/folha-pagamento-ads/blob/5bac7c3bf03d5eb5166cca2b22710ba9b794cf55/sistemaFolha-final/assets/XLS.png" width="110" alt="v3.1" title="Versão 3.1"><br>
+        <code>v3.1</code>
+      </a>
+    </td>
+    <td align="center" valign="bottom">
+      <a href="https://github.com/nobrew-cell/folha-pagamento-ads/releases/tag/v2.1">
+        <img src="https://github.com/nobrew-cell/folha-pagamento-ads/blob/5bac7c3bf03d5eb5166cca2b22710ba9b794cf55/sistemaFolha-final/assets/TSV.png" width="110" alt="v2.1" title="Versão 2.1"><br>
+        <code>v2.1</code>
+      </a>
+    </td>
+    <td align="center" valign="bottom">
+      <a href="https://github.com/nobrew-cell/folha-pagamento-ads/releases/tag/v1.1">
+        <img src="https://github.com/nobrew-cell/folha-pagamento-ads/blob/5bac7c3bf03d5eb5166cca2b22710ba9b794cf55/sistemaFolha-final/assets/CSV.png" width="110" alt="v1.1" title="Versão 1.1"><br>
+        <code>v1.1</code>
+      </a>
+    </td>
+  </tr>
+</table>
+
+---
+
+### 💻 Execução via Código-Fonte (Avaliação Acadêmica)
+
+Caso você tenha feito o download do código-fonte cru (`.zip`) e queira rodar o projeto diretamente sem usar os executáveis, é necessário ter o **JDK 17+** instalado na máquina.
+
+**Opção 1 — Automático (Windows):**
+Basta dar dois cliques no arquivo `executar.bat` localizado na raiz do projeto. Ele compila todas as classes e abre o sistema automaticamente no terminal.
+
+**Opção 2 — Compilação Manual (Terminal):**
+
+**Windows (PowerShell):**
+```powershell
+javac -encoding UTF-8 -d bin (Get-ChildItem -Recurse -Filter *.java src | % { $_.FullName })
+```
+
+**Linux / macOS:**
+```bash
+javac -encoding UTF-8 -d bin $(find src -name "*.java")
+```
+
+**Executar (Qualquer SO):**
+```bash
+java -cp bin br.com.folha.main.SistemaFolha
+```
 ---
 
 ## ⚙️ Funcionalidades
@@ -101,44 +193,6 @@ sistemaFolha-final/
 Cada pasta dentro de `br/com/folha/` é um pacote Java. Não são simples diretórios: pacotes dividem o sistema em camadas confortavelmente isoladas, e ficam declarados sempre no topo de cada arquivo `.java`. Cada camada faz exatamente o que o nome dela diz, e nada além disso.
 
 Para adicionar um novo tipo de funcionário: crie a classe em `model/`, implemente os quatro métodos abstratos e adicione o `case` correspondente em `FuncionarioRepository`.
-
----
-
-## 🚀 Como executar
-
-**Pré-requisito:** JDK 17+ instalado.
-
-### Opção 1 — `.bat` (Windows, recomendada)
-
-Dê dois cliques em `executar.bat`. O sistema compila e abre automaticamente.
-
-> Na primeira execução, o Windows pode exibir um aviso do SmartScreen — clique em **"Mais informações"** e depois **"Executar assim mesmo"**.
-
-### Opção 2 — IDE
-
-Abra a pasta do projeto na sua IDE, navegue até `src/br/com/folha/main/SistemaFolha.java` e execute pelo botão **Run** acima do método `main`.
-
-### Opção 3 — Terminal
-
-**Compilar:**
-
-```powershell
-# Windows (PowerShell)
-javac -encoding UTF-8 -d bin (Get-ChildItem -Recurse -Filter *.java src | % { $_.FullName })
-```
-
-```bash
-# Linux / macOS
-javac -encoding UTF-8 -d bin $(find src -name "*.java")
-```
-
-**Executar:**
-
-```bash
-java -cp bin br.com.folha.main.SistemaFolha
-```
-
-> Instaladores `.exe` (Windows), `.deb` (Linux) e `.dmg` (macOS) estão em desenvolvimento — veja [`INSTALL.md`](./INSTALL.md) quando disponível.
 
 ---
 
