@@ -228,7 +228,7 @@ Para adicionar um novo tipo de funcionário: crie a classe em `model/`, implemen
 | `exportados/dados/` | Exportações TSV com timestamp (integração BI / Excel) |
 | `exportados/relatorios/` | Exportações XLS com timestamp (leitura humana) |
 | `backups/` | Backups automáticos antes de qualquer reset ou fechamento de mês |
-| `historico/` | Snapshots mensais gerados pelo "Novo mês", com nomenclatura `yyyy-MM-dd_database.tsv` |
+| `historico/` | Snapshots mensais gerados pelo "Novo mês", com nomenclatura `historico/yyyy-MM_NomeMes_yyyy-MM-dd_HH-mm-ss.tsv` |
 | `logs/` | Registro de sessões mensais — usado para detectar database ausente |
 
 Esses arquivos não aparecem agora pois estão no `.gitignore`. Podem conter dados de funcionários — nomes, matrículas, salários. Mantê-los fora do repositório é uma decisão de privacidade.

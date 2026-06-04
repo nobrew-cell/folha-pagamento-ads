@@ -83,6 +83,7 @@ cd SistemaFolha-Linux
 Use esta opção se quiser rodar direto do código-fonte, contribuir com o projeto ou validar o sistema localmente.
 
 **Pré-requisito:** JDK 17 ou superior instalado.
+> **Nota:** Os executáveis nativos da v8.1 são compilados com JDK 21 via GitHub Actions. O código-fonte é compatível com JDK 17+, então qualquer versão a partir da 17 funciona para rodar pelo código. Caso queira reproduzir o build do CI localmente, use o JDK 21.
 
 - Windows: [Adoptium Temurin](https://adoptium.net/) ou `winget install EclipseAdoptium.Temurin.17.JDK`
 - macOS: [Adoptium Temurin](https://adoptium.net/) ou `brew install --cask temurin`

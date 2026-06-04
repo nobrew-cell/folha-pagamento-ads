@@ -11,6 +11,7 @@ sources.log
 database.tsv
 backups/
 exportados/
+historico/
 
 # ─── IDEs ─────────────────────────────────────────────────
 .idea/
