@@ -5,9 +5,18 @@
 
 ---
 
+> [!IMPORTANT]
+> ### 🎓 Painel de Avaliação Acadêmica
+> **Professor, selecione uma das opções abaixo para ir direto ao ponto e otimizar o seu tempo de correção:**
+> * 🚀 **[Rodar o Sistema Direto](#-como-testar-e-executar)** — Baixe o executável nativo do seu sistema operacional e rode o app pronto, sem precisar instalar nada na máquina.
+> * 💻 **[Avaliar o Código-Fonte](#-execução-via-código-fonte-avaliação-acadêmica)** — Instruções rápidas para compilar manualmente ou rodar com um clique usando os scripts automatizados (`.bat`, `.sh` e `.command`).
+> * 📊 **[Análise Técnica e Documentos](#-documentação-complementar)** — Índice completo com os diagramas de fluxo interativos, mapa da arquitetura e as reflexões da equipe. Recomendamos que acesse o [`docs/COMENTARIOS.md`](./docs/COMENTARIOS.md).
+
+---
+
 ## 👥 Equipe e contribuições
 
-O projeto foi desenvolvido por **Gabriel Conceição da Silva**, **Eduardo Santos Cruz** e **Pedro Alonso Martins Fernandes**.
+O projeto foi desenvolvido por **`Gabriel Conceição da Silva`**, **`Eduardo Santos Cruz`** e **`Pedro Alonso Martins Fernandes`**.
 *Gabriel* foi responsável pela maior parte da implementação e arquitetura do sistema, enquanto *Pedro* e *Eduardo* contribuíram principalmente com testes, sugestões e validações durante o desenvolvimento.
 
 Reflexões individuais de cada membro sobre o desenvolvimento estão em [`docs/COMENTARIOS.md`](./docs/COMENTARIOS.md).
@@ -17,10 +26,6 @@ Reflexões individuais de cada membro sobre o desenvolvimento estão em [`docs/C
 ## 📌 Sobre o projeto
 
 Sistemas de folha de pagamento no mercado tendem a ser caros, dependentes de internet ou complexos demais para o que entregam. Na outra ponta, o Excel é flexível e amplamente usado — mas não tem regras de negócio, depende do usuário não errar e não escala bem.
-
-<p align="center">
-  <img src="../sistemaFolha-final/assets/telaExemplo.gif" width="850" alt="Demonstração do Sistema">
-</p>
 
 Este sistema é uma alternativa simples no meio do caminho: roda localmente no terminal, sem banco de dados externo, sem internet, sem instalação de dependências além do JDK. Calcula salários automaticamente, aplica regras de negócio e exporta os dados em formatos compatíveis com Excel e ferramentas de BI. O foco não é ser completo — é ser útil naquilo que se propõe.
 
@@ -46,7 +51,7 @@ Para baixar os executáveis e visualizar o histórico completo de releases (com 
 
 ---
 
-**Galeria de Releases:**
+### Galeria de Releases:
 
 <table align="center" border="0">
   <tr>
@@ -91,12 +96,20 @@ Para baixar os executáveis e visualizar o histórico completo de releases (com 
 
 ---
 
-### 💻 Execução via Código-Fonte (Avaliação Acadêmica)
+## 💻 Execução via Código-Fonte (Avaliação Acadêmica)
 
 Caso você tenha feito o download do código-fonte cru (`.zip`) e queira rodar o projeto diretamente sem usar os executáveis, é necessário ter o **JDK 17+** instalado na máquina.
 
-**Opção 1 — Automático (Windows):**
-Basta dar dois cliques no arquivo `executar.bat` localizado na raiz do projeto. Ele compila todas as classes e abre o sistema automaticamente no terminal.
+**Opção 1 — Automático:**
+
+| Sistema | Script | Como abrir |
+|---|---|---|
+| Windows | `executar.bat` | Duplo clique na raiz do projeto |
+| Windows (PowerShell) | `scripts/executar.ps1` | Chamado automaticamente pelo `.bat` |
+| Linux | `scripts/executar.sh` | `bash scripts/executar.sh` no terminal |
+| macOS | `scripts/executar.command` | Duplo clique no Finder ou `bash scripts/executar.command` |
+
+Todos os scripts compilam o projeto automaticamente (se necessário) e iniciam o sistema. Após a primeira compilação, use `scripts/iniciar.sh` ou `scripts/iniciar.command` para pular a etapa de compilação e abrir mais rápido.
 
 **Opção 2 — Compilação Manual (Terminal):**
 
@@ -155,7 +168,7 @@ java -cp bin br.com.folha.main.SistemaFolha
 
 ---
 
-## 📁 Estrutura do projeto
+## 📁 Estrutura do projeto base
 
 ```
 sistemaFolha-final/
@@ -178,15 +191,26 @@ sistemaFolha-final/
 │       │   └── DashboardBI.java           ← dashboard analítico integrado
 │       └── util/
 │           └── LoggerUtil.java            ← log de sessões e detecção de primeiro acesso
-├── assets/                                ← diagramas SVG (dark/light)
+├── assets/                                ← diagramas SVG (dark/light) e capturas de tela
+├── bin/                                   ← classes compiladas (gerado automaticamente)
+├── config/                                ← ícones do aplicativo (.icns, .ico, .png)
 ├── docs/
 │   ├── DIAGRAMAS.md                       ← fluxograma e casos de uso
 │   ├── COMENTARIOS.md                     ← reflexões da equipe sobre o desenvolvimento
 │   ├── ARQUITETURA.html                   ← documentação técnica navegável
 │   └── fluxograma-sistema-folha.html      ← fluxograma interativo offline
-├── executar.bat                           ← execução com um clique (Windows)
+├── logs/                                  ← logs de sessão gerados em execução
 ├── scripts/
-│   └── executar.ps1
+│   ├── executar.ps1                       ← compila e executa (Windows / PowerShell)
+│   ├── executar.sh                        ← compila e executa (Linux)
+│   ├── executar.command                   ← compila e executa (macOS, duplo clique no Finder)
+│   ├── iniciar.sh                         ← executa direto se o JAR já existir (Linux)
+│   └── iniciar.command                    ← executa direto se o JAR já existir (macOS)
+├── tests/
+│   ├── dados_teste.xlsx
+│   └── database_teste.tsv
+├── executar.bat                           ← chama o .ps1 (Windows)
+├── limpar.bat                             ← remove bin/, logs/, backups/, exportados/ e database.tsv
 └── COMO_EXECUTAR.txt                      ← guia detalhado de todas as telas e menus
 ```
 
@@ -215,24 +239,26 @@ Esses arquivos não aparecem agora pois estão no `.gitignore`. Podem conter dad
 
 | Documento | Conteúdo |
 |---|---|
-| [`docs/DIAGRAMAS.md`](./docs/DIAGRAMAS.md) | Fluxograma Mermaid e diagramas de casos de uso (dark/light) |
+| [`INSTALL.md`](./INSTALL.md) | Central de instalação, uso dos executáveis e permissões de sistema |
 | [`docs/ARQUITETURA.html`](./docs/ARQUITETURA.html) | Documentação técnica navegável das camadas e classes |
+| [`docs/DIAGRAMAS.md`](./docs/DIAGRAMAS.md) | Fluxograma Mermaid e diagramas de casos de uso (dark/light) |
 | [`docs/fluxograma-sistema-folha.html`](./docs/fluxograma-sistema-folha.html) | Fluxograma interativo offline com simbologia ANSI completa |
-| [`COMO_EXECUTAR.txt`](./sistemaFolha-final/COMO_EXECUTAR.txt) | Guia de todas as telas, menus, submenus e opções do console |
+| [`docs/COMENTARIOS.md`](./docs/COMENTARIOS.md) | Reflexões individuais da equipe sobre o processo de desenvolvimento |
+| [`COMO_EXECUTAR.txt`](./sistemaFolha-final/COMO_EXECUTAR.txt) | Guia detalhado de todas as telas, menus e opções do console |
 | [`LICENSE.md`](./LICENSE.md) | Termos de uso e restrições do projeto |
 
 ---
 
 ## 🛠️ Uso de ferramentas externas
 
-Ao longo do desenvolvimento, recorreu-se pontualmente ao **Claude** como ferramenta de acompanhamento — não como substituto de raciocínio, mas como um par de olhos externo.
+Ao longo do desenvolvimento, recorreu-se pontualmente ao **Claude Code** como ferramenta de acompanhamento — não como substituto de raciocínio, mas como um par de olhos externo.
 
 Os usos foram cirúrgicos:
 
-- **Dashboard analítico** — feito em JavaFX, uma tecnologia ainda em estudo à época. A IA gerou um molde inicial; a lógica, os parâmetros e os ajustes finais foram feitos manualmente.
-- **Comentários no código-fonte** — a empolgação falou mais alto no início, e o código saiu antes da documentação.
-- **Partes do `model/` e do `repository/`** — orientação a objetos ainda era território em construção. A ferramenta ajudou a validar decisões de herança e polimorfismo, não a gerá-las.
-- **Documentação do repositório** — os arquivos `.md` e `.html` foram redigidos com suporte da ferramenta a partir de anotações e rascunhos próprios.
+- **Dashboard analítico** — feito em Swing, uma tecnologia ainda em estudo à época. A IA gerou um molde inicial; a lógica, os parâmetros e os ajustes finais foram feitos manualmente.
+- **Comentários no código-fonte** — a empolgação falou mais alto no início, e o código saiu bem antes da documentação.
+- **Partes do `model/` e do `repository/`** — orientação a objetos no `Java`, também era território em construção. A ferramenta ajudou a validar decisões de herança e polimorfismo, não a gerá-las.
+- **Documentação do repositório** — alguns dos arquivos `.md` e `.html` foram redigidos com suporte da ferramenta a partir de anotações e rascunhos próprios. 
 
 Arquitetura, lógica de negócio, estrutura de pacotes, `ConsoleUI.java` e decisões de design foram desenvolvidos manualmente. O material da **Oracle Academy** serviu como base de estudo ao longo de todo o projeto.
 
