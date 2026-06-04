@@ -1,6 +1,6 @@
 # Instalação — Sistema de Folha de Pagamento
 
-<div align="left">
+<div align="center">
 
 [![Release v8.1](https://img.shields.io/badge/release-v8.1--atual-gold?style=for-the-badge&logo=github)](https://github.com/nobrew-cell/folha-pagamento-ads/releases/tag/v8.1)
 [![Release v7.1](https://img.shields.io/badge/release-v7.1-blue?style=for-the-badge&logo=github)](https://github.com/nobrew-cell/folha-pagamento-ads/releases/tag/v7.1)
@@ -17,11 +17,10 @@
 
 ## Releases
 
-<!-- Espaço reservado para os ícones de cada release -->
-<!-- Insira aqui os badges/ícones das versões anteriores -->
+<div align="center">
 
 | Release | Foco Principal | Disponível no GitHub |
-| :--- | :--- | :---: |
+| :---: | :--- | :---: |
 | **v8.1** — *Atual* | Distribuição multiplataforma, executáveis nativos e scripts utilitários. | ✅ Sim |
 | **v7.1** | Consolidação da engenharia de documentação e `ARQUITETURA.html`. | ✅ Sim |
 | **v6.1** | *Pulada intencionalmente para focar na reestruturação de documentação.* | ❌ Não |
@@ -31,26 +30,16 @@
 | **v2.1** | Estabilização do legado em TSV (migração e consistência de delimitadores). | ✅ Sim |
 | **v1.1** | Estabilização do legado em CSV (padrão de ponto-e-vírgula regional 🇧🇷). | ✅ Sim |
 
----
-
-## Sobre a v8.1
-
-A `v8.1` entrega a camada de distribuição prática do projeto. Depois de consolidar toda a engenharia de documentação no `ARQUITETURA.html` da versão anterior, este release transforma o código funcional em executáveis acessíveis e simples de rodar em qualquer sistema operacional — sem dependências manuais, sem configuração de ambiente.
-
-**O que foi entregue:**
-
-- **Executável `.exe`** para Windows — portátil, com terminal de comandos habilitado.
-- **Aplicativo `.app`** nativo para macOS — compilado via GitHub Actions em ambiente limpo.
-- **Binário `.tar.gz`** para Linux — estrutura pronta para execução direta.
-- **Scripts utilitários** dentro do código-fonte para validação e testes locais.
-
-> Os executáveis incluem a JRE estática integrada — não é necessário ter Java instalado na máquina para rodá-los.
+</div>
 
 ---
 
-## Opção 1 — Executável nativo (recomendado, sem Java necessário)
+## Opção 1 — Executável nativo (Recomendado)
 
-Baixe o release correspondente ao seu sistema operacional na [página de releases](https://github.com/nobrew-cell/folha-pagamento-ads/releases/latest), ou aqui no topo.
+> [!NOTE]
+> A versão **v8.1** empacota o sistema com uma **JRE estática integrada**. Isso significa que os executáveis abaixo são 100% portáteis: **não é necessário ter o Java instalado na máquina** para rodá-los.
+
+Baixe o release correspondente ao seu sistema operacional na [página de releases](https://github.com/nobrew-cell/folha-pagamento-ads/releases/), ou utilize os botões no topo desta página.
 
 ### Windows
 
@@ -164,23 +153,6 @@ bash scripts/iniciar.command
 > chmod +x scripts/executar.command scripts/iniciar.command
 > open scripts/executar.command
 > ```
-
----
-
-## Estrutura gerada em execução
-
-Após a primeira execução, o sistema cria automaticamente na pasta onde está sendo rodado:
-
-| Pasta / Arquivo | Conteúdo |
-|-----------------|----------|
-| `database.tsv` | Base de dados principal — carregado ao abrir, salvo ao sair |
-| `exportados/dados/` | Exportações TSV com timestamp |
-| `exportados/relatorios/` | Exportações XLS com timestamp |
-| `backups/` | Backups automáticos antes de reset ou fechamento de mês |
-| `historico/` | Snapshots mensais gerados pelo "Novo mês" |
-| `logs/` | Registro de sessões — usado para detectar primeiro acesso |
-
-Esses arquivos não estão no repositório (`.gitignore`) pois podem conter dados de funcionários.
 
 ---
 
