@@ -7,10 +7,22 @@
 
 > [!IMPORTANT]
 > ### 🎓 Painel de Avaliação Acadêmica
-> **Professor, selecione uma das opções abaixo para ir direto ao ponto e otimizar o seu tempo de correção:**
-> * 🚀 **[Rodar o Sistema Direto](#-como-testar-e-executar)** — Baixe o executável nativo do seu sistema operacional e rode o app pronto, sem precisar instalar nada na máquina.
-> * 💻 **[Avaliar o Código-Fonte](#-execução-via-código-fonte-avaliação-acadêmica)** — Instruções rápidas para compilar manualmente ou rodar com um clique usando os scripts automatizados (`.bat`, `.sh` e `.command`).
-> * 📊 **[Análise Técnica e Documentos](#-documentação-complementar)** — Índice completo com os diagramas de fluxo interativos, mapa da arquitetura e as reflexões da equipe. Recomendamos que acesse o [`docs/COMENTARIOS.md`](./docs/COMENTARIOS.md).
+> **Professor, otimize seu tempo de correção escolhendo a melhor rota de avaliação abaixo:**
+> 
+> <p align="center">
+>   <a href="#-como-testar-e-executar">
+>     <img src="https://img.shields.io/badge/🚀_EXECUTÁVEL-Baixar_e_Rodar_Direto-1F222E?style=for-the-badge" alt="Baixar Executável" />
+>   </a>
+>   <a href="#-execução-via-código-fonte-avaliação-acadêmica">
+>     <img src="https://img.shields.io/badge/💻_CÓDIGO_FONTE-Avaliar_e_Compilar-1F222E?style=for-the-badge" alt="Avaliar Código-Fonte" />
+>   </a>
+>   <a href="./docs/COMENTARIOS.md">
+>     <img src="https://img.shields.io/badge/📊_DOCUMENTAÇÃO-Arquitetura_e_Decisões-1F222E?style=for-the-badge" alt="Arquitetura e Documentos" />
+>   </a>
+>   <a href="https://www.youtube.com/watch?v=rw4hGn6M1sc" target="_blank">
+>     <img src="https://img.shields.io/badge/YouTube-Assistir_Apresentação_em_Vídeo-FF0000?style=for-the-badge&logo=youtube&logoColor=white" alt="Assistir no YouTube" />
+>   </a>
+> </p>
 
 ---
 
