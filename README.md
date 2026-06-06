@@ -10,18 +10,24 @@
 > **Professor, otimize seu tempo de correção escolhendo a melhor rota de avaliação abaixo:**
 > 
 > <p align="center">
->   <a href="#-como-testar-e-executar">
->     <img src="https://img.shields.io/badge/🚀_EXECUTÁVEL-Baixar_e_Rodar_Direto-1F222E?style=for-the-badge" alt="Baixar Executável" />
->   </a>
->   <a href="#-execução-via-código-fonte-avaliação-acadêmica">
->     <img src="https://img.shields.io/badge/💻_CÓDIGO_FONTE-Avaliar_e_Compilar-1F222E?style=for-the-badge" alt="Avaliar Código-Fonte" />
->   </a>
->   <a href="./docs/COMENTARIOS.md">
->     <img src="https://img.shields.io/badge/📊_DOCUMENTAÇÃO-Arquitetura_e_Decisões-1F222E?style=for-the-badge" alt="Arquitetura e Documentos" />
->   </a>
->   <a href="https://www.youtube.com/watch?v=rw4hGn6M1sc" target="_blank">
->     <img src="https://img.shields.io/badge/YouTube-Assistir_Apresentação_em_Vídeo-FF0000?style=for-the-badge&logo=youtube&logoColor=white" alt="Assistir no YouTube" />
->   </a>
+>    <a href="#-como-testar-e-executar">
+>       <img src="https://img.shields.io/badge/🚀_EXECUTÁVEL-Baixar_e_Rodar_Direto-1F222E?style=for-the-badge" alt="Baixar Executável" />
+>    </a>
+>    <a href="#-execução-via-código-fonte-avaliação-acadêmica">
+>       <img src="https://img.shields.io/badge/💻_CÓDIGO_FONTE-Avaliar_e_Compilar-1F222E?style=for-the-badge" alt="Avaliar Código-Fonte" />
+>    </a>
+>    <a href="#-roteiro-de-avaliação">
+>       <img src="https://img.shields.io/badge/🧪_ROTEIRO-Cenários_de_Avaliação-1F222E?style=for-the-badge" alt="Roteiro de Avaliação" />
+>    </a>
+>    <a href="./docs/COMENTARIOS.md">
+>       <img src="https://img.shields.io/badge/📊_DOCUMENTAÇÃO-Arquitetura_e_Decisões-1F222E?style=for-the-badge" alt="Arquitetura e Documentos" />
+>    </a>
+>    <a href="./docs/slides_pitch.pdf">
+>       <img src="https://img.shields.io/badge/📊_PITCH-Apresentação_Acadêmica-048F2F?style=for-the-badge" alt="Ver Slides de Pitch" />
+>    </a>
+>    <a href="https://www.youtube.com/watch?v=rw4hGn6M1sc" target="_blank">
+>       <img src="https://img.shields.io/badge/YouTube-Assistir_Apresentação_em_Vídeo-FF0000?style=for-the-badge&logo=youtube&logoColor=white" alt="Assistir no YouTube" />
+>    </a>
 > </p>
 
 ---
@@ -139,6 +145,58 @@ javac -encoding UTF-8 -d bin $(find src -name "*.java")
 ```bash
 java -cp bin br.com.folha.main.SistemaFolha
 ```
+---
+
+## 🧪 Roteiro de Avaliação
+
+> **Nota de fluxo:** o sistema inicializa automaticamente no Menu Administrativo no primeiro acesso (banco vazio). Nos acessos seguintes, a tela de seleção de perfil é exibida — escolha `[2] Administrador` ou `[1] Funcionário` conforme o cenário abaixo. A qualquer momento, a opção `[0]` no menu ADM redireciona para o Menu do Funcionário.
+
+Os cenários abaixo cobrem os requisitos da UC diretamente. Siga-os na ordem ou pule para o que precisar avaliar.
+
+---
+
+**Cenário 1 — Cadastro manual e cálculo de salário**
+
+Acesse como **Funcionário** e cadastre um de cada tipo:
+
+| Tipo | Opção | O que informar |
+|---|---|---|
+| Padrão | `[1]` | matrícula e nome — salário calculado automaticamente |
+| Comissionado | `[2]` | matrícula, nome, valor de vendas e percentual de comissão |
+| Produção | `[3]` | matrícula, nome, valor por peça e quantidade produzida |
+
+Depois, use `[4] Gerar Folha de Pagamento` para ver os três registros ordenados por matrícula com os salários calculados. Em qualquer campo de entrada, digite `0` para cancelar e voltar ao menu.
+
+---
+
+**Cenário 2 — Validação de entradas**
+
+Durante o cadastro, tente inserir valores inválidos: número negativo no campo de vendas, quantidade de peças negativa, ou nome em branco. O sistema rejeita cada um com mensagem de erro e repete a pergunta — sem travar e sem aceitar o dado.
+
+---
+
+**Cenário 3 — Importar o banco de teste** *(recomendado para agilizar a avaliação)*
+
+O repositório inclui um banco de dados com 20 funcionários pré-cadastrados (8 padrão, 7 comissionado e 5 de produção) em `sistemaFolha-final/tests/database_teste.tsv`.
+
+> ⚠️ **Este arquivo está no repositório, mas não no zip do executável.** Para usá-lo com o executável, copie o `database_teste.tsv` para a pasta raiz do sistema (onde fica o `.exe` / `.app`) e renomeie para `database.tsv` antes de abrir o programa. Ao abrir, os dados já estarão carregados.
+>
+> Usando pelo código-fonte: o arquivo já está em `sistemaFolha-final/tests/`. Alternativamente, acesse o **Menu ADM → `[3] Importar TSV`** e informe o caminho completo do arquivo para carregar a base sem precisar renomear nada.
+
+Com dados carregados, é possível testar todos os cenários seguintes sem cadastro manual.
+
+---
+
+**Cenário 4 — Exportação**
+
+No Menu ADM, use `[1] Exportar TSV` e `[2] Exportar XLS`. Os arquivos são gerados com timestamp em `exportados/dados/` e `exportados/relatorios/`, respectivamente. O XLS abre diretamente no Excel. A essa altura, fique à vontade para testar a opção `[9] Dashboard Analítico`, colocada como forma de visualização complementar — é, ironicamente, o "gerar folha" do perfil ADM.
+
+---
+
+**Cenário 5 — ArrayList e estrutura de dados**
+
+O sistema armazena todos os funcionários em um `ArrayList<Funcionario>` gerenciado pelo `FolhaService`. Para verificar: a opção `[4] Gerar Folha` percorre essa lista com um laço e exibe os registros ordenados por matrícula. A classe `Funcionario` é abstrata; cada subtipo implementa `calcularSalario()` de forma polimórfica.
+
 ---
 
 ## ⚙️ Funcionalidades
