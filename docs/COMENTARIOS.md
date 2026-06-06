@@ -48,7 +48,7 @@ Reflexões pessoais de cada membro sobre o desenvolvimento do projeto — decis�
 ## 🟩 Gabriel Conceição da Silva
 
 **Sobre o `Escopo Atual` vs `Escopo da UC Dual`**
-> Se esse projeto quisesse sobreviver e ficar no meu github, eu teria que inevitavelmente adicionar algumas leves alterações ao escopo geral pedido pela UC Dual. Parte disso foi por causa da minha empolgação, mas prometo que o resto foi em meus momentos mais lúcidos. Um exemplo é o salário base que é fixo, porém nesse sistema é editável via menu adm. O que não é o `*perfeitamente fixo*` citado no projeto.
+> Se esse projeto quisesse sobreviver e ficar no meu github, eu teria que inevitavelmente adicionar algumas leves alterações ao escopo geral pedido pela UC Dual. Parte disso foi por causa da minha empolgação, mas prometo que o resto foi em meus momentos mais lúcidos. Um exemplo é o salário base que é fixo, porém nesse sistema é editável via menu adm. O que não é o _`perfeitamente fixo`_ citado no projeto.
 >
 > Mas isso foi colocado principalmente por facilidade pessoal ao administrador, para ele não ter que ir trocar manualmente no código do projeto. E sendo sincero, tem muita pouca diferença, pois mesmo um salário fixo, pode ser alterado no código. Então mesmo se eu colocasse um:
 >
