@@ -2,7 +2,11 @@
                      SISTEMA DE FOLHA DE PAGAMENTO – v8.1
                              -- Guia de Uso --
 ================================================================================
-
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+NOTA DE FLUXO: Por decisão de projeto, o sistema inicializa automaticamente no 
+Menu Administrativo para facilitar o acesso às funções de gestão durante a correção. 
+O Menu Principal pode ser acessado através da opção [0] no menu administrativo.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Antes de qualquer coisa, um aviso tranquilizador:
     Voce nao precisa saber programar para usar este sistema.
     So precisa saber digitar e pressionar ENTER.
