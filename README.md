@@ -149,7 +149,7 @@ java -cp bin br.com.folha.main.SistemaFolha
 
 ## 🧪 Roteiro de Avaliação
 
-> **Nota de fluxo:** o sistema inicializa automaticamente no Menu Administrativo no primeiro acesso (banco vazio). Nos acessos seguintes, a tela de seleção de perfil é exibida — escolha `[2] Administrador` ou `[1] Funcionário` conforme o cenário abaixo. A qualquer momento, a opção `[0]` no menu ADM redireciona para o Menu do Funcionário.
+> **Nota de fluxo:** o sistema inicializa automaticamente no Perfil Administrativo no primeiro acesso (banco vazio). Nos acessos seguintes, a tela de seleção de perfil é exibida — escolha `[2] Administrador` ou `[1] Funcionário` conforme o cenário abaixo.
 
 Os cenários abaixo cobrem os requisitos da UC diretamente. Siga-os na ordem ou pule para o que precisar avaliar.
 
